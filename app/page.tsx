@@ -4,15 +4,32 @@ import React, { useState } from 'react';
 import Hero from '../components/hero';
 import Header from '../components/header';
 import Footer from '../components/footer';
+import About from '../components/about';
 
 
-export default function HomePage() {
+export default function Homepage() {
   return (
-    <main className="min-h-screen flex flex-col bg-[#0d0d0d] text-white">
-      <Header />
-      <Hero />
-      <Footer />
-    </main>
+    <>
+      <main className="scroll-smooth">
+        <section id="hero">
+          <Hero />
+        </section>
+        <section id="about">
+          {<About />}
+        </section>
+        <section id="timeline">
+          {/*<Timeline />*/}
+        </section>
+        <section id="projects">
+          {/*<Projects />*/}
+        </section>
+        <section id="contact">
+          {/*<Contact />*/}
+        </section>
+        <Footer />
+      </main>
+    </>
   );
 }
+
 

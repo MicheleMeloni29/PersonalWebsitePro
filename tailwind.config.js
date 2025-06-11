@@ -5,6 +5,7 @@ module.exports = {
     content: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
     theme: {
         extend: {
+            scrollBehavior: ['responsive'],
             keyframes: {
                 slideInUp: {
                     '0%': { transform: 'translateY(100%)', opacity: '0' },
