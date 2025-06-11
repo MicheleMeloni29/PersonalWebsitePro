@@ -22,8 +22,7 @@
 }
 
 body {
-  @apply bg-[#0d0d0d]
-  font-family: 'Share Tech Mono', monospace;
+  @apply bg-[#0d0d0d];
   font-family: 'Fira Code', monospace;
   background-color: #1e1e1e;
   color: #d4d4d4;
