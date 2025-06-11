@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 :root {
   --background: #ffffff;
@@ -21,6 +22,8 @@
 }
 
 body {
+  @apply bg-[#0d0d0d]
+  font-family: 'Share Tech Mono', monospace;
   font-family: 'Fira Code', monospace;
   background-color: #1e1e1e;
   color: #d4d4d4;

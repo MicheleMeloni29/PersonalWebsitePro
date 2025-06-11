@@ -1,0 +1,25 @@
+"use client";
+import Image from "next/image";
+
+export default function Hero() {
+
+    return (
+        <section className="min-h-[85vh] bg-[#0d0d0d] text-white flex flex-col">
+        
+            {/* Hero Section */}
+            <div className="flex-grow flex flex-col items-center justify-center px-6 py-2 text-center">
+                <Image
+                    src="/IMG_IO.jpg" // <-- Sostituisci con il tuo file reale
+                    alt="Michele Meloni"
+                    width={120}
+                    height={120}
+                    className="rounded-full border-2 border-red-900 shadow-[0_0_20px_#cc0000] mb-6"
+                />
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">Hi, I'm Michele Meloni</h1>
+                <p className="text-gray-400 text-lg max-w-2xl">
+                    I build modern and performant web and mobile applications.
+                </p>
+            </div>
+        </section>
+    );
+}

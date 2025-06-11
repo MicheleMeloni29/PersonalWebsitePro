@@ -34,7 +34,7 @@
     ".next/types/**/*.ts",
     "next-env.d.ts",
     "out/types/**/*.ts"
-, "components/aboutMe.tsx"  ],
+, "components/header.tsx"  ],
   "exclude": [
     "node_modules"
   ]
