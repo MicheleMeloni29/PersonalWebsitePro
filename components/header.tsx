@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import {
+  FaHome,
   FaUser,
   FaClock,
   FaProjectDiagram,
   FaEnvelope,
+  FaSun
 } from 'react-icons/fa';
 
 export default function Header() {
@@ -16,16 +18,19 @@ export default function Header() {
       setIsMobile(window.innerWidth < 768);
     };
 
+    
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const links = [
+    { href: '#hero', icon: <FaHome /> },
     { href: '#about', label: 'About', icon: <FaUser /> },
     { href: '#timeline', label: 'Timeline', icon: <FaClock /> },
     { href: '#projects', label: 'Projects', icon: <FaProjectDiagram /> },
     { href: '#contact', label: 'Contact', icon: <FaEnvelope /> },
+    { href: '#theme', icon: <FaSun /> }
   ];
 
   return (
@@ -34,7 +39,7 @@ export default function Header() {
         isMobile ? 'bottom-18' : 'top-8'
       } left-1/2 -translate-x-1/2 z-50`}
     >
-          <nav className="flex gap-4 px-4 py-2 bg-[#0d0d0d] text-[#cccccc] rounded-full border border-red-800 shadow-lg backdrop-blur-md">
+          <nav className="flex gap-4 px-1 py-2  bg-[#0d0d0d] text-[#cccccc] rounded-full border border-red-800 shadow-lg backdrop-blur-md">
         {links.map(({ href, label, icon }) => (
           <a
             key={label}

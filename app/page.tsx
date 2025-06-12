@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Hero from '../components/hero';
 import About from '../components/about';
 import TimeLine from '../components/timeline';
+import MyProjects from '../components/myprojects';
 import Footer from '../components/footer';
 
 
@@ -21,7 +22,7 @@ export default function Homepage() {
           {<TimeLine />}
         </section>
         <section id="projects">
-          {/*<Projects />*/}
+          {<MyProjects />}
         </section>
         <section id="contact">
           {/*<Contact />*/}

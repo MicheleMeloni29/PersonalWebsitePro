@@ -8,14 +8,13 @@ import { Typewriter } from 'react-simple-typewriter';
 export default function About() {
     const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
     const [showTypewriter, setShowTypewriter] = useState(false);
-    const [showParagraphs, setShowParagraphs] = useState(false);
 
     // start typewriter effect when in view
     if (inView && !showTypewriter) {
         setShowTypewriter(true);
     }
 
-    
+
     return (
         <section
             id="about"
