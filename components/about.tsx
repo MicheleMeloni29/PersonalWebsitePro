@@ -66,7 +66,7 @@ export default function About() {
                         <motion.p
                             initial={{ opacity: 0, x: -720 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 1.3, delay: 5 }}
+                            transition={{ duration: 1.3, delay: 9 }}
                             className="text-base md:text-lg text-red-900 mb-4 leading-relaxed"
                         >
                             As a self-taught developer, I built projects, explored backend with Python, and keep
