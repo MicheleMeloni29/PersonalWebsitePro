@@ -15,6 +15,7 @@ export default function About() {
         setShowTypewriter(true);
     }
 
+    
     return (
         <section
             id="about"

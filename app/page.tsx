@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import Hero from '../components/hero';
-import Header from '../components/header';
-import Footer from '../components/footer';
 import About from '../components/about';
+import TimeLine from '../components/timeline';
+import Footer from '../components/footer';
 
 
 export default function Homepage() {
@@ -18,7 +18,7 @@ export default function Homepage() {
           {<About />}
         </section>
         <section id="timeline">
-          {/*<Timeline />*/}
+          {<TimeLine />}
         </section>
         <section id="projects">
           {/*<Projects />*/}

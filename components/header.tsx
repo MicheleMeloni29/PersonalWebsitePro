@@ -31,7 +31,7 @@ export default function Header() {
   return (
     <header
       className={`fixed ${
-        isMobile ? 'bottom-12' : 'top-4'
+        isMobile ? 'bottom-18' : 'top-8'
       } left-1/2 -translate-x-1/2 z-50`}
     >
           <nav className="flex gap-4 px-4 py-2 bg-[#0d0d0d] text-[#cccccc] rounded-full border border-red-800 shadow-lg backdrop-blur-md">
