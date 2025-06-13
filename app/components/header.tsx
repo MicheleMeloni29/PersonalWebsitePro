@@ -18,7 +18,7 @@ export default function Header() {
       setIsMobile(window.innerWidth < 768);
     };
 
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -35,16 +35,15 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed ${
-        isMobile ? 'bottom-18' : 'top-8'
-      } left-1/2 -translate-x-1/2 z-50`}
+      className={`fixed ${isMobile ? 'bottom-18' : 'top-8'
+        } left-1/2 -translate-x-1/2 z-50`}
     >
-          <nav className="flex gap-4 px-1 py-2  bg-[#0d0d0d] text-[#cccccc] rounded-full border border-red-800 shadow-lg backdrop-blur-md">
+      <nav className="flex gap-4 px-1 py-2  bg-gtradient-to-br-from [#111]to-[#0d0d0d] text-[#cccccc] rounded-full border border-red-800 shadow-[0_4px_6px_rgba(255,0,0,0.2),0_1px_3px_rgba(0,0,0,0.4)] ring-1 ring-red-900/50 backdrop-blur-md">
         {links.map(({ href, label, icon }) => (
           <a
             key={label}
             href={href}
-            className="flex items-center gap-2 px-3 py-1 rounded-md transition hover:bg-red-800/80"
+            className="flex items-center gap-2 px-3 py-1 rounded-md transition-all duration-300 hover:scale-105 hover:shadow-[0_2px_15px_rgba(255,0,0,0.4)]"
           >
             <span className="text-lg">{icon}</span>
             {!isMobile && (

@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import Hero from '../components/hero';
-import About from '../components/about';
-import TimeLine from '../components/timeline';
-import MyProjects from '../components/myprojects';
-import Footer from '../components/footer';
+import Hero from './components/hero';
+import About from './components/about';
+import TimeLine from './components/timeline';
+import MyProjects from './components/myprojects';
+import Contact from './components/contacts';
+import Footer from './components/footer';
 
 
 export default function Homepage() {
@@ -25,7 +26,7 @@ export default function Homepage() {
           {<MyProjects />}
         </section>
         <section id="contact">
-          {/*<Contact />*/}
+          <Contact />
         </section>
         <Footer />
       </main>
