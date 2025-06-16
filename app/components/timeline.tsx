@@ -1,6 +1,8 @@
 'use client';
 
 import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+
 
     // Timeline component 
     const timelineData = [
@@ -56,15 +58,45 @@ import { motion } from "framer-motion";
 
 
 
-export default function Timeline() { 
+export default function Timeline() {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [progress, setProgress] = useState(0); 
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const container = containerRef.current;
+            if (!container) return;
+
+            const rect = container.getBoundingClientRect();
+            const scrollY = window.innerHeight - rect.top;
+            const progressPercent = Math.min(
+                Math.max(scrollY / rect.height, 0),
+                1
+            );
+
+            setProgress(progressPercent);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     return (
         <section
             id="timeline"
             className="min-h-[calc(100vh-64px-40px)] flex items-center justify-center pb-22 px-6 text-white"          //mian-h-[calc(100vh-64px-40px)] for full height minus header and footer
         >
-            <div >
+            <div className="relative pt-28 max-w-2xl" ref={containerRef}>
                 <h2 className="text-3xl md:text-4xl font-bold pt-28 mb-6 text-red-800">My Journey</h2>
-                < div className="relative border-l border-red-800 pl-6 space-y-12 max-w-2xl">
+
+                < div className="relative border-l border-red-800 pl-6 space-y-12">
+                    
+                    { /* Progress indicator */  }
+                    <div
+                        className="absolute left-[-0.55rem] w-3 h-3 bg-red-500 rounded-full z-10 shadow-[0_0_10px_2px_rgba(255,0,0,0.6)] transition-transform duration-75"
+                        style={{ top: `${progress * 100}%` }}
+                    />
+
                     {timelineData.map((item, idx) => (
                         <motion.div
                             key={idx}
