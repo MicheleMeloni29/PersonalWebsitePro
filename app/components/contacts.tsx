@@ -16,7 +16,7 @@ export default function Contact() {
 
                 <div className="flex justify-center gap-6 mt-8 text-2xl">
                     <a
-                        href="https://github.com/michelemeloni"
+                        href="https://github.com/MicheleMeloni29"
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label="GitHub"

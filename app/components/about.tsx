@@ -22,7 +22,7 @@ export default function About() {
             className="min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 text-white overflow-x-hidden"
         >
             <div className="max-w-3xl text-left">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-800">About Me</h2>
+                <h2 className="text-3xl md:text-4xl font-bold  text-red-800">About Me</h2>
 
                 <AnimatePresence>
                     {showTypewriter && (

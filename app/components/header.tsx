@@ -41,7 +41,7 @@ export default function Header() {
       <nav className="flex gap-4 px-1 py-2  bg-gtradient-to-br-from [#111]to-[#0d0d0d] text-[#cccccc] rounded-full border border-red-800 shadow-[0_4px_6px_rgba(255,0,0,0.2),0_1px_3px_rgba(0,0,0,0.4)] ring-1 ring-red-900/50 backdrop-blur-md">
         {links.map(({ href, label, icon }) => (
           <a
-            key={label}
+            key={href}
             href={href}
             className="flex items-center gap-2 px-3 py-1 rounded-md transition-all duration-300 hover:scale-105 hover:shadow-[0_2px_15px_rgba(255,0,0,0.4)]"
           >
