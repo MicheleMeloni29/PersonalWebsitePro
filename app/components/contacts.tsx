@@ -16,15 +16,6 @@ export default function Contact() {
 
                 <div className="flex justify-center gap-6 mt-8 text-2xl">
                     <a
-                        href="https://github.com/MicheleMeloni29"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="GitHub"
-                        className="hover:text-red-600 transition duration-300"
-                    >
-                        <FaGithub />
-                    </a>
-                    <a
                         href="mailto:melonimichelee29@gmail.com"
                         rel="noopener noreferrer"
                         aria-label="Mail"
@@ -49,6 +40,21 @@ export default function Contact() {
 
                     >
                         <FaInstagram />
+                    </a>
+                </div>
+                <p className="text-lg text-red-700 mb-6 pt-8">
+                    And to see my project repositories
+                </p>
+                <div className="flex justify-center gap-6 mt-8 text-2xl">
+                    
+                    <a
+                        href="https://github.com/MicheleMeloni29"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="GitHub"
+                        className="hover:text-red-600 transition duration-300"
+                    >
+                        <FaGithub />
                     </a>
                 </div>
             </div>
