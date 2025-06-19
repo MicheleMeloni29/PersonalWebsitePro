@@ -53,39 +53,45 @@ const timelineData = [
 ];
 
 export default function Timeline() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [scrollProgress, setScrollProgress] = useState(0);
+    const [visibleIndex, setVisibleIndex] = useState<number | null>(null);
+    const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
     useEffect(() => {
-        const handleScroll = () => {
-            const container = containerRef.current;
-            if (!container) return;
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const visible = entries
+                    .filter((entry) => entry.isIntersecting)
+                    .map((entry) => ({
+                        index: Number(entry.target.getAttribute('data-index')),
+                        ratio: entry.intersectionRatio,
+                    }));
 
-            const rect = container.getBoundingClientRect();
-            const viewportHeight = window.innerHeight;
+                if (visible.length > 0) {
+                    const mostVisible = visible.reduce((prev, curr) => (curr.ratio > prev.ratio ? curr : prev));
+                    setVisibleIndex(mostVisible.index);
+                }
+            },
+            {
+                root: null,
+                rootMargin: '-20% 0% -20% 0%', // Focus al centro dello schermo
+                threshold: [0.3, 0.6, 1],
+            }
+        );
 
-            const sectionHeight = rect.height;
-            const sectionTop = rect.top;
+        itemsRef.current.forEach((el) => {
+            if (el) observer.observe(el);
+        });
 
-            const visibleStart = Math.max(0, viewportHeight - sectionTop);
-            const totalScrollable = sectionHeight + viewportHeight;
-            const progress = Math.min(Math.max(visibleStart / totalScrollable, 0), 1);
-
-            setScrollProgress(progress);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        handleScroll(); // run once on mount
-        return () => window.removeEventListener('scroll', handleScroll);
+        return () => observer.disconnect();
     }, []);
 
     return (
         <section
             id="timeline"
-            className="min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 pb-32  text-white "
+            className="min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 pb-32"
         >
-            <div className="relative pt-28 max-w-2xl w-full" ref={containerRef}>
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-800">My Journey</h2>
+            <div className="relative pt-28 max-w-2xl w-full">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-800">My Journey</h2>
 
                 <div className="relative border-l border-red-800 pl-6 space-y-12 max-w-2xl min-h-[150vh] ">
 
@@ -94,9 +100,15 @@ export default function Timeline() {
                     {timelineData.map((item, idx) => (
                         <motion.div
                             key={idx}
+                            data-index={idx}
+                            ref={(el) => { itemsRef.current[idx] = el; }}
                             initial={{ opacity: 0, x: -30 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
+                            animate={{
+                                scale: visibleIndex === idx ? 1.05 : 1,
+                                opacity: visibleIndex === idx ? 1 : 0.6,
+                              }}
                             transition={{ duration: 0.5, delay: idx * 0.1 }}
                             className="relative"
                         >
