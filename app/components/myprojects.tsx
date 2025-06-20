@@ -1,17 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import Image from 'next/image';
+import { title } from 'process';
+
 
 const projects = [
     {
         title: 'Il Mio Orto',
         short: 'Project carried out in a team with two colleagues to complete the practical part of the course "Human-machine interaction"',
-        full: 'We had the task of designing and creating an android application using the Java language. So we decided to create an application that would allow users to organize their own small vegetable garden at home and keep it under control even remotely with various humidity sensors and remote irrigation device. The login is managed so that every time the user wants to log in, he must first register by filling in the mandatory fields. Once the data is stored, the user can log in.',
+        full: 'We had the task of designing and creating an android application using the Java language. So we decided to create an application that would allow users to organize their own small vegetable garden at home and keep it under control even remotely with various humidity sensors and remote irrigation device. The login is managed so that every time the user wants to log in, he must first register by filling in the mandatory fields. Once the data is stored, the user can log in. The home page shows the user the state of the sensors and the possibility to irrigate the garden. The application also allows you to add new plants, view the history of irrigation and sensor data, and receive notifications when the plants need attention. The project was a great opportunity to apply our knowledge of Java and Android development, as well as to work collaboratively in a team.',
         images: ['/IlMioOrto/Start.png', 'IlMioOrto/Login.png', '/IlMioOrto/Signin.png', '/IlMioOrto/Home.png'],
+    },
+    {
+        title: 'Frogger',
+        short: 'Video game created in C with lncurses library fro the course "Operative Systems" whith a colleague',
+        full: 'This is a video game created in C using the lncurses library, which allows for the creation of text-based user interfaces. The game is inspired by the classic Frogger game, where the player must navigate a frog across a busy road and a river filled with obstacles. The player controls the frog using the arrow keys to move up, down, left, or right. The goal is to reach the other side of the screen without getting hit by cars or falling into the water. The game features a simple scoring system, where the player earns points for successfully crossing the road and river. The game ends when the player either reaches the goal or loses all their lives.',
+        images: ['/Frogger/Immagine1.png', '/Frogger/Immagine2.png', '/Frogger/Immagine3.png', '/Frogger/Immagine4.png', '/Frogger/Immagine5.png', '/Frogger/Immagine6.png'],
     },
 
 ];
@@ -48,6 +56,58 @@ export default function Projects() {
         );
     };
 
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowLeft') {
+                handlePrevImage();
+            } else if (e.key === 'ArrowRight') {
+                handleNextImage();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    const hoverRef = useRef<HTMLDivElement>(null);
+    let hoverTimeout = useRef<NodeJS.Timeout | null>(null);
+
+    useEffect(() => {
+        const div = hoverRef.current;
+        if (!div) return;
+
+        const handleMouseMove = (e: MouseEvent) => {
+            const { left, width } = div.getBoundingClientRect();
+            const x = e.clientX - left;
+
+            if (x < width * 0.3) {
+                if (!hoverTimeout.current) {
+                    hoverTimeout.current = setTimeout(() => {
+                        handlePrevImage();
+                        hoverTimeout.current = null;
+                    }, 300);
+                }
+            } else if (x > width * 0.7) {
+                if (!hoverTimeout.current) {
+                    hoverTimeout.current = setTimeout(() => {
+                        handleNextImage();
+                        hoverTimeout.current = null;
+                    }, 300);
+                }
+            } else {
+                if (hoverTimeout.current) {
+                    clearTimeout(hoverTimeout.current);
+                    hoverTimeout.current = null;
+                }
+            }
+        };
+
+        div.addEventListener('mousemove', handleMouseMove);
+        return () => div.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
+
+
     return (
         <section
             id="projects"
@@ -72,7 +132,7 @@ export default function Projects() {
                 border border-[#3d3d3d] hover:shadow-[0_0_20px_rgba(255,0,0,0.3)] transition-shadow duration-500"
                 >
                     {/* Card progetto */}
-                    <div className="flex flex-col items-center text-white max-w-xl px-4 text-center">
+                    <div className="flex flex-col items-center text-white max-w-xl px-4 pt-5 text-center">
                         <h3 className="text-2xl font-bold text-red-600 mb-2">
                             {projects[currentIndex].title}
                         </h3>
@@ -91,50 +151,62 @@ export default function Projects() {
                         </div>
 
                         {/* Carosello immagini centrato */}
-                        <div className="relative w-full overflow-hidden pt-20 ">
-                            <div className="flex items-center justify-center">
-                                <div
-                                    className="flex gap-4 transition-transform duration-500 ease-in-out"
-                                    style={{
-                                        transform: `translateX(calc(50% - ${(imageIndex + 0.5) * 220}px))`,
-                                    }}
-                                >
+                        <div
+                            ref={hoverRef}
+                            className="relative w-full max-w-lg overflow-hidden pt-6">
+                            <div className="flex items-center justify-center relative">
+                                {/* Wrapper contenente le immagini */}
+                                <div className="flex items-center justify-center gap-4 transition-all duration-500 ease-in-out pt-50 pb-50">
                                     {projects[currentIndex].images.map((src, idx) => {
-                                        const isActive = idx === imageIndex;
+                                        const total = projects[currentIndex].images.length;
+                                        // Calcolo indice circolare per visualizzare 3 immagini (prev, current, next)
+                                        const relativeIndex = (idx - imageIndex + total) % total;
+
+                                        let scale = 0.8;
+                                        let opacity = 0.5;
+                                        let translateX = "-80%";
+
+                                        if (relativeIndex === 0) {
+                                            // immagine attiva
+                                            scale = 1.2;
+                                            opacity = 1;
+                                            translateX = "0";
+                                        } else if (relativeIndex === 1) {
+                                            // next
+                                            translateX = "100%";
+                                        } else if (relativeIndex === total - 1) {
+                                            // prev
+                                            translateX = "-100%";
+                                        } else {
+                                            return null; // mostra solo 3 immagini alla volta
+                                        }
+
                                         return (
                                             <motion.div
                                                 key={idx}
-                                                animate={{ scale: isActive ? 1.2 : 0.9, opacity: isActive ? 1 : 0.6 }}
-                                                transition={{ duration: 0.3 }}
-                                                className="flex-shrink-0"
+                                                className="absolute"
+                                                animate={{
+                                                    scale,
+                                                    opacity,
+                                                    x: translateX,
+                                                    zIndex: relativeIndex === 0 ? 10 : 0,
+                                                }}
+                                                transition={{ duration: 0.4 }}
                                             >
                                                 <Image
                                                     src={src}
                                                     alt={`Project image ${idx + 1}`}
-                                                    width={120}
-                                                    height={80}
+                                                    width={135}
+                                                    height={90}
+                                                    className="rounded-lg border"
                                                 />
                                             </motion.div>
                                         );
                                     })}
                                 </div>
                             </div>
-
-                            {/* Frecce per navigare */}
-                            <div className="absolute top-1/2 left-4 -translate-y-1/2 z-10">
-                                <button onClick={handlePrevImage} className="text-white hover:text-red-600">
-                                    <FaChevronLeft size={24} />
-                                </button>
-                            </div>
-                            <div className="absolute top-1/2 right-4 -translate-y-1/2 z-10">
-                                <button onClick={handleNextImage} className="text-white hover:text-red-600">
-                                    <FaChevronRight size={24} />
-                                </button>
-                            </div>
                         </div>
-
                     </div>
-
                 </div>
 
                 {/* Freccia destra */}
