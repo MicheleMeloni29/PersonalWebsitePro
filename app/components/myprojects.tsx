@@ -92,12 +92,12 @@ export default function Projects() {
                 border border-[#3d3d3d] hover:shadow-[0_0_20px_rgba(255,0,0,0.3)] transition-shadow duration-500"
                 >
                     {/* Card progetto */}
-                    <div className="flex flex-col items-center text-white max-w-xl px-4 pt-5 text-center">
+                    <div className="flex flex-col items-center text-white max-w-xl px-4 text-center">
                         <h3 className="text-2xl font-bold text-red-600 mb-2">
                             {projects[currentIndex].title}
                         </h3>
                         <div className="relative mb-4">
-                            <div className="text-base text-red-700 overflow-y-auto max-h-32 pr-1 transition-all duration-500 scrollbar-hide">
+                            <div className="text-base text-red-700 overflow-y-auto max-h-32 pr-1 transition-all duration-500 scrollbar-hide ">
                                 {expanded ? projects[currentIndex].full : projects[currentIndex].short}
                             </div>
                             {!expanded && (
@@ -112,7 +112,7 @@ export default function Projects() {
 
                         {/* Carosello immagini con drag*/}
                         <motion.div
-                            className="relative w-full max-w-lg overflow-hidden pt-20 pb-90"
+                            className="relative w-full max-w-lg overflow-hidden pt-15 pb-60"
                             drag="x"
                             dragConstraints={{ left: 0, right: 0 }}
                             onDragEnd={(event, info) => {
@@ -168,8 +168,8 @@ export default function Projects() {
                                                 <Image
                                                     src={mediaSrc}
                                                     alt={`Project image ${idx + 1}`}
-                                                    width={135}
-                                                    height={90}
+                                                    width={100}
+                                                    height={40}
                                                     className="rounded-lg border poiter-events-none"
                                                 />
                                             ) : type === "video" ? (
