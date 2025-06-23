@@ -51,6 +51,12 @@ export default function AnimatedBackground() {
                 <text className="anim10" x="85%" y="80%" fill="rgba(220,20,60,0.1)" fontSize="40" fontFamily="monospace">
                     {'<span>'}
                 </text>
+                <text className="anim11" x="5%" y="75%" fill="rgba(220,20,60,0.15)" fontSize="55" fontFamily="monospace">
+                    {'<a>'}
+                </text>
+                <text className="anim12" x="45%" y="20%" fill="rgba(220,20,60,0.18)" fontSize="30" fontFamily="monospace">
+                    {'<p>'}
+                </text>
             </svg>
         </div>
     );
