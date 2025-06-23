@@ -21,12 +21,6 @@ const projects = [
         short: 'Video game created in C with lncurses library fro the course "Operative Systems" whith a colleague',
         full: 'This is a video game created in C using the lncurses library, which allows for the creation of text-based user interfaces. The game is inspired by the classic Frogger game, where the player must navigate a frog across a busy road and a river filled with obstacles. The player controls the frog using the arrow keys to move up, down, left, or right. The goal is to reach the other side of the screen without getting hit by cars or falling into the water. The game features a simple scoring system, where the player earns points for successfully crossing the road and river. The game ends when the player either reaches the goal or loses all their lives.',
         images: [
-            { type: 'image', src: '/Frogger/Immagine1.png' },
-            { type: 'image', src: '/Frogger/Immagine2.png' },
-            { type: 'image', src: '/Frogger/Immagine3.png' },
-            { type: 'image', src: '/Frogger/Immagine4.png' },
-            { type: 'image', src: '/Frogger/Immagine5.png' },
-            { type: 'image', src: '/Frogger/Immagine6.png' },
             { type: 'video', src: '/Frogger/Video.mp4' },
         ],
     },
@@ -87,7 +81,7 @@ export default function Projects() {
 
                 {/* Contenitore carosello */}
                 <div
-                    className="min-h-[calc(100vh-64px-40px)] w-full max-w-5xl flex items-center justify-center 
+                    className="min-h-[calc(100vh-65px-40px)] w-full max-w-5xl flex items-center justify-center 
                 bg-[#222223] px-6 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_4px_6px_rgba(0,0,0,0.6),_0_10px_15px_rgba(0,0,0,0.3)] 
                 border border-[#3d3d3d] hover:shadow-[0_0_20px_rgba(255,0,0,0.3)] transition-shadow duration-500"
                 >
@@ -112,7 +106,7 @@ export default function Projects() {
 
                         {/* Carosello immagini con drag*/}
                         <motion.div
-                            className="relative w-full max-w-lg overflow-hidden pt-15 pb-60"
+                            className="relative w-full max-w-lg overflow-hidden pt-15 pb-70"
                             drag="x"
                             dragConstraints={{ left: 0, right: 0 }}
                             onDragEnd={(event, info) => {
@@ -169,13 +163,13 @@ export default function Projects() {
                                                     src={mediaSrc}
                                                     alt={`Project image ${idx + 1}`}
                                                     width={100}
-                                                    height={40}
+                                                    height={6}
                                                     className="rounded-lg border poiter-events-none"
                                                 />
                                             ) : type === "video" ? (
                                                 <video
                                                     src={mediaSrc}
-                                                    width={135}
+                                                    width={140}
                                                     height={90}
                                                     className="rounded-lg border pointer-events-none"
                                                     autoPlay={relativeIndex === 0}
