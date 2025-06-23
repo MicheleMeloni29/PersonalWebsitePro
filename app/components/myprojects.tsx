@@ -5,6 +5,7 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import Image from 'next/image';
+import { useDragControls, useMotionValue } from 'framer-motion';
 import { title } from 'process';
 
 
@@ -19,7 +20,15 @@ const projects = [
         title: 'Frogger',
         short: 'Video game created in C with lncurses library fro the course "Operative Systems" whith a colleague',
         full: 'This is a video game created in C using the lncurses library, which allows for the creation of text-based user interfaces. The game is inspired by the classic Frogger game, where the player must navigate a frog across a busy road and a river filled with obstacles. The player controls the frog using the arrow keys to move up, down, left, or right. The goal is to reach the other side of the screen without getting hit by cars or falling into the water. The game features a simple scoring system, where the player earns points for successfully crossing the road and river. The game ends when the player either reaches the goal or loses all their lives.',
-        images: ['/Frogger/Immagine1.png', '/Frogger/Immagine2.png', '/Frogger/Immagine3.png', '/Frogger/Immagine4.png', '/Frogger/Immagine5.png', '/Frogger/Immagine6.png'],
+        images: [
+            { type: 'image', src: '/Frogger/Immagine1.png' },
+            { type: 'image', src: '/Frogger/Immagine2.png' },
+            { type: 'image', src: '/Frogger/Immagine3.png' },
+            { type: 'image', src: '/Frogger/Immagine4.png' },
+            { type: 'image', src: '/Frogger/Immagine5.png' },
+            { type: 'image', src: '/Frogger/Immagine6.png' },
+            { type: 'video', src: '/Frogger/Video.mp4' },
+        ],
     },
 
 ];
@@ -29,6 +38,11 @@ export default function Projects() {
     const [activeIndex, setActiveIndex] = useState(0);
     const [expanded, setExpanded] = useState(false);
     const [imageIndex, setImageIndex] = useState(0);
+    const [startX, setStartX] = useState<number | null>(null);
+    const [endX, setEndX] = useState<number | null>(null);
+    const dragX = useMotionValue(0);
+    const dragControls = useDragControls();
+
 
     const handleNextProject = () => {
         setExpanded(false);
@@ -44,68 +58,14 @@ export default function Projects() {
         );
     };
 
-    const handleNextImage = () => {
-        setImageIndex((prev) =>
-            (prev + 1) % projects[currentIndex].images.length
-        );
+    const handleImageSwipe = (direction: 'left' | 'right') => {
+        const total = projects[currentIndex].images.length;
+        if (direction === 'left') {
+            setImageIndex((prev) => (prev + 1) % total);
+        } else {
+            setImageIndex((prev) => (prev === 0 ? total - 1 : prev - 1));
+        }
     };
-
-    const handlePrevImage = () => {
-        setImageIndex((prev) =>
-            prev === 0 ? projects[currentIndex].images.length - 1 : prev - 1
-        );
-    };
-
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'ArrowLeft') {
-                handlePrevImage();
-            } else if (e.key === 'ArrowRight') {
-                handleNextImage();
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
-
-    const hoverRef = useRef<HTMLDivElement>(null);
-    let hoverTimeout = useRef<NodeJS.Timeout | null>(null);
-
-    useEffect(() => {
-        const div = hoverRef.current;
-        if (!div) return;
-
-        const handleMouseMove = (e: MouseEvent) => {
-            const { left, width } = div.getBoundingClientRect();
-            const x = e.clientX - left;
-
-            if (x < width * 0.3) {
-                if (!hoverTimeout.current) {
-                    hoverTimeout.current = setTimeout(() => {
-                        handlePrevImage();
-                        hoverTimeout.current = null;
-                    }, 300);
-                }
-            } else if (x > width * 0.7) {
-                if (!hoverTimeout.current) {
-                    hoverTimeout.current = setTimeout(() => {
-                        handleNextImage();
-                        hoverTimeout.current = null;
-                    }, 300);
-                }
-            } else {
-                if (hoverTimeout.current) {
-                    clearTimeout(hoverTimeout.current);
-                    hoverTimeout.current = null;
-                }
-            }
-        };
-
-        div.addEventListener('mousemove', handleMouseMove);
-        return () => div.removeEventListener('mousemove', handleMouseMove);
-    }, []);
-
 
 
     return (
@@ -137,7 +97,7 @@ export default function Projects() {
                             {projects[currentIndex].title}
                         </h3>
                         <div className="relative mb-4">
-                            <div className="text-base text-red-700 overflow-y-auto  max-h-32 pr-1 transition-all duration-500 scrollbar-hide">
+                            <div className="text-base text-red-700 overflow-y-auto max-h-32 pr-1 transition-all duration-500 scrollbar-hide">
                                 {expanded ? projects[currentIndex].full : projects[currentIndex].short}
                             </div>
                             {!expanded && (
@@ -150,62 +110,85 @@ export default function Projects() {
                             )}
                         </div>
 
-                        {/* Carosello immagini centrato */}
-                        <div
-                            ref={hoverRef}
-                            className="relative w-full max-w-lg overflow-hidden pt-6">
-                            <div className="flex items-center justify-center relative">
-                                {/* Wrapper contenente le immagini */}
-                                <div className="flex items-center justify-center gap-4 transition-all duration-500 ease-in-out pt-50 pb-50">
-                                    {projects[currentIndex].images.map((src, idx) => {
-                                        const total = projects[currentIndex].images.length;
-                                        // Calcolo indice circolare per visualizzare 3 immagini (prev, current, next)
-                                        const relativeIndex = (idx - imageIndex + total) % total;
+                        {/* Carosello immagini con drag*/}
+                        <motion.div
+                            className="relative w-full max-w-lg overflow-hidden pt-20 pb-90"
+                            drag="x"
+                            dragConstraints={{ left: 0, right: 0 }}
+                            onDragEnd={(event, info) => {
+                                if (info.offset.x < -50) handleImageSwipe('left');
+                                else if (info.offset.x > 50) handleImageSwipe('right');
+                            }}
+                        >
+                            <div className="flex items center justify-center relative gap-4">
+                                {projects[currentIndex].images.map((media, idx) => {
+                                    const total = projects[currentIndex].images.length;
+                                    const relativeIndex = (idx - imageIndex + total) % total;
 
-                                        let scale = 0.8;
-                                        let opacity = 0.5;
-                                        let translateX = "-80%";
+                                    let scale = 0.8;
+                                    let opacity = 0.5;
+                                    let translateX = "-80%";
 
-                                        if (relativeIndex === 0) {
-                                            // immagine attiva
-                                            scale = 1.2;
-                                            opacity = 1;
-                                            translateX = "0";
-                                        } else if (relativeIndex === 1) {
-                                            // next
-                                            translateX = "100%";
-                                        } else if (relativeIndex === total - 1) {
-                                            // prev
-                                            translateX = "-100%";
-                                        } else {
-                                            return null; // mostra solo 3 immagini alla volta
-                                        }
+                                    if (relativeIndex === 0) {
+                                        scale = 1.2;
+                                        opacity = 1;
+                                        translateX = "0";
+                                    } else if (relativeIndex === 1) {
+                                        translateX = "100%";
+                                    } else if (relativeIndex === total - 1) {
+                                        translateX = "-100%";
+                                    } else {
+                                        return null;
+                                    }
 
-                                        return (
-                                            <motion.div
-                                                key={idx}
-                                                className="absolute"
-                                                animate={{
-                                                    scale,
-                                                    opacity,
-                                                    x: translateX,
-                                                    zIndex: relativeIndex === 0 ? 10 : 0,
-                                                }}
-                                                transition={{ duration: 0.4 }}
-                                            >
+                                    // Qui analizziamo correttamente type e mediaSrc
+                                    let type = "image";
+                                    let mediaSrc = "";
+
+                                    if (typeof media === "string") {
+                                        mediaSrc = media;
+                                    } else if (typeof media === "object" && media !== null) {
+                                        mediaSrc = media.src;
+                                        type = media.type;
+                                    }
+
+                                    return (
+                                        <motion.div
+                                            key={idx}
+                                            className="absolute"
+                                            animate={{
+                                                scale,
+                                                opacity,
+                                                x: translateX,
+                                                zIndex: relativeIndex == 0 ? 10 : 0,
+                                            }}
+                                            transition={{ duration: 0.4 }}
+                                        >
+                                            {type === "image" ? (
                                                 <Image
-                                                    src={src}
+                                                    src={mediaSrc}
                                                     alt={`Project image ${idx + 1}`}
                                                     width={135}
                                                     height={90}
-                                                    className="rounded-lg border"
+                                                    className="rounded-lg border poiter-events-none"
                                                 />
-                                            </motion.div>
-                                        );
-                                    })}
-                                </div>
+                                            ) : type === "video" ? (
+                                                <video
+                                                    src={mediaSrc}
+                                                    width={135}
+                                                    height={90}
+                                                    className="rounded-lg border pointer-events-none"
+                                                    autoPlay={relativeIndex === 0}
+                                                    muted
+                                                    loop
+                                                    playsInline
+                                                />
+                                            ) : null}
+                                        </motion.div>
+                                    );
+                                })}
                             </div>
-                        </div>
+                        </motion.div>
                     </div>
                 </div>
 

@@ -12,17 +12,31 @@ import {
 
 export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
+  const [showIconName, setShowIconName] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-
-
+    // Initial check
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  
+  // This hunctions shows the name of icon if pointer is hovered
+  const handleMouseEnter = () => {
+    if (isMobile) return;
+    setShowIconName(true);
+  };
+  const handleMouseLeave = () => {
+    if (isMobile) return;
+    setShowIconName(false);
+  };
+
+
+
 
   const links = [
     { href: '#hero', icon: <FaHome /> },
@@ -47,7 +61,9 @@ export default function Header() {
           >
             <span className="text-lg">{icon}</span>
             {!isMobile && (
-              <span className="text-sm font-medium">{label}</span>
+              
+              <span className="text-sm font-medium">{label}
+              </span>
             )}
           </a>
         ))}
