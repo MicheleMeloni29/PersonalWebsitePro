@@ -39,6 +39,18 @@ export default function AnimatedBackground() {
                 <text className="anim6" x="15%" y="50%" fill="rgba(220,20,60,0.14)" fontSize="55" fontFamily="monospace">
                     {'</>'}
                 </text>
+                <text className="anim7" x="70%" y="70%" fill="rgba(220,20,60,0.08)" fontSize="30" fontFamily="monospace">
+                    {'#000'}
+                </text>
+                <text className="anim8" x="30%" y="30%" fill="rgba(220,20,60,0.16)" fontSize="65" fontFamily="monospace">
+                    {'<div>'}
+                </text>
+                <text className="anim9" x="55%" y="10%" fill="rgba(220,20,60,0.2)" fontSize="50" fontFamily="monospace">
+                    {'{...}'}
+                </text>
+                <text className="anim10" x="85%" y="80%" fill="rgba(220,20,60,0.1)" fontSize="40" fontFamily="monospace">
+                    {'<span>'}
+                </text>
             </svg>
         </div>
     );
