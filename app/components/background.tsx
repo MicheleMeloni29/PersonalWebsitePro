@@ -3,7 +3,7 @@
 
 export default function AnimatedBackground() {
     return (
-        <div className="fixed inset-0 -z-10 overflow-hidden bg-[#0d0d0d]">
+        <div className="fixed inset-0 -z-10 overflow-hidden ">
             <svg
                 viewBox="0 0 800 600"
                 preserveAspectRatio="xMidYMid slice"
@@ -13,8 +13,8 @@ export default function AnimatedBackground() {
                 {/* gradiente scuro */}
                 <defs>
                     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#0a0a0a" />
-                        <stop offset="100%" stopColor="#111111" />
+                        <stop offset="0%" stopColor="var(--bg-start)" />
+                        <stop offset="100%" stopColor="var(--bg-end)" />
                     </linearGradient>
                 </defs>
 
@@ -40,22 +40,13 @@ export default function AnimatedBackground() {
                     {'</>'}
                 </text>
                 <text className="anim7" x="70%" y="70%" fill="rgba(220,20,60,0.08)" fontSize="30" fontFamily="monospace">
-                    {'#000'}
+                    {'export'}
                 </text>
                 <text className="anim8" x="30%" y="30%" fill="rgba(220,20,60,0.16)" fontSize="65" fontFamily="monospace">
                     {'<div>'}
                 </text>
                 <text className="anim9" x="55%" y="10%" fill="rgba(220,20,60,0.2)" fontSize="50" fontFamily="monospace">
                     {'{...}'}
-                </text>
-                <text className="anim10" x="85%" y="80%" fill="rgba(220,20,60,0.1)" fontSize="40" fontFamily="monospace">
-                    {'<span>'}
-                </text>
-                <text className="anim11" x="5%" y="75%" fill="rgba(220,20,60,0.15)" fontSize="55" fontFamily="monospace">
-                    {'<a>'}
-                </text>
-                <text className="anim12" x="45%" y="20%" fill="rgba(220,20,60,0.18)" fontSize="30" fontFamily="monospace">
-                    {'<p>'}
                 </text>
             </svg>
         </div>

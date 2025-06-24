@@ -29,9 +29,9 @@ export default function About() {
                         <motion.p
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ duration: 1 }}
-                            className="text-xl md:text-2xl text-red-900 mb-8"
-                        >
+                            transition={{ duration: 0.5 }}
+                            className="text-xl md:text-2xl text-red-900 mb-8 pt-14"
+                        > 
                             <Typewriter
                                 words={[
                                     'Hi, I’m Michele. I started programming in college, and it changed everything.',
@@ -52,7 +52,7 @@ export default function About() {
                             initial={{ opacity: 0, x: 720 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 1.3, delay: 2.9 }}
-                            className="text-base md:text-lg text-red-900 mb-4 leading-relaxed"
+                            className="text-base md:text-lg text-red-900 mb-4 leading-relaxed pt-10"
                         >
                             The first lines of code, written just for fun, turned into a passion. I dove deep into
                             mobile and frontend development, discovering React, React Native, TypeScript,
@@ -67,7 +67,7 @@ export default function About() {
                             initial={{ opacity: 0, x: -720 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 1.3, delay: 3.2 }}
-                            className="text-base md:text-lg text-red-900 mb-4 leading-relaxed"
+                            className="text-base md:text-lg text-red-900 mb-4 leading-relaxed pt-10"
                         >
                             As a self-taught developer, I built projects, explored backend with Python, and keep
                             learning every day. I code to grow, to solve problems, and to turn ideas into reality.

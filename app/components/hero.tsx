@@ -13,7 +13,7 @@ export default function Hero() {
                     alt="Michele Meloni"
                     width={120}
                     height={120}
-                    className="rounded-full border-2 border-red-900 shadow-[0_0_20px_#cc0000] mb-6"
+                    className="rounded-full border-2 border-light-light-border_img dark:border-dark-dark_border_img' shadow-[0_0_20px_#cc0000] mb-6"
                 />
                 <h1 className="text-4xl md:text-5xl font-bold mb-4">Hi, I'm Michele Meloni</h1>
                 <p className="text-red-900 text-lg max-w-2xl">

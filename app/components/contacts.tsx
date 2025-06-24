@@ -6,7 +6,7 @@ export default function Contact() {
     return (
         <section
             id="contact"
-            className="min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 text-white"
+            className="min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 text-white dark:text-red-900"
         >
             <div className="text-center max-w-2xl transition-all duration-700 ease-in-out">
                 <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-800">Let's get in touch</h2>

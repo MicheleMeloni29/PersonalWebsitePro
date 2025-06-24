@@ -86,7 +86,7 @@ export default function Projects() {
                 border border-[#3d3d3d] hover:shadow-[0_0_20px_rgba(255,0,0,0.3)] transition-shadow duration-500"
                 >
                     {/* Card progetto */}
-                    <div className="flex flex-col items-center text-white max-w-xl px-4 text-center">
+                    <div className="flex flex-col items-center max-w-xl px-4 text-center">
                         <h3 className="text-2xl font-bold text-red-600 mb-2">
                             {projects[currentIndex].title}
                         </h3>
