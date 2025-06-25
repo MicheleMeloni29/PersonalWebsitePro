@@ -82,7 +82,7 @@ export default function Projects() {
                 {/* Contenitore carosello */}
                 <div
                     className="min-h-[calc(100vh-65px-40px)] w-full max-w-5xl flex items-center justify-center 
-                bg-[#222223] px-6 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_4px_6px_rgba(0,0,0,0.6),_0_10px_15px_rgba(0,0,0,0.3)] 
+                bg-[#5e5e5ec5] dark:bg-[#696969b9] px-6 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_4px_6px_rgba(0,0,0,0.6),_0_10px_15px_rgba(0,0,0,0.3)] 
                 border border-[#3d3d3d] hover:shadow-[0_0_20px_rgba(255,0,0,0.3)] transition-shadow duration-500"
                 >
                     {/* Card progetto */}

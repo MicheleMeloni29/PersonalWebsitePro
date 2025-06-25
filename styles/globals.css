@@ -27,7 +27,6 @@
 }
 
 body {
-  @apply bg-[#1e1e1e];
   font-family: 'Fira Code', monospace;
   background-color: #1e1e1e;
   color: #d4d4d4;

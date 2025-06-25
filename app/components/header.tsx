@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import {
@@ -27,7 +28,7 @@ export default function Header() {
   };
 
   const links = [
-    { href: '#hero', label: '', icon: <FaHome /> },
+    { href: '#hero', icon: <FaHome /> },
     { href: '#about', label: 'About', icon: <FaUser /> },
     { href: '#timeline', label: 'Timeline', icon: <FaClock /> },
     { href: '#projects', label: 'Projects', icon: <FaProjectDiagram /> },
@@ -40,10 +41,11 @@ export default function Header() {
     >
       <nav className="
         flex gap-4 px-4 py-2
-        bg-gradient-to-br from-[#e2e2e2] to-[#b1b1b1]
-        rounded-full border border-red-800
-        ring-1 ring-red-900/50 backdrop-blur-md
-      ">
+          bg-gradient-to-br from-[#e2e2e2] to-[#b1b1b1]
+          dark:from-[#111111] dark:to-[#0d0d0d]
+          rounded-full border border-red-800
+          shadow-[0_4px_6px_rgba(0,0,0,0.4)] backdrop-blur-md"
+      >
         {links.map(({ href, label, icon }) => (
           <a
             key={href}
@@ -52,10 +54,11 @@ export default function Header() {
               flex items-center gap-2 px-3 py-1
               rounded-md transition-all duration-300 hover:scale-105
               hover:shadow-[0_2px_15px_rgba(255,0,0,0.4)]
-              text-red-700
-            "
+            text-red-900 dark:text-white"
           >
-            <span className="text-lg">{icon}</span>
+            {React.cloneElement(icon, {
+              className: `text-lg text-red-900 dark:text-white`
+            })}
             {!isMobile && (
               <span className="text-sm font-medium">{label}</span>
             )}
@@ -69,14 +72,12 @@ export default function Header() {
           className="
             flex items-center gap-2 px-3 py-1
             rounded-md transition-all duration-300 hover:scale-105
-            hover:shadow-[0_2px_15px_rgba(255,0,0,0.4)]
-            text-red-700
-          "
+            hover:shadow-[0_2px_15px_rgba(255,0,0,0.4)]"
         >
           <FaSun className="text-lg" />
           {!isMobile && (
             <span className="text-sm font-medium">
-              {theme === 'dark' ? '' : ''}
+              {theme === 'light' ? '' : ''}
             </span>
           )}
         </button>
