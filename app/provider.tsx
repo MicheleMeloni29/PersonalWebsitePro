@@ -2,16 +2,15 @@
 'use client';
 
 import { ThemeProvider } from 'next-themes';
-import AnimatedBackground from './components/background';
+import Galaxy from './components/backgroundReactBits';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     return (
         <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
             enableSystem={false}>
-            {/* animated background */}
-            <AnimatedBackground />
+            <Galaxy />
+            {/* children components */}
             {children}
         </ThemeProvider>
     );

@@ -3,6 +3,7 @@ import Header from './components/header';
 import Providers from './provider';
 import '../styles/globals.css';
 
+
 // Exported metadata object used by Next.js for setting page title and description (SEO)
 export const metadata = {
   title: 'Michele Meloni',
@@ -15,9 +16,12 @@ export const metadata = {
       {/* the body remains a server component */}
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en"
+      className="light"
+      style={{colorScheme: 'light'}}
+    >
       {/* il body resta un server component */}
-      <body className="relative overflow-x-hidden">
+      <body className="h-ful overflow-x-hidden">
         {/* qui avvolgiamo in client wrapper */}
         <Providers>
           <div className="relative z-10 flex flex-col h-screen">

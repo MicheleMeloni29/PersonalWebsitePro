@@ -32,16 +32,17 @@ export default function About() {
                             transition={{ duration: 0.5 }}
                             className="text-xl md:text-2xl text-red-900 mb-8 pt-14"
                         > 
-                            <Typewriter
-                                words={[
-                                    'Hi, I’m Michele. I started programming in college, and it changed everything.',
-                                ]}
-                                cursor
-                                cursorStyle="_"
-                                typeSpeed={35}
-                                delaySpeed={2500}
-                                
-                            />
+                            <span>
+                                <Typewriter
+                                    words={['Hi, I’m Michele. I started programming in college, and it changed everything.']}
+                                    loop={1}
+                                    typeSpeed={75}
+                                    deleteSpeed={0}
+                                    delaySpeed={1500}
+                                    cursor={true}
+                                    cursorStyle="|"
+                                />
+                            </span>
                         </motion.p>
                     )}
                 </AnimatePresence>
