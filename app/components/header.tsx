@@ -77,7 +77,7 @@ export default function Header() {
           <FaSun className="text-lg" />
           {!isMobile && (
             <span className="text-sm font-medium">
-              {theme === 'light' ? '' : ''}
+              {theme === 'light' ? 'Dark' : 'Light'}
             </span>
           )}
         </button>
