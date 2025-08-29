@@ -33,7 +33,7 @@ export default function ProfileHeroCard({
     return (
         <div
             className={`
-        relative mx-auto w-full max-w-[380px] aspect-[4/5] p-[1.5px] rounded-[28px]
+        relative mx-auto w-full max-w-[300px] aspect-[4/5] p-[1.5px] rounded-[28px]
                 shadow-[0_0_70px_-8px_rgba(220,38,38,0.45)]
         ${className}
       `}
@@ -92,7 +92,7 @@ export default function ProfileHeroCard({
                      shadow-[0_10px_30px_rgba(0,0,0,0.45)]"
                 >
                     <p
-                        className="text-[13.5px] leading-snug
+                        className="text-[12px] leading-snug
                        text-red-700
                        max-h-20 overflow-y-auto pr-1
                        scrollbar-thin scrollbar-thumb-red-800/40 scrollbar-track-transparent

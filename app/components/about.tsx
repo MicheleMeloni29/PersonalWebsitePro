@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Typewriter } from 'react-simple-typewriter';
+import DecryptedText from './UI/DecriptedText';
 
 export default function About() {
     const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
@@ -13,7 +13,6 @@ export default function About() {
     if (inView && !showTypewriter) {
         setShowTypewriter(true);
     }
-
 
     return (
         <section
@@ -33,14 +32,13 @@ export default function About() {
                             className="text-xl md:text-2xl text-red-900 mb-8 pt-14"
                         > 
                             <span>
-                                <Typewriter
-                                    words={['Hi, I’m Michele. I started programming in college, and it changed everything.']}
-                                    loop={1}
-                                    typeSpeed={75}
-                                    deleteSpeed={0}
-                                    delaySpeed={1500}
-                                    cursor={true}
-                                    cursorStyle="|"
+                                <DecryptedText
+                                    text="Hi, I’m Michele. I started programming in college, and it changed everything."
+                                    animateOn="view"              // per mobile è l’opzione migliore
+                                    sequential                    // svela un carattere alla volta
+                                    revealDirection="start"
+                                    speed ={40}                   // velocità di svelamento
+                                    encryptedClassName="text-rose-300/80 blur-[0.5px]"
                                 />
                             </span>
                         </motion.p>
