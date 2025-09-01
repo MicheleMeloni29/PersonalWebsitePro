@@ -47,20 +47,17 @@ function LabeledRotator({
             </span>
 
             <div className="relative inline-block max-w-full overflow-hidden">
-                {/* ghost: riserva spazio della stringa più lunga */}
-                <span
-                    className={`opacity-0 pointer-events-none select-none ${mainTextClasses}`}
-                    aria-hidden="true"
-                >
+                {/* Ghost: riserva spazio alla stringa più lunga (niente layout shift) */}
+                <span className={`opacity-0 pointer-events-none select-none ${mainTextClasses}`} aria-hidden="true">
                     {longest}
                 </span>
 
-                {/* rotatore reale */}
+                {/* Contenuto reale */}
                 <div className="absolute inset-0 overflow-hidden">
                     <RotatingText
                         texts={texts}
-                        rotationInterval={2400}
-                        splitBy="characters"               // "words" se preferisci
+                        rotationInterval={2600}
+                        splitBy="characters"              // "words" se preferisci
                         staggerDuration={0.02}
                         staggerFrom="center"
                         mainClassName={mainTextClasses}
@@ -75,27 +72,44 @@ function LabeledRotator({
 
 export default function Hero() {
     return (
-        <section className="min-h-screen px-6 py-8">
-            {/* Mobile: 1 col  —  Desktop: 2 col (card | rotatori) */}
-            <div className="mx-auto w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-y-10 lg:gap-x-16 items-start">
-                {/* Sinistra: ProfileCard */}
-                <div className="flex justify-center lg:justify-start">
-                    <ProfileCard
-                        name="Michele Meloni"
-                        role="Frontend Developer"
-                        location="Sestu, Sardinia (IT)"
-                        photo="profileIMGReal.png"
-                        bio="I build modern web & mobile apps. Passionate about UI/UX and performance."
-                        imageScale={0.95}
-                        imageInset={12}
-                        objectPosition="50% 60%"
-                        imageOffsetY={0}
-                        imageOpacity={0.3}
-                    />
+        <section
+            className="
+        px-6
+    /* spazio extra sopra SOLO su mobile */
+    pt-[clamp(28px,10vh,96px)]
+    /* spazio sotto per navbar mobile (già avevi le CSS vars) */
+    pb-[calc(var(--nav-bottom-h)+env(safe-area-inset-bottom))]
+    /* desktop: altezza viewport meno navbar e centratura verticale */
+    lg:pt-0
+    lg:min-h-[calc(100dvh-var(--nav-top-h,80px))]
+    lg:flex lg:items-center lg:py-0
+  "
+        >
+            {/* Mobile: 1 col → Desktop: 2 col (card | rotatori) */}
+            <div className="  mx-auto w-full max-w-7xl 
+                            grid grid-cols-1 lg:grid-cols-2
+                            gap-y-10 lg:gap-x-16 lg:items-center">
+                {/* Sinistra (desktop): ProfileCard grande */}
+                <div className="flex justify-center lg:justify-start 
+                                lg:mt-34 sm:mt-4 xl:mt-16">
+                    <div className="w-full max-w-md sm:max-w-lg lg:max-w-2xl">
+                        <ProfileCard
+                            name="Michele Meloni"
+                            role="Frontend Developer"
+                            location="Sestu, Sardinia (IT)"
+                            photo="profileIMGReal.png"
+                            bio="I build modern web & mobile apps. Passionate about UI/UX and performance."
+                            imageScale={0.95}
+                            imageInset={12}
+                            objectPosition="50% 60%"
+                            imageOffsetY={0}
+                            imageOpacity={0.3}
+                        />
+                    </div>
                 </div>
 
-                {/* Destra: due RotatingText uno sopra l'altro (centrati verticalmente rispetto alla card) */}
-                <div className="flex flex-col justify-center gap-6 lg:items-start items-center">
+                {/* Destra (desktop): due RotatingText verticali; mobile: sotto la card */}
+                <div className=" mb-10 flex flex-col gap-6 items-center lg:items-start lg:gap-24">
                     <LabeledRotator label="Languages" texts={LANGUAGES} />
                     <LabeledRotator label="Tech" texts={TECHNOLOGIES} />
                 </div>
