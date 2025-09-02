@@ -88,9 +88,9 @@ export default function Timeline() {
     return (
         <section
             id="timeline"
-            className="min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 pb-32"
+            className="min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 pb-32 pt-26"
         >
-            <div className="relative pt-28 max-w-2xl w-full">
+            <div className="relative max-w-2xl w-full">
               <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-800">My Journey</h2>
 
                 <div className="relative border-l border-red-800 pl-6 space-y-12 max-w-2xl min-h-[150vh] ">

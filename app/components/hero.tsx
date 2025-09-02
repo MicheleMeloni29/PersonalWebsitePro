@@ -78,7 +78,7 @@ export default function Hero() {
     /* spazio extra sopra SOLO su mobile */
     pt-[clamp(8px,60vh,56px)]
     /* spazio sotto per navbar mobile (già avevi le CSS vars) */
-    pb-[calc(var(--nav-bottom-h)+env(safe-area-inset-bottom))]
+       pb-[calc(var(--nav-bottom-h)+env(safe-area-inset-bottom))] lg:pb-0
     /* desktop: altezza viewport meno navbar e centratura verticale */
     lg:pt-18
     lg:min-h-[calc(100dvh-var(--nav-top-h,80px))]
