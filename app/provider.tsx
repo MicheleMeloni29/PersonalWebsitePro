@@ -1,6 +1,7 @@
 'use client';
 
 import { ThemeProvider } from 'next-themes';
+import { LanguageProvider } from './components/UI/LanguageProvider';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     return (
@@ -9,7 +10,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             defaultTheme="light"  // o "system" se vuoi seguire il sistema
             enableSystem={true}
         >
-            {children}
+            <LanguageProvider>{children}</LanguageProvider>
         </ThemeProvider>
     );
 }
