@@ -66,11 +66,9 @@ export default function Header() {
       <nav
         ref={navRef}
         className="
-          relative overflow-hidden  
+          relative overflow-hidden isolate
           flex items-center gap-3 px-4 py-2
-          bg-gradient-to-br from-[#e2e2e2] to-[#b1b1b1]
-          dark:from-[#111] dark:to-[#0d0d0d]
-          rounded-full border border-red-800
+          rounded-full border-0
           shadow-[0_4px_6px_rgba(0,0,0,0.4)] backdrop-blur-md
         "
       >
@@ -82,9 +80,9 @@ export default function Header() {
             amplitude={0}
             frequencyX={3}
             frequencyY={3}
-            interactive={false}          // 👈 niente interazione mouse
-            aria-hidden                   // 👈 non accessibile agli screen reader
-            className="pointer-events-none opacity-90" // 👈 sopra il bg del nav, sotto i contenuti
+            interactive={false}
+            aria-hidden
+            className="pointer-events-none opacity-90"
           />
         )}
 

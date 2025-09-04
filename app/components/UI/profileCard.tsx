@@ -94,8 +94,8 @@ export default function ProfileHeroCard({
 
 
     // Crossfade fallback
-    const crossfadeOpacityCover = useTransform(flipY, [0, 180], [1, 0]);
-    const crossfadeOpacityFront = useTransform(flipY, [0, 180], [0, 1]);
+    const faceAOpacity = useTransform(flipY, [0, 89, 90, 180], [1, 1, 0, 0]);
+    const faceBOpacity = useTransform(flipY, [0, 89, 90, 180], [0, 0, 1, 1]);
 
     // Mostra cover solo quando flip < 90°
     const [showCover, setShowCover] = useState(true);
@@ -232,8 +232,8 @@ export default function ProfileHeroCard({
                     style={{
                         transform: `translateZ(${depthPx * 0.6}px) rotateY(0deg)`,
                         transformStyle: "preserve-3d",
-                        backfaceVisibility: "hidden",
-                        WebkitBackfaceVisibility: "hidden",
+                        backfaceVisibility: "visible",
+                        WebkitBackfaceVisibility: "visible",
                         pointerEvents: showCover ? "auto" : "none",
                         visibility: showCover ? "visible" : "hidden", 
                     }}

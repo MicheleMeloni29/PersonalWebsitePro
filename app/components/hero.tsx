@@ -93,7 +93,7 @@ export default function Hero() {
                             objectPosition="50% 60%"
                             imageOffsetY={0}
                             imageOpacity={0.3}
-                            className="aspect-auto sm:aspect-[4/5] lg:aspect-[4/5]" // aspect ratio adattivo
+                            className="sm:aspect-[4/5] lg:aspect-[4/5]" // aspect ratio adattivo
                         />
                     </div>
                 </div>
