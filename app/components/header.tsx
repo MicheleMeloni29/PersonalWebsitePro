@@ -65,7 +65,7 @@ export default function Header() {
   const flag = lang === "en" ? "EN" : lang === "it" ? "IT" : "ES";
 
   return (
-    <header className="fixed left-1/2 -translate-x-1/2 z-50 bottom-14 lg:bottom-auto lg:top-8">
+    <header className="fixed left-1/2 -translate-x-1/2 z-50 bottom-8 lg:bottom-auto lg:top-8">
       <nav
         ref={navRef}
         className="

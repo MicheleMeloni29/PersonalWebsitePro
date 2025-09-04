@@ -78,7 +78,7 @@ export default function Hero() {
             lg:flex lg:items-center lg:py-0
         "
         >
-            <div className="mx-auto w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-y-6 lg:gap-x-16 lg:items-center">
+            <div className="mx-auto w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-y-8 lg:gap-x-16 lg:items-center">
                 {/* Sinistra (desktop): ProfileCard grande */}
                 <div className="flex justify-center lg:justify-start lg:mt-24 sm:mt-4 xl:mt-12">
                     <div className="w-full max-w-md sm:max-w-lg lg:max-w-2xl">
