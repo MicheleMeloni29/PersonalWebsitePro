@@ -25,8 +25,8 @@ const TECHNOLOGIES = [
 function LabeledRotator({
     label,
     texts,
-    labelWidthClass = "w-28 sm:w-32",
-    mainTextClasses = "text-red-900 text-xl md:text-2xl xl:text-3xl font-semibold tracking-tight whitespace-nowrap",
+    labelWidthClass = "w-28 sm:w-32  font-semibold  text-red-900",
+    mainTextClasses = "text-red-700 text-xl md:text-2xl xl:text-3xl font-bold tracking-tight whitespace-nowrap",
 }: {
     label: string;
     texts: string[];

@@ -1,28 +1,30 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "next-themes"; // se non ti serve più per altri motivi, puoi rimuoverlo
 import { useReducedMotion } from "framer-motion";
 import {
-  FaHome, FaUser, FaClock, FaProjectDiagram, FaEnvelope, FaSun, FaMoon,
+  FaHome, FaUser, FaClock, FaProjectDiagram, FaEnvelope,
 } from "react-icons/fa";
-import LiquidChrome from "./UI/LiquidChrome"; // 👈 importa il background
+import LiquidChrome from "./UI/LiquidChrome";
+import { useLanguage } from "./data/LanguageProvider";
 
 export default function Header() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { t, lang, cycleLang } = useLanguage();
+
+  // puoi mantenere il tema solo per modulare i colori del LiquidChrome
+  const { theme, resolvedTheme } = useTheme();
   const prefersReduced = useReducedMotion();
   const navRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
 
-  // Evita mismatch: il client fa prima render con mounted=false (uguale al server)
   useEffect(() => setMounted(true), []);
 
-  // Aggiorna le CSS vars con l'altezza reale dell'header
+  // aggiorna CSS vars con l'altezza reale dell'header
   useEffect(() => {
     if (!navRef.current) return;
     const root = document.documentElement;
     const mq = window.matchMedia("(min-width: 1024px)");
-
     const setVars = () => {
       const h = navRef.current?.offsetHeight ?? 0;
       if (mq.matches) {
@@ -33,7 +35,6 @@ export default function Header() {
         root.style.setProperty("--nav-top-h", `0px`);
       }
     };
-
     const ro = new ResizeObserver(setVars);
     ro.observe(navRef.current);
     setVars();
@@ -46,20 +47,22 @@ export default function Header() {
     };
   }, []);
 
-  const toggleTheme = () => setTheme((resolvedTheme ?? theme) === "dark" ? "light" : "dark");
-
+  // Link tradotti
   const links = [
-    { href: "#hero", label: "Home", icon: <FaHome /> },
-    { href: "#about", label: "About", icon: <FaUser /> },
-    { href: "#timeline", label: "Timeline", icon: <FaClock /> },
-    { href: "#projects", label: "Projects", icon: <FaProjectDiagram /> },
-    { href: "#contact", label: "Contact", icon: <FaEnvelope /> },
+    { href: "#hero", label: t("Header", "home"), icon: <FaHome /> },
+    { href: "#about", label: t("Header", "about"), icon: <FaUser /> },
+    { href: "#timeline", label: t("Header", "timeline"), icon: <FaClock /> },
+    { href: "#projects", label: t("Header", "projects"), icon: <FaProjectDiagram /> },
+    { href: "#contact", label: t("Header", "contact"), icon: <FaEnvelope /> },
   ];
 
   // Colori per LiquidChrome (0..1)
   const mode = (resolvedTheme ?? theme) as "light" | "dark" | undefined;
   const baseColor: [number, number, number] =
     mode === "dark" ? [0.08, 0.08, 0.12] : [0.88, 0.88, 0.93];
+
+  // Bandiera corrente (emoji) e label accessibile
+  const flag = lang === "en" ? "EN" : lang === "it" ? "IT" : "ES";
 
   return (
     <header className="fixed left-1/2 -translate-x-1/2 z-50 bottom-14 lg:bottom-auto lg:top-8">
@@ -95,7 +98,7 @@ export default function Header() {
               className="flex items-center gap-2 px-3 py-1 rounded-md
                          transition-all duration-300 hover:scale-105
                          hover:shadow-[0_2px_15px_rgba(255,0,0,0.4)]
-                         text-red-900 dark:text-white"
+                         text-red-900 dark:text-red-500"
               aria-label={label}
             >
               {React.cloneElement(icon, { className: "text-lg", "aria-hidden": true })}
@@ -103,30 +106,19 @@ export default function Header() {
             </a>
           ))}
 
-          {/* Toggle Theme */}
+          {/* Language Button: 🇬🇧 → 🇮🇹 → 🇪🇸 → 🇬🇧 */}
           <button
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            className="flex items-center gap-2 px-3 py-1 rounded-md
-                       transition-all duration-300 hover:scale-105
-                       hover:shadow-[0_2px_15px_rgba(255,0,0,0.4)]
-                       text-red-900 dark:text-white"
+            onClick={cycleLang}
+            aria-label={t("Header", "changeLanguage")}
+            title={t("Header", "changeLanguage")}
+            className="grid place-items-center w-9 h-9 rounded-full
+                      transition-all duration-300 hover:scale-105
+                         hover:shadow-[0_2px_15px_rgba(255,0,0,0.4)]
+                       text-red-500 font-extrabold"
           >
-            {!mounted ? (
-              <FaSun className="text-lg opacity-0" aria-hidden />
-            ) : ((resolvedTheme ?? theme) === "dark" ? (
-              <FaSun className="text-lg" aria-hidden />
-            ) : (
-              <FaMoon className="text-lg" aria-hidden />
-            ))}
-            <span className="hidden lg:inline text-sm font-medium">
-              {!mounted ? "Theme" : ((resolvedTheme ?? theme) === "light" ? "Dark" : "Light")}
-            </span>
+            <span aria-hidden>{flag}</span>
           </button>
         </div>
-
-        {/* (facoltativo) velo per leggibilità su theme chiaro */}
-        {/* <div className="absolute inset-0 bg-white/10 dark:bg-black/0 pointer-events-none" /> */}
       </nav>
     </header>
   );

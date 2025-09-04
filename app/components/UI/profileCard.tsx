@@ -252,7 +252,7 @@ export default function ProfileHeroCard({
 
                     {/* Overlay opzionale */}
                     <div className="absolute inset-0 grid place-items-center pointer-events-none">
-                        <h2 className="text-white/90 text-2xl font-bold tracking-tight drop-shadow-[0_6px_22px_rgba(0,0,0,0.6)]">
+                        <h2 className="text-red-500 text-2xl font-bold tracking-tight drop-shadow-[0_6px_22px_rgba(0,0,0,0.6)]">
                             {name}
                         </h2>
                     </div>
@@ -290,7 +290,6 @@ export default function ProfileHeroCard({
                                 backfaceVisibility: "hidden",
                             }}
                         />
-                        <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_18%,rgba(185,28,28,0.32),transparent_60%)] mix-blend-overlay" />
                         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.20),rgba(0,0,0,0.60))]" />
                     </div>
 
@@ -299,7 +298,7 @@ export default function ProfileHeroCard({
                         className="absolute top-7 left-0 right-0 text-center px-6"
                         style={{ transform: `translateZ(${depthPx * 1.0}px)` }}
                     >
-                        <h3 className="text-3xl md:text-4xl font-semibold tracking-tight text-red-700 dark:text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
+                        <h3 className="text-3xl md:text-4xl font-semibold tracking-tight dark:text-red-500 drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
                             {name}
                         </h3>
                         <p className="mt-1 text-[17px] md:text-[18px] font-bold text-red-700">{role}</p>
@@ -307,16 +306,16 @@ export default function ProfileHeroCard({
 
                     {/* BIO */}
                     <div
-                        className="absolute left-5 right-5 bottom-3 rounded-2xl bg-[#1f1f1f]/95 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.55)]"
+                        className="text-center absolute left-5 right-5 bottom-3 rounded-2xl bg-[#1f1f1f]/95 backdrop-blur-md px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.55)]"
                         style={{ transform: `translateZ(${depthPx * 0.7}px)` }}
                     >
                         <p
-                            className="text-[14px] font-bold leading-snug text-red-700 pr-1 overflow-hidden"
+                            className="text-[14px] font-bold leading-snug text-red-800 pr-1 overflow-hidden"
                             style={{ maxHeight: "5.6em", WebkitMaskImage: "linear-gradient(180deg,#000 80%,transparent)" }}
                         >
                             {bio}
                         </p>
-                        {location && <p className="mt-2 text-xs text-white/70">{location}</p>}
+                        {location && <p className="mt-2 text-xs text-red-500">{location}</p>}
                     </div>
                 </div>
 
