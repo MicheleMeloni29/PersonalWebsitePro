@@ -17,9 +17,11 @@ import {
   BackgroundVariantC,
 } from './components/UI/Backgrounds';
 
+type SceneIndex = 0 | 1 | 2 | 3 | 4 | 5;
+
 export default function Page() {
   // scene: 0 A/Hero, 1 B/About, 2 C/TL1, 3 C/TL2, 4 A/Projects, 5 B/Contacts
-  const [scene, setScene] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
+  const [scene, setScene] = useState<SceneIndex>(0);
 
   const scrollerRef = useRef<HTMLElement>(null);
   const sectionsRef = useRef<HTMLDivElement>(null);
@@ -33,7 +35,7 @@ export default function Page() {
   const [bPhase, setBPhase] = useState<0 | 1>(0);
 
   const prevVariantRef = useRef<'A' | 'B' | 'C'>('A');
-  const sceneRef = useRef(scene);
+  const sceneRef = useRef<SceneIndex>(scene);
   const isProgrammaticScrollRef = useRef(false);
   const releaseTimerRef = useRef<number | null>(null);
 
@@ -54,8 +56,7 @@ export default function Page() {
           .filter((e) => e.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         if (!visible) return;
-        const next = Number((visible.target as HTMLElement).dataset.index) as
-          | 0 | 1 | 2 | 3 | 4 | 5;
+        const next = Number((visible.target as HTMLElement).dataset.index) as SceneIndex;
         setScene(next);
       },
       { threshold: [0.5], root: scrollerRef.current || null }
@@ -153,10 +154,14 @@ export default function Page() {
     const root = sectionsRef.current;
     if (!scroller || !root) return;
 
-    const clamp = (v: number) =>
-      Math.max(0, Math.min(root.querySelectorAll('[data-index]').length - 1, v));
+    const clamp = (v: number): SceneIndex => {
+      const totalSections = root.querySelectorAll('[data-index]').length;
+      const maxIndex = Math.min(Math.max(totalSections - 1, 0), 5);
+      const normalized = Math.max(0, Math.min(maxIndex, Math.round(v)));
+      return normalized as SceneIndex;
+    };
 
-    const scrollToScene = (target: number) => {
+    const scrollToScene = (target: SceneIndex) => {
       const el = root.querySelector<HTMLElement>(`[data-index="${target}"]`);
       if (!el) return;
       const scrollerRect = scroller.getBoundingClientRect();
