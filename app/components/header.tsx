@@ -65,12 +65,13 @@ export default function Header() {
   const flag = lang === "en" ? "EN" : lang === "it" ? "IT" : "ES";
 
   return (
-    <header className="fixed left-1/2 -translate-x-1/2 z-50 bottom-8 lg:bottom-auto lg:top-8">
+    <header className="fixed left-1/2 -translate-x-1/2 z-50 bottom-2 lg:bottom-auto lg:top-4">
       <nav
         ref={navRef}
         className="
           relative overflow-hidden isolate
-          flex items-center gap-3 px-4 py-2
+          flex items-center justify-center gap-4 px-6 py-2
+          min-w-[380px] lg:min-w-[700px] w-auto max-w-full whitespace-nowrap
           rounded-full border-0
           shadow-[0_4px_6px_rgba(0,0,0,0.4)] backdrop-blur-md
         "

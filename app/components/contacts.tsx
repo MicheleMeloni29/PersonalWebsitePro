@@ -1,12 +1,18 @@
 'use client';
 
+import { ComponentPropsWithoutRef } from 'react';
 import { FaGithub, FaLinkedin, FaEnvelope, FaInstagram } from 'react-icons/fa';
 
-export default function Contact() {
+type ContactProps = ComponentPropsWithoutRef<'section'>;
+
+export default function Contact({ className, id = 'contact', ...sectionProps }: ContactProps) {
+    const baseClasses = "min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 text-white dark:text-red-900";
+
     return (
         <section
-            id="contact"
-            className="min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 text-white dark:text-red-900"
+            id={id}
+            {...sectionProps}
+            className={`${baseClasses}${className ? ` ${className}` : ''}`}
         >
             <div className="text-center max-w-2xl transition-all duration-700 ease-in-out">
                 <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-800">Let's get in touch</h2>
@@ -14,7 +20,7 @@ export default function Contact() {
                     I'm always open to new opportunities, collaborations or just a chat about tech.
                 </p>
 
-                <div className="flex justify-center gap-6 mt-8 text-2xl">
+                <div className="flex justify-center gap-12 mt-8 text-4xl">
                     <a
                         href="mailto:melonimichelee29@gmail.com"
                         rel="noopener noreferrer"
@@ -45,7 +51,7 @@ export default function Contact() {
                 <p className="text-lg text-red-700 mb-6 pt-8">
                     And to see my project repositories
                 </p>
-                <div className="flex justify-center gap-6 mt-8 text-2xl">
+                <div className="flex justify-center gap-6 mt-8 text-4xl">
                     
                     <a
                         href="https://github.com/MicheleMeloni29"

@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { ComponentPropsWithoutRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { motion, AnimatePresence } from 'framer-motion';
 import DecryptedText from './UI/DecriptedText';
 
-export default function About() {
-    const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
+type AboutProps = ComponentPropsWithoutRef<'section'>;
+
+export default function About({ className, id = 'about', ...sectionProps }: AboutProps) {
+    const { ref: sectionRef, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
     const [showTypewriter, setShowTypewriter] = useState(false);
 
     // start typewriter effect when in view
@@ -14,22 +16,25 @@ export default function About() {
         setShowTypewriter(true);
     }
 
+    const baseClasses = "min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 text-white overflow-x-hidden";
+
     return (
         <section
-            id="about"
-            ref={ref}
-            className="min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 text-white overflow-x-hidden"
+            id={id}
+            ref={sectionRef}
+            {...sectionProps}
+            className={`${baseClasses}${className ? ` ${className}` : ''}`}
         >
             <div className="max-w-3xl text-left">
-                <h2 className="text-3xl md:text-4xl font-bold  text-red-800">About Me</h2>
+                <h2 className="text-2xl md:text-4xl font-bold  text-red-800">About Me</h2>
 
                 <AnimatePresence>
                     {showTypewriter && (
                         <motion.p
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5 }}
-                            className="text-xl md:text-2xl text-red-900 mb-8 pt-14"
+                            transition={{ duration: 0.3 }}
+                            className="text-base md:text-2xl text-red-900 mb-8 pt-14"
                         > 
                             <span>
                                 <DecryptedText

@@ -1,10 +1,16 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { ComponentPropsWithoutRef } from "react";
 
-// Timeline data
-const timelineData = [
+export type TimelineEntry = {
+    year: string;
+    title: string;
+    description: string;
+};
+
+// Dati timeline (come i tuoi)
+export const timelineData: TimelineEntry[] = [
     {
         year: "2018 June",
         title: "Diploma",
@@ -52,67 +58,93 @@ const timelineData = [
     },
 ];
 
-export default function Timeline() {
-    const [visibleIndex, setVisibleIndex] = useState<number | null>(null);
-    const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+// ---- SPLIT LOGIC: divide automaticamente DOPO "Smartphone Technician"
+const SPLIT_AT = (() => {
+    const idx = timelineData.findIndex((e) => e.title === "Smartphone Technician");
+    // se trovato, prendi tutto fino a *incluso* (quindi +1). fallback a 4 come nel tuo esempio
+    return idx >= 0 ? idx + 1 : 4;
+})();
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                const visible = entries
-                    .filter((entry) => entry.isIntersecting)
-                    .map((entry) => ({
-                        index: Number(entry.target.getAttribute('data-index')),
-                        ratio: entry.intersectionRatio,
-                    }));
+const TIMELINE_PART_ONE_ITEMS = timelineData.slice(0, SPLIT_AT);
+const TIMELINE_PART_TWO_ITEMS = timelineData.slice(SPLIT_AT);
 
-                if (visible.length > 0) {
-                    const mostVisible = visible.reduce((prev, curr) => (curr.ratio > prev.ratio ? curr : prev));
-                    setVisibleIndex(mostVisible.index);
-                }
-            },
-            {
-                root: null,
-                rootMargin: '-20% 0% -20% 0%', // Focus al centro dello schermo
-                threshold: [0.3, 0.6, 1],
-            }
-        );
+type TimelineSectionProps = ComponentPropsWithoutRef<"section"> & {
+    items: TimelineEntry[];
+    heading?: string;
+    showHeading?: boolean;
+    /** Mostra una call-to-action in fondo che porta alla sezione successiva */
+    continueToId?: string;
+    /** Mostra un piccolo badge “Continues” in alto (per la seconda parte) */
+    continuedBadge?: boolean;
+    fullHeightLine?: boolean;
+};
 
-        itemsRef.current.forEach((el) => {
-            if (el) observer.observe(el);
-        });
-
-        return () => observer.disconnect();
-    }, []);
+function TimelineSection({
+    className,
+    id = "timeline",
+    items,
+    heading = "My Journey",
+    showHeading = true,
+    fullHeightLine = false, 
+    continueToId,
+    continuedBadge = false,
+    ...sectionProps
+}: TimelineSectionProps) {
+    const baseClasses =
+        " h-dvh flex items-center justify-center px-5 md:px-8 pb-20 pt-20";
 
     return (
         <section
-            id="timeline"
-            className="min-h-[calc(100vh-64px-40px)] flex items-center justify-center px-6 pb-32 pt-26"
+            id={id}
+            {...sectionProps}
+            className={`${baseClasses}${className ? ` ${className}` : ""}`}
+            aria-labelledby={`${id}-title`}
         >
-            <div className="relative max-w-2xl w-full">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-800">My Journey</h2>
+            <div className="relative w-full max-w-2xl">
+                <div className="mb-6 flex items-center justify-between">
+                    {showHeading && (
+                        <h2 id={`${id}-title`} className="text-3xl md:text-4xl font-bold text-red-800">
+                            {heading}
+                        </h2>
+                    )}
+                </div>
 
-                <div className="relative border-l border-red-800 pl-6 space-y-12 max-w-2xl min-h-[150vh] ">
+                {/* Wrapper della colonna */}
+                <div className="relative pl-6 space-y-12">
+                    {/* ✅ Linea verticale */}
+                    {fullHeightLine ? (
+                        // Full height (top→bottom) per la Parte 1
+                        <span
+                            aria-hidden
+                            className="pointer-events-none absolute left-0 top-0 bottom-0 w-px bg-red-800"
+                        />
+                    ) : (
+                        // Comportamento classico (solo quanto i contenuti)
+                        <span
+                            aria-hidden
+                            className="block absolute left-0 top-0 w-px bg-red-800"
+                            style={{
+                                // altezza pari all'altezza contenuti: misurata via CSS trick
+                                // optional: puoi rimuoverlo e tenere 'border-l' come prima se preferisci
+                                height: '100%'
+                            }}
+                        />
+                    )}
 
-
-                    {/* Timeline items */}
-                    {timelineData.map((item, idx) => (
+                    {/* Items */}
+                    {items.map((item, idx) => (
                         <motion.div
-                            key={idx}
+                            key={`${item.title}-${idx}`}
                             data-index={idx}
-                            ref={(el) => { itemsRef.current[idx] = el; }}
                             initial={{ opacity: 0, x: -30 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            animate={{
-                                scale: visibleIndex === idx ? 1.05 : 1,
-                                opacity: visibleIndex === idx ? 1 : 0.6,
-                              }}
-                            transition={{ duration: 0.5, delay: idx * 0.1 }}
+                            transition={{ duration: 0.45, delay: idx * 0.06 }}
                             className="relative"
                         >
-                            <p className="text-sm text-red-900">{item.year}</p>
+                            {/* Dot sulla linea */}
+                            <span className="absolute -left-[11px] top-1.5 h-2 w-2 rounded-full bg-red-600 ring-4 ring-red-600/20" />
+                            <p className="text-xs uppercase tracking-wide text-red-900">{item.year}</p>
                             <h3 className="text-lg font-bold text-red-600">{item.title}</h3>
                             <p className="text-base text-red-900">{item.description}</p>
                         </motion.div>
@@ -122,3 +154,46 @@ export default function Timeline() {
         </section>
     );
 }
+
+// API ergonomica per le due “pagine” della timeline
+type TimelinePartProps = Omit<
+    TimelineSectionProps,
+    "items" | "continueToId" | "continuedBadge"
+>;
+
+export function TimelinePartOne({
+    heading = "My Journey",
+    id = "timeline",
+    ...props
+}: TimelinePartProps) {
+    return (
+        <TimelineSection
+            {...props}
+            id={id}
+            items={TIMELINE_PART_ONE_ITEMS}
+            heading={heading}
+            showHeading={true}
+            fullHeightLine // ⟵ ON qui
+        />
+    );
+}
+
+export function TimelinePartTwo({
+    id = "timeline-continued",
+    ...props
+}: TimelinePartProps) {
+    return (
+        <TimelineSection
+            {...props}
+            id={id}
+            items={TIMELINE_PART_TWO_ITEMS}
+            showHeading={false}
+        // fullHeightLine NON attivo qui
+        />
+    );
+}
+
+// utili se vuoi usare i dataset “grezzi” altrove
+export const timelinePartOneItems = TIMELINE_PART_ONE_ITEMS;
+export const timelinePartTwoItems = TIMELINE_PART_TWO_ITEMS;
+export { TimelineSection as TimelineBase };

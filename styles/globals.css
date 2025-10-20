@@ -70,4 +70,102 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}¨
+
+/* ====== Variabili e trasformazioni per Variant A (opzionali) ====== */
+/* Base (Desktop / Laptop ~1024x608) */
+.bg-a-vars {
+  /* Offsets riferiti al viewBox 1920x1080 */
+  --tl-x: 150;
+  /* top-left: +x → destra  */
+  --tl-y: 120;
+  /* top-left: +y → giù     */
+  --tl-r: 1300;
+  /* top-left: raggio       */
+
+  --br-x: 1700;
+  /* bottom-right: +x → fuori a destra dal corner (1920,1080) */
+  --br-y: 1000;
+  /* bottom-right: +y → fuori in basso dal corner             */
+  --br-r: 2500;
+  /* bottom-right: raggio */
+
+  --r-scale: 1;
+  /* non toccare: scala per cerchi r=1 (se usata) */
+}
+
+/* Applica gli offset al gruppo SVG */
+.bg-a-vars .glow-tl {
+  transform: translate(var(--tl-x), var(--tl-y));
+}
+
+.bg-a-vars .glow-br {
+  transform: translate(calc(1920 + var(--br-x)), calc(1080 + var(--br-y)));
+}
+
+/* Scala i cerchi placeholder (r=1) in modo cross-browser-safe */
+.bg-a-vars .glow-tl>circle,
+.bg-a-vars .glow-br>circle {
+  transform-box: fill-box;
+  transform-origin: 0 0;
+}
+
+.bg-a-vars .glow-tl>circle {
+  transform: scale(var(--tl-r));
+}
+
+.bg-a-vars .glow-br>circle {
+  transform: scale(var(--br-r));
+}
+
+/* ====== Switch portrait/landscape per tutti i gruppi (A e B) ====== */
+/* Default: PORTRAIT attivo, LANDSCAPE nascosto */
+.tl-portrait,
+.br-portrait,
+.tr-portrait,
+.bl-portrait {
+  display: block;
+}
+
+.tl-landscape,
+.br-landscape,
+.tr-landscape,
+.bl-landscape {
+  display: none;
+}
+
+/* LANDSCAPE da 4:3 in su (puoi cambiare la soglia a 16:10 se preferisci) */
+@media (min-aspect-ratio: 4/3) {
+
+  .tl-portrait,
+  .br-portrait,
+  .tr-portrait,
+  .bl-portrait {
+    display: none;
+  }
+
+  .tl-landscape,
+  .br-landscape,
+  .tr-landscape,
+  .bl-landscape {
+    display: block;
+  }
+}
+
+/* Variante più restrittiva (se vuoi il cambio solo su schermi molto wide) */
+@media (min-aspect-ratio: 16/10) {
+
+  .tl-portrait,
+  .br-portrait,
+  .tr-portrait,
+  .bl-portrait {
+    display: none;
+  }
+
+  .tl-landscape,
+  .br-landscape,
+  .tr-landscape,
+  .bl-landscape {
+    display: block;
+  }
 }

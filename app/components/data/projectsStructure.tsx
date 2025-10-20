@@ -15,7 +15,7 @@ export interface Project {
 
 export const projects: Project[] = [
     {
-        title: 'Il Mio Orto',
+        title: 'Orto Verde',
         short: 'Project carried out in a team with two colleagues to complete the practical part of the course "Human-machine interaction"',
         full: 'We had the task of designing and creating an android application using the Java language. So we decided to create an application that would allow users to organize their own small vegetable garden at home and keep it under control even remotely with various humidity sensors and remote irrigation device. The login is managed so that every time the user wants to log in, he must first register by filling in the mandatory fields. Once the data is stored, the user can log in. The home page shows the user the state of the sensors and the possibility to irrigate the garden. The application also allows you to add new plants, view the history of irrigation and sensor data, and receive notifications when the plants need attention. The project was a great opportunity to apply our knowledge of Java and Android development, as well as to work collaboratively in a team.',
         images: ['/IlMioOrto/Start.png',

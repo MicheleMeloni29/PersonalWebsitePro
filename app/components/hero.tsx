@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { ComponentPropsWithoutRef, useMemo } from "react";
 import ProfileCard from "./UI/profileCard";
 import RotatingText from "./UI/RotatingText";
 
@@ -66,22 +66,30 @@ function LabeledRotator({
     );
 }
 
-export default function Hero() {
+type HeroProps = ComponentPropsWithoutRef<"section">;
+
+export default function Hero({ className, ...sectionProps }: HeroProps) {
+    const baseClasses = [
+        "px-6",
+        "pt-[clamp(8px,30vh,56px)]",
+        "pb-[calc(var(--nav-bottom-h)+env(safe-area-inset-bottom))]",
+        "lg:pb-0",
+        "lg:pt-18",
+        "lg:min-h-[calc(100dvh-var(--nav-top-h,80px))]",
+        "lg:flex",
+        "lg:items-center",
+        "lg:py-0",
+    ].join(" ");
+
     return (
         <section
-            className="
-            px-6
-            pt-[clamp(8px,30vh,56px)]
-            pb-[calc(var(--nav-bottom-h)+env(safe-area-inset-bottom))] lg:pb-0
-            lg:pt-18
-            lg:min-h-[calc(100dvh-var(--nav-top-h,80px))]
-            lg:flex lg:items-center lg:py-0
-        "
+            {...sectionProps}
+            className={`${baseClasses}${className ? ` ${className}` : ""}`}
         >
             <div className="mx-auto w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-y-8 lg:gap-x-16 lg:items-center">
                 {/* Sinistra (desktop): ProfileCard grande */}
                 <div className="flex justify-center lg:justify-start lg:mt-24 sm:mt-4 xl:mt-12">
-                    <div className="w-full max-w-md sm:max-w-lg lg:max-w-2xl">
+                    <div className= "w-full max-w-md sm:max-w-lg lg:max-w-2xl">
                         <ProfileCard
                             name="Michele Meloni"
                             role="Frontend Developer"
