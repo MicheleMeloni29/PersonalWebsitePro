@@ -7,8 +7,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     return (
         <ThemeProvider
             attribute="class"
-            defaultTheme="light"  // o "system" se vuoi seguire il sistema
-            enableSystem={true}
+            defaultTheme="dark"
+            forcedTheme="dark"
+            enableSystem={false}
         >
             <LanguageProvider>{children}</LanguageProvider>
         </ThemeProvider>
