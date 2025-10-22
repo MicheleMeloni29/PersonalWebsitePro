@@ -5,6 +5,7 @@ import { FaChevronLeft, FaChevronRight, FaSearchPlus, FaTimes, FaPlay } from 're
 import { motion, PanInfo } from 'framer-motion';
 import Image from 'next/image';
 import { projects, Project } from './data/projectsStructure';
+import ShinyText from './UI/ShinyText';
 
 type ProjectsProps = ComponentPropsWithoutRef<'section'>;
 
@@ -303,16 +304,16 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
 
         if (!media.length) {
             return (
-                <div className="flex items-center justify-center h-48 sm:h-56 md:h-60 lg:h-64 w-full rounded-xl border border-white/10 bg-black/40 text-white/60">
+                <div className="flex items-center justify-center h-40 sm:h-56 md:h-60 lg:h-64 w-full rounded-xl border border-white/10 bg-black/40 text-white/60">
                     No media
                 </div>
             );
         }
 
         return (
-            <div className="w-full flex flex-col items-center gap-2">
+            <div className="w-full flex flex-col items-center gap-0.5 sm:gap-2">
                 <motion.div
-                    className={`relative w-full max-w-md sm:max-w-lg lg:max-w-xl overflow-hidden${canInteract ? ' cursor-grab active:cursor-grabbing' : ''
+                    className={`relative w-full max-w-[13.5rem] sm:max-w-lg lg:max-w-xl overflow-hidden${canInteract ? ' cursor-grab active:cursor-grabbing' : ''
                         }`}
                     drag={canInteract ? 'x' : false}
                     dragConstraints={{ left: 0, right: 0 }}
@@ -338,7 +339,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                     aria-roledescription="carousel"
                     aria-label="Project media"
                 >
-                    <div className="flex items-center justify-center relative h-48 sm:h-56 md:h-60 lg:h-64 w-full overflow-hidden">
+                    <div className="flex items-center justify-center relative h-40 sm:h-56 md:h-60 lg:h-64 w-full overflow-hidden">
                         {media.map((m, idx) => {
                             const total = media.length;
                             const rel = (idx - imageIndex + total) % total;
@@ -365,7 +366,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                     transition={{ duration: 0.35, ease: 'easeOut' }}
                                 >
                                     {type === 'image' ? (
-                                        <div className="relative flex items-center justify-center w-full h-full px-3">
+                                        <div className="relative flex items-center justify-center w-full h-full px-1.5 sm:px-3">
                                             <Image
                                                 src={normalizedSrc}
                                                 alt={`${project.title} screenshot ${idx + 1}`}
@@ -373,12 +374,12 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                                 height={260}
                                                 className="rounded-lg border border-gray-300 dark:border-gray-600 shadow-lg object-contain"
                                                 style={{
-                                                    maxWidth: isMobile ? '55%' : '100px',
-                                                    maxHeight: '84%',
+                                                    maxWidth: isMobile ? '45%' : '100px',
+                                                    maxHeight: '74%',
                                                     width: 'auto',
                                                     height: 'auto',
                                                 }}
-                                                sizes="(max-width: 640px) 55vw, 220px"
+                                                sizes="(max-width: 640px) 46vw, 220px"
                                                 priority={isCurrent}
                                                 quality={90}
                                             />
@@ -394,13 +395,13 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                             )}
                                         </div>
                                     ) : (
-                                        <div className="relative flex items-center justify-center w-full h-full px-3">
+                                        <div className="relative flex items-center justify-center w-full h-full px-1.5 sm:px-3">
                                             <video
                                                 src={normalizedSrc}
                                                 className="rounded-lg border border-gray-300 dark:border-gray-600 shadow-lg max-w-full max-h-full object-contain"
                                                 style={{
-                                                    maxWidth: isMobile ? '55%' : '120px',
-                                                    maxHeight: '84%',
+                                                    maxWidth: isMobile ? '45%' : '120px',
+                                                    maxHeight: '74%',
                                                     width: 'auto',
                                                     height: 'auto',
                                                 }}
@@ -430,7 +431,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
 
                 {/* indicatore posizione (no thumbnails) */}
                 {media.length > 1 && (
-                    <div className="flex items-center justify-center gap-1.5 mt-1">
+                    <div className="flex items-center justify-center gap-1 mt-4 sm:mt-1">
                         {media.map((_, idx) => (
                             <span
                                 key={idx}
@@ -450,29 +451,28 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         const full = getFullText(project);
 
         return (
-            <div className="flex flex-col items-center w-full max-w-3xl text-center gap-3 h-full">
-                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-red-600 mb-1">{project.title}</h3>
+            <div className="flex flex-col items-center w-full max-w-[15rem] sm:max-w-3xl text-center gap-1.5 sm:gap-3 h-full">
+                <h3 className="text-base sm:text-2xl lg:text-3xl font-bold text-red-700 mb-0.5">{project.title}</h3>
 
                 {/* Testo: centrale = autoscroll, preview = statico con fade */}
                 {isActive ? (
                     <AutoscrollText
                         text={getFullText(project)}
-                        className="text-sm sm:text-base text-red-700 h-28 sm:h-32 md:h-36"
+                        className="text-sm sm:text-base text-red-900 h-[7.5rem] sm:h-32 md:h-36"
                         speed={24}
                         startDelay={1800}
                         restartKey={activeKey}
                     />
                 ) : (
                     <div className="relative w-full">
-                        <div className="text-sm sm:text-base text-red-700 h-24 sm:h-28 md:h-28 overflow-hidden pr-2">
+                        <div className="text-xs sm:text-base text-red-700 h-[4.9rem] sm:h-28 md:h-28 overflow-hidden pr-1 sm:pr-2">
                             {getFullText(project)}
                         </div>
                         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#0d0d0d] to-transparent" />
                     </div>
                 )}
 
-
-                <div className="w-full flex-1 flex flex-col items-center gap-3 justify-center">
+                <div className="w-full flex-1 flex flex-col items-center gap-3 justify-end pt-4">
                     {renderMediaCarousel(project, isActive)}
                 </div>
             </div>
@@ -523,22 +523,22 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         >
             <h2
                 id="projects-title"
-                className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 text-red-800 text-center"
+                className="-translate-y-12 sm:translate-y-0 text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-6 text-red-700 text-center"
             >
                 My Projects
             </h2>
 
             <div className="flex-1 w-full flex items-center justify-center">
                 <div className="relative w-full max-w-7xl flex items-center justify-center h-full">
-                    {/* ⬆️ più largo per dare respiro ai preview */}
-                    <div className="relative w-full max-w-6xl mx-auto h-full flex justify-center overflow-visible">
+                    {/* più largo per dare respiro ai preview */}
+                    <div className="relative w-full max-w-6xl mx-auto h-full flex flex-col sm:flex-row items-center sm:items-stretch justify-center overflow-visible">
                         {renderPreviewCard(prevProject, 'left', prevIndex)}
                         {renderPreviewCard(nextProject, 'right', nextIndex)}
 
                         {/* scheda centrale */}
                         <motion.div
-                            className="relative z-10 w-full md:w-[86%] lg:w-[78%] h-full max-h-[75vh] sm:max-h-[75vh] flex flex-col items-center justify-between
-              bg-[#5e5e5ec5] dark:bg-[#000000b9] p-4 sm:p-6 lg:p-7 rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing
+                            className="relative z-10 w-[82%] max-w-[14.5rem] sm:w-full sm:max-w-none md:w-[86%] lg:w-[78%] h-full max-h-[68vh] sm:max-h-[75vh] min-h-[26rem] sm:min-h-0 mt-[-5em] sm:mt-0 flex flex-col items-center gap-3 sm:gap-0 justify-start sm:justify-between
+              bg-[#5e5e5ec5] dark:bg-[#000000b9] px-2 pt-2 pb-0 sm:pb-6 lg:p-7 rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing
               shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_4px_6px_rgba(0,0,0,0.6),_0_10px_15px_rgba(0,0,0,0.3)] hover:shadow-[0_0_20px_rgba(255,0,0,0.3)] transition-shadow duration-500"
                             drag="x"
                             dragConstraints={{ left: 0, right: 0 }}
@@ -558,31 +558,17 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                 </div>
                             )}
 
-                            {/* frecce progetto per mobile */}
-                            <div className="sm:hidden absolute inset-0 pointer-events-none">
-                                <div className="absolute inset-y-0 left-2 flex items-center">
-                                    <button
-                                        type="button"
-                                        onClick={handlePrevProject}
-                                        className="pointer-events-auto rounded-full bg-black/50 p-2 text-white"
-                                        aria-label="Previous project"
-                                    >
-                                        <FaChevronLeft />
-                                    </button>
-                                </div>
-                                <div className="absolute inset-y-0 right-2 flex items-center">
-                                    <button
-                                        type="button"
-                                        onClick={handleNextProject}
-                                        className="pointer-events-auto rounded-full bg-black/50 p-2 text-white"
-                                        aria-label="Next project"
-                                    >
-                                        <FaChevronRight />
-                                    </button>
-                                </div>
-                            </div>
                         </motion.div>
-                    </div>
+
+                        <div className="sm:hidden mt-3">
+                            <ShinyText
+                                text="SLIDE FOR MORE"
+                                disabled={false}
+                                speed={10}
+                                className='custom-class'
+                            />
+                        </div>
+                    </div>   
                 </div>
             </div>
 
@@ -591,7 +577,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                 <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-8">
                     <div className="absolute inset-0 bg-black/70" onClick={closeLightbox} aria-hidden />
                     <div
-                        className="relative z-10 w-full max-w-5xl text-white"
+                        className="relative z-10 w-full max-w-5xl text-red-700"
                         role="dialog"
                         aria-modal="true"
                         aria-label="Media viewer"

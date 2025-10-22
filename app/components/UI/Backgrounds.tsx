@@ -170,12 +170,12 @@ export function BackgroundVariantB({ scale = 1 }: { scale?: number }) {
                     </filter>
                 </defs>
 
-                {/* ---------- TOP-RIGHT ---------- */}
+                {/* ---------- TOP ----------- */}
                 {/* Versione PORTRAIT (mobile/verticale) */}
                 <g className="tr tr-portrait" transform="translate(1920, 0)">
                     <circle
                         cx={-900}
-                        cy={-1850}
+                        cy={-2050}
                         r={1500}
                         fill="url(#gradientWhiteRed)"
                         filter="url(#softBlurTRland)"
@@ -193,12 +193,12 @@ export function BackgroundVariantB({ scale = 1 }: { scale?: number }) {
                     />
                 </g>
 
-                {/* ---------- BOTTOM-LEFT ---------- */}
+                {/* ---------- BOTTOM ----------- */}
                 {/* Versione PORTRAIT (mobile/verticale) */}
                 <g className="bl bl-portrait" transform="translate(0, 1080)">
                     <circle
-                        cx={800}
-                        cy={1600}
+                        cx={960}
+                        cy={1800}
                         r={1200}
                         fill="url(#gradientWhiteRed)"
                         filter="url(#softBlur)"
@@ -278,7 +278,7 @@ export function BackgroundVariantC({ scale = 1 }: { scale?: number }) {
                 {/* Versione PORTRAIT (mobile/verticale) */}
                 <g className="tr tr-portrait" transform="translate(1920, 0)">
                     <circle
-                        cx={2200}
+                        cx={2400}
                         cy={540}
                         r={2600}
                         fill="url(#gradientWhiteRed)"
@@ -301,7 +301,7 @@ export function BackgroundVariantC({ scale = 1 }: { scale?: number }) {
                 {/* Versione PORTRAIT (mobile/verticale) */}
                 <g className="bl bl-portrait" transform="translate(0, 0)">
                     <circle
-                        cx={-2200}
+                        cx={-2400}
                         cy={540}
                         r={2600}
                         fill="url(#gradientWhiteRed)"
@@ -323,4 +323,3 @@ export function BackgroundVariantC({ scale = 1 }: { scale?: number }) {
         </div>
     );
 }
-

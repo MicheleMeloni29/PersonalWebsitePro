@@ -35,11 +35,16 @@ module.exports = {
                     "0%": { opacity: 0, transform: "translateX(100%)" },
                     "100%": { opacity: 1, transform: "translateX(0)" },
                 },
+                shine: {
+                    '0%': { 'background-position': '200% 50%' },
+                    '100%': { 'background-position': '-200% 50%' },
+                },
             },
             animation: {
                 slideInUp: 'slideInUp 0.5s ease-out forwards',
                 slideOutUp: 'slideOutUp 0.5s ease-in forwards',
-                slideDown: 'slideDown 0.4s ease-out forwards'
+                slideDown: 'slideDown 0.4s ease-out forwards',
+                shine: 'shine var(--shine-duration, 5s) linear infinite',
             },
             
         },
