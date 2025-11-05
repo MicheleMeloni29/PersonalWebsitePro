@@ -54,4 +54,11 @@ export const projects: Project[] = [
             'WeatherApp/settingsDark.png',
         ]
     },
+    {
+        title: 'Serie A Escange',
+        short: 'Another app developed in React Native and tested with Expo, but with backend full developed by me with python and django',
+        full: "PROJECT STILL IN DEVELOPMENT!!! After understanding ReactNative and starting to see some backend potential, I decided to develop my own backend for this project using Python(Django). It's an app that allows users to earn game credits through quizzes or other methods I'll implement later.These credits can then be used to purchase card packs. These cards can only be collected for now, but I'm working on other app implementations, such as card trading between users or even card games where users challenge each other with their own cards. See app dimotration video: https://www.youtube.com/watch?v=UFcIKJ8q8GY",
+        images: [
+        ],
+    },
 ];
