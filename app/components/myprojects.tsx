@@ -1,7 +1,7 @@
 'use client';
 
-import { ComponentPropsWithoutRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FaChevronLeft, FaChevronRight, FaSearchPlus, FaTimes, FaPlay } from 'react-icons/fa';
+import { ComponentPropsWithoutRef, useCallback, useEffect, useRef, useState } from 'react';
+import { FaChevronLeft, FaChevronRight, FaSearchPlus, FaTimes, FaPlay, FaExternalLinkAlt, FaGithub } from 'react-icons/fa';
 import { motion, PanInfo } from 'framer-motion';
 import Image from 'next/image';
 import { projects, Project } from './data/projectsStructure';
@@ -301,19 +301,25 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
     const renderMediaCarousel = (project: Project, isActive: boolean) => {
         const media = project.images ?? [];
         const canInteract = isActive;
+        const mediaWidth = isActive ? (isMobile ? '84%' : '60%') : (isMobile ? '60%' : '38%');
+        const mediaMaxHeight = isActive ? '72%' : '69%';
+        const neighborOffset = isActive ? '74%' : '88%';
+        const containerHeights = isActive
+            ? 'h-72 sm:h-[20rem] md:h-[22rem] lg:h-[24rem]'
+            : 'h-32 sm:h-40 md:h-44 lg:h-48';
 
         if (!media.length) {
             return (
-                <div className="flex items-center justify-center h-40 sm:h-56 md:h-60 lg:h-64 w-full rounded-xl border border-white/10 bg-black/40 text-white/60">
+                <div className={`flex items-center justify-center ${containerHeights} w-full rounded-xl border border-white/10 bg-black/40 text-white/60`}>
                     No media
                 </div>
             );
         }
 
         return (
-            <div className="w-full flex flex-col items-center gap-0.5 sm:gap-2">
+            <div className="w-full flex flex-col items-center gap-0.5 sm:gap-2 h-full">
                 <motion.div
-                    className={`relative w-full max-w-[13.5rem] sm:max-w-lg lg:max-w-xl overflow-hidden${canInteract ? ' cursor-grab active:cursor-grabbing' : ''
+                    className={`relative w-full max-w-lg sm:max-w-xl lg:max-w-2xl xl:max-w-3xl overflow-hidden h-full${canInteract ? ' cursor-grab active:cursor-grabbing' : ''
                         }`}
                     drag={canInteract ? 'x' : false}
                     dragConstraints={{ left: 0, right: 0 }}
@@ -339,7 +345,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                     aria-roledescription="carousel"
                     aria-label="Project media"
                 >
-                    <div className="flex items-center justify-center relative h-40 sm:h-56 md:h-60 lg:h-64 w-full overflow-hidden">
+                    <div className={`flex items-center justify-center relative ${containerHeights} w-full overflow-hidden`}>
                         {media.map((m, idx) => {
                             const total = media.length;
                             const rel = (idx - imageIndex + total) % total;
@@ -354,8 +360,8 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                             }
                             const normalizedSrc = mediaSrc.startsWith('/') ? mediaSrc : `/${mediaSrc}`;
                             const isCurrent = rel === 0;
-                            // un filo più distanti tra loro
-                            const x = rel === 0 ? '0%' : rel === 1 ? '98%' : '-98%';
+                            // distanza tra media in base allo stato attivo
+                            const x = rel === 0 ? '0%' : rel === 1 ? neighborOffset : `-${neighborOffset}`;
                             const zIndex = rel === 0 ? 10 : 5;
 
                             return (
@@ -372,14 +378,14 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                                 alt={`${project.title} screenshot ${idx + 1}`}
                                                 width={360}
                                                 height={260}
-                                                className="rounded-lg border border-gray-300 dark:border-gray-600 shadow-lg object-contain"
+                                                className="rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg object-contain"
                                                 style={{
-                                                    maxWidth: isMobile ? '45%' : '100px',
-                                                    maxHeight: '74%',
-                                                    width: 'auto',
+                                                    width: mediaWidth,
+                                                    maxWidth: '100%',
                                                     height: 'auto',
+                                                    maxHeight: mediaMaxHeight,
                                                 }}
-                                                sizes="(max-width: 640px) 46vw, 220px"
+                                                sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 560px"
                                                 priority={isCurrent}
                                                 quality={90}
                                             />
@@ -398,12 +404,12 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                         <div className="relative flex items-center justify-center w-full h-full px-1.5 sm:px-3">
                                             <video
                                                 src={normalizedSrc}
-                                                className="rounded-lg border border-gray-300 dark:border-gray-600 shadow-lg max-w-full max-h-full object-contain"
+                                                className="rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg max-w-full max-h-full object-contain"
                                                 style={{
-                                                    maxWidth: isMobile ? '45%' : '120px',
-                                                    maxHeight: '74%',
-                                                    width: 'auto',
+                                                    width: mediaWidth,
+                                                    maxWidth: '100%',
                                                     height: 'auto',
+                                                    maxHeight: mediaMaxHeight,
                                                 }}
                                                 autoPlay={isCurrent && canInteract}
                                                 muted
@@ -446,33 +452,71 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         );
     };
 
-    /* ============ CARD CONTENT ============ */
-    const renderCardContent = (project: Project, isActive: boolean, activeKey?: string) => {
-        const full = getFullText(project);
+    const resolveLinkIcon = (url: string) => {
+        if (/youtu(\.be|be\.com)/i.test(url)) {
+            return <FaPlay className="h-3.5 w-3.5" />;
+        }
+        if (/github\.com/i.test(url)) {
+            return <FaGithub className="h-3.5 w-3.5" />;
+        }
+        return <FaExternalLinkAlt className="h-3.5 w-3.5" />;
+    };
+
+    const renderProjectLinks = (project: Project) => {
+        const links = project.links ?? [];
+        if (!links.length) return null;
 
         return (
-            <div className="flex flex-col items-center w-full max-w-[15rem] sm:max-w-3xl text-center gap-1.5 sm:gap-3 h-full">
-                <h3 className="text-base sm:text-2xl lg:text-3xl font-bold text-red-700 mb-0.5">{project.title}</h3>
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-3 self-center lg:justify-start">
+                {links.map(({ label, url }, idx) => {
+                    const icon = resolveLinkIcon(url);
+                    return (
+                        <a
+                            key={`${project.title}-link-${idx}`}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group flex items-center gap-2 rounded-full border border-red-600/70 bg-red-600/10 px-4 py-2 text-sm font-medium text-red-700 transition hover:bg-red-600/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                        >
+                            <span className="text-red-600 transition group-hover:text-red-400">{icon}</span>
+                            <span className="tracking-wide">{label}</span>
+                        </a>
+                    );
+                })}
+            </div>
+        );
+    };
 
-                {/* Testo: centrale = autoscroll, preview = statico con fade */}
-                {isActive ? (
-                    <AutoscrollText
-                        text={getFullText(project)}
-                        className="text-sm sm:text-base text-red-900 h-[7.5rem] sm:h-32 md:h-36"
-                        speed={24}
-                        startDelay={1800}
-                        restartKey={activeKey}
-                    />
-                ) : (
-                    <div className="relative w-full">
-                        <div className="text-xs sm:text-base text-red-700 h-[4.9rem] sm:h-28 md:h-28 overflow-hidden pr-1 sm:pr-2">
-                            {getFullText(project)}
+    /* ============ CARD CONTENT ============ */
+    const renderCardContent = (project: Project, isActive: boolean, activeKey?: string) => {
+        const description = getFullText(project);
+
+        return (
+            <div className="flex w-full flex-col items-center gap-6 lg:flex-row lg:items-stretch lg:gap-10">
+                <div className="flex w-full flex-1 flex-col items-center gap-2 text-center sm:gap-3 lg:items-start lg:text-left h-full">
+                    <h3 className="text-lg sm:text-2xl lg:text-3xl font-bold text-red-700">{project.title}</h3>
+
+                    {isActive ? (
+                        <AutoscrollText
+                            text={description}
+                            className="text-sm sm:text-base md:text-lg text-red-900 h-[12rem] sm:h-[18rem] md:h-[19rem] lg:h-[20rem]"
+                            speed={22}
+                            startDelay={1600}
+                            restartKey={activeKey}
+                        />
+                    ) : (
+                        <div className="relative w-full">
+                            <div className="text-xs sm:text-base text-red-700 h-[7.5rem] sm:h-40 md:h-40 overflow-hidden pr-1 sm:pr-2 md:pr-3">
+                                {description}
+                            </div>
+                            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#0d0d0d] to-transparent" />
                         </div>
-                        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#0d0d0d] to-transparent" />
-                    </div>
-                )}
+                    )}
 
-                <div className="w-full flex-1 flex flex-col items-center gap-3 justify-end pt-4">
+                    {renderProjectLinks(project)}
+                </div>
+
+                <div className="w-full flex-1 flex flex-col items-center justify-start gap-6 h-full">
                     {renderMediaCarousel(project, isActive)}
                 </div>
             </div>
@@ -491,8 +535,8 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                 type="button"
                 onClick={() => goToProject(targetIndex)}
                 className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[5]"
-                initial={{ x, opacity: 0.95, scale: 0.98 }}
-                animate={{ x, opacity: 0.95, scale: 0.98 }}
+                initial={{ x, opacity: 0.95, scale: 0.98 }}         // posizione iniziale fuori schermo
+                animate={{ x, opacity: 0.95, scale: 0.98 }}         // posizione finale
                 whileHover={{ scale: 1.0 }}
                 transition={{ duration: 0.35, ease: 'easeOut' }}
                 aria-label={position === 'left' ? 'Previous project' : 'Next project'}
@@ -537,9 +581,9 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
 
                         {/* scheda centrale */}
                         <motion.div
-                            className="relative z-10 w-[82%] max-w-[14.5rem] sm:w-full sm:max-w-none md:w-[86%] lg:w-[78%] h-full max-h-[68vh] sm:max-h-[75vh] min-h-[26rem] sm:min-h-0 mt-[-5em] sm:mt-0 flex flex-col items-center gap-3 sm:gap-0 justify-start sm:justify-between
-              bg-[#5e5e5ec5] dark:bg-[#000000b9] px-2 pt-2 pb-0 sm:pb-6 lg:p-7 rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing
-              shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_4px_6px_rgba(0,0,0,0.6),_0_10px_15px_rgba(0,0,0,0.3)] hover:shadow-[0_0_20px_rgba(255,0,0,0.3)] transition-shadow duration-500"
+                            className="relative z-10 w-[86%] sm:w-full md:w-[82%] lg:w-[74%] xl:w-[68%] max-w-5xl min-h-[26rem] sm:min-h-[28rem] lg:min-h-[30rem] mt-[-4.5rem] sm:mt-0 flex flex-col items-stretch gap-7
+              bg-[#5e5e5ec5] dark:bg-[#000000b9] px-4 sm:px-6 lg:px-10 py-5 sm:py-6 lg:py-8 rounded-3xl overflow-visible cursor-grab active:cursor-grabbing
+              shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_4px_6px_rgba(0,0,0,0.6),_0_10px_15px_rgba(0,0,0,0.3)] hover:shadow-[0_0_24px_rgba(255,0,0,0.28)] transition-shadow duration-500"
                             drag="x"
                             dragConstraints={{ left: 0, right: 0 }}
                             dragElastic={0}
@@ -672,3 +716,4 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         </section>
     );
 }
+
