@@ -301,12 +301,12 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
     const renderMediaCarousel = (project: Project, isActive: boolean) => {
         const media = project.images ?? [];
         const canInteract = isActive;
-        const mediaWidth = isActive ? (isMobile ? '84%' : '60%') : (isMobile ? '60%' : '38%');
-        const mediaMaxHeight = isActive ? '72%' : '69%';
-        const neighborOffset = isActive ? '74%' : '88%';
+        const mediaWidth = isActive ? (isMobile ? '42%' : '60%') : (isMobile ? '28%' : '38%');
+        const mediaMaxHeight = isActive ? (isMobile ? '26%' : '72%') : (isMobile ? '26%' : '69%');
+        const neighborOffset = isActive ? (isMobile ? '50%' : '74%') : (isMobile ? '58%' : '88%');
         const containerHeights = isActive
-            ? 'h-72 sm:h-[20rem] md:h-[22rem] lg:h-[24rem]'
-            : 'h-32 sm:h-40 md:h-44 lg:h-48';
+            ? 'h-56 sm:h-[20rem] md:h-[22rem] lg:h-[24rem]'
+            : 'h-28 sm:h-40 md:h-44 lg:h-48';
 
         if (!media.length) {
             return (
@@ -437,7 +437,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
 
                 {/* indicatore posizione (no thumbnails) */}
                 {media.length > 1 && (
-                    <div className="flex items-center justify-center gap-1 mt-4 sm:mt-1">
+                    <div className="flex items-center justify-center gap-1">
                         {media.map((_, idx) => (
                             <span
                                 key={idx}
@@ -464,25 +464,38 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
 
     const renderProjectLinks = (project: Project) => {
         const links = project.links ?? [];
-        if (!links.length) return null;
+        const demoLink = links.find(
+            (link) =>
+                /demo/i.test(link.label) ||
+                /demo/i.test(link.url) ||
+                /youtu(\.be|be\.com)/i.test(link.url)
+        );
+        const primaryLink = demoLink ?? links[0] ?? null;
 
         return (
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3 self-center lg:justify-start">
-                {links.map(({ label, url }, idx) => {
-                    const icon = resolveLinkIcon(url);
-                    return (
-                        <a
-                            key={`${project.title}-link-${idx}`}
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group flex items-center gap-2 rounded-full border border-red-600/70 bg-red-600/10 px-4 py-2 text-sm font-medium text-red-700 transition hover:bg-red-600/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                        >
-                            <span className="text-red-600 transition group-hover:text-red-400">{icon}</span>
-                            <span className="tracking-wide">{label}</span>
-                        </a>
-                    );
-                })}
+                {primaryLink ? (
+                    <a
+                        key={`${project.title}-primary-link`}
+                        href={primaryLink.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-2 rounded-full border border-red-600/70 bg-red-600/10 px-4 py-2 text-sm font-medium text-red-700 transition hover:bg-red-600/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                    >
+                        <span className="text-red-600 transition group-hover:text-red-400">
+                            {resolveLinkIcon(primaryLink.url)}
+                        </span>
+                        <span className="tracking-wide">{primaryLink.label}</span>
+                    </a>
+                ) : (
+                    <span
+                        key={`${project.title}-demo-placeholder`}
+                        className="flex items-center gap-2 rounded-full border border-red-600/40 bg-red-600/5 px-4 py-2 text-sm font-medium text-red-200/70"
+                        aria-disabled="true"
+                    >
+                        <span className="tracking-wide">No demo available</span>
+                    </span>
+                )}
             </div>
         );
     };
@@ -492,7 +505,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         const description = getFullText(project);
 
         return (
-            <div className="flex w-full flex-col items-center gap-6 lg:flex-row lg:items-stretch lg:gap-10">
+            <div className="flex w-full flex-col items-center gap-3 sm:gap-4 lg:flex-row lg:items-stretch lg:gap-10">
                 <div className="flex w-full flex-1 flex-col items-center gap-2 text-center sm:gap-3 lg:items-start lg:text-left h-full">
                     <h3 className="text-lg sm:text-2xl lg:text-3xl font-bold text-red-700">{project.title}</h3>
 
@@ -516,7 +529,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                     {renderProjectLinks(project)}
                 </div>
 
-                <div className="w-full flex-1 flex flex-col items-center justify-start gap-6 h-full">
+                <div className="w-full flex-1 flex flex-col items-center justify-start gap-6 h-full -mt-2 sm:mt-0">
                     {renderMediaCarousel(project, isActive)}
                 </div>
             </div>
@@ -543,7 +556,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
             >
                 <div className="pointer-events-none">
                     <div
-                        className="w-[300px] lg:w-[360px] max-h-[62vh] bg-[#5e5e5e99] dark:bg-[#00000080] p-4 rounded-2xl border border-white/10
+                        className="w-[300px] lg:w-[360px] h-[34rem] lg:h-[30rem] bg-[#5e5e5e99] dark:bg-[#00000080] p-4 rounded-2xl border border-white/10
                      shadow-[inset_0_1px_0_rgba(255,255,255,0.08),_0_4px_6px_rgba(0,0,0,0.45),_0_10px_15px_rgba(0,0,0,0.28)]
                      backdrop-blur-sm overflow-hidden"
                     >
@@ -567,7 +580,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         >
             <h2
                 id="projects-title"
-                className="-translate-y-12 sm:translate-y-0 text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-6 text-red-700 text-center"
+                className="-translate-y-16 sm:translate-y-0 text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-6 text-red-700 text-center"
             >
                 My Projects
             </h2>
@@ -581,7 +594,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
 
                         {/* scheda centrale */}
                         <motion.div
-                            className="relative z-10 w-[86%] sm:w-full md:w-[82%] lg:w-[74%] xl:w-[68%] max-w-5xl min-h-[26rem] sm:min-h-[28rem] lg:min-h-[30rem] mt-[-4.5rem] sm:mt-0 flex flex-col items-stretch gap-7
+                            className="relative z-10 w-[86%] sm:w-full md:w-[82%] lg:w-[74%] xl:w-[68%] max-w-5xl h-[34rem] lg:h-[30rem] mt-[-4.5rem] sm:mt-0 flex flex-col items-stretch gap-7
               bg-[#5e5e5ec5] dark:bg-[#000000b9] px-4 sm:px-6 lg:px-10 py-5 sm:py-6 lg:py-8 rounded-3xl overflow-visible cursor-grab active:cursor-grabbing
               shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_4px_6px_rgba(0,0,0,0.6),_0_10px_15px_rgba(0,0,0,0.3)] hover:shadow-[0_0_24px_rgba(255,0,0,0.28)] transition-shadow duration-500"
                             drag="x"
