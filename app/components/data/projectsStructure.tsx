@@ -80,4 +80,14 @@ export const projects: Project[] = [
             { label: 'Visit Website', url: 'https://www.sustentu.com' },
         ],
     },
+    {
+        title: 'Core Studio',
+        short: 'Web portfolio for a Graphic Designer, developed by me using Next.js for development, Vercel to host online the page',
+        full: "In December 2025, I created a web portfolio for a graphic designer, starting with a minimal brief consisting only of color palettes and text content. I independently managed the entire creative and technical process: structure design, definition of the visual style, animation development, scroll management, and construction of a visual narrative consistent with the client's identity. The focus was on user experience and enhancing the work, using fluid transitions, animated sequences, and a layout designed to guide the user through navigation. The site was deployed on Vercel and finalized with the association of a custom domain, ensuring performance and reliability in production.",
+        images: [
+        ],
+        links: [
+            { label: 'Visit Website', url: 'https://www.corestudio.art' },
+        ],
+    },
 ];
