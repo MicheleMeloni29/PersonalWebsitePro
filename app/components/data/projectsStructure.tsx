@@ -61,7 +61,7 @@ export const projects: Project[] = [
         ]
     },
     {
-        title: 'Serie A Escange',
+        title: 'Serie A Excange',
         short: 'Another app developed in React Native and tested with Expo, but with backend full developed by me with python and django',
         full: "PROJECT STILL IN DEVELOPMENT!!! After understanding ReactNative and starting to see some backend potential, I decided to develop my own backend for this project using Python(Django). It's an app that allows users to earn game credits through quizzes or other methods I'll implement later.These credits can then be used to purchase card packs. These cards can only be collected for now, but I'm working on other app implementations, such as card trading between users or even card games where users challenge each other with their own cards. See the app demonstration video below.",
         images: [
@@ -88,6 +88,16 @@ export const projects: Project[] = [
         ],
         links: [
             { label: 'Visit Website', url: 'https://www.corestudio.art' },
+        ],
+    },
+    {
+        title: 'NexusApp',
+        short: '',
+        full: "I started 2026 by joining a startup as a full-stack developer. I designed a website, currently a demo version of the final project. This site allows users to connect their Steam/ Riot accounts and, via API, generate a wrapper with user statistics on gaming platforms, ultimately generating a 'Player Card' based on the data obtained. Project still under development",
+        images: [
+        ],
+        links: [
+            { label: 'Visit Website', url: 'https://app.nexusapp.space/' },
         ],
     },
 ];

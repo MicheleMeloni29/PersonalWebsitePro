@@ -1,732 +1,305 @@
 'use client';
 
-import { ComponentPropsWithoutRef, useCallback, useEffect, useRef, useState } from 'react';
-import { FaChevronLeft, FaChevronRight, FaSearchPlus, FaTimes, FaPlay, FaExternalLinkAlt, FaGithub } from 'react-icons/fa';
-import { motion, PanInfo } from 'framer-motion';
+import { ComponentPropsWithoutRef, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
+import { FaChevronLeft, FaChevronRight, FaExternalLinkAlt, FaGithub, FaPlay } from 'react-icons/fa';
 import { projects, Project } from './data/projectsStructure';
-import ShinyText from './UI/ShinyText';
 
 type ProjectsProps = ComponentPropsWithoutRef<'section'>;
 
-const PROJECT_DRAG_THRESHOLD = 90;
-const MEDIA_DRAG_THRESHOLD = 50;
+type MediaItem = {
+    type: 'image' | 'video';
+    src: string;
+};
 
-/* ============================
-   Testo autoscroll + no scrollbar
-============================ */
-function AutoscrollText({
-    text,
-    className,
-    speed = 12, // px/sec
-    restartDelay = 2800,
-    interactionDelay = 1800,
-    startDelay = 1000,
-    restartKey,
-}: {
-    text: string;
-    className?: string;
-    speed?: number;
-    restartDelay?: number;
-    interactionDelay?: number;
-    startDelay?: number;
-    restartKey?: string | number;
-}) {
-    const ref = useRef<HTMLDivElement | null>(null);
-    const timerRef = useRef<number | null>(null);
-    const frameRef = useRef<number>(0);
-    const targetRef = useRef(0);
-    const now = typeof performance !== 'undefined' ? performance.now() : 0;
-    const lastRef = useRef(now);
-    const [paused, setPaused] = useState(false);
-    const pausedRef = useRef(paused);
-    const [inView, setInView] = useState(true);
-    const [reduced, setReduced] = useState(false);
+const normalizeMedia = (item: string | { type?: 'image' | 'video'; src: string }): MediaItem => {
+    if (typeof item === 'string') return { type: 'image', src: item };
+    return { type: item.type ?? 'image', src: item.src };
+};
 
-    useEffect(() => {
-        pausedRef.current = paused;
-    }, [paused]);
-
-    const clearTimer = useCallback(() => {
-        if (timerRef.current) {
-            window.clearTimeout(timerRef.current);
-            timerRef.current = null;
-        }
-    }, []);
-
-    const scheduleRestart = useCallback((delayBeforeReset: number, delayBeforeScroll: number = startDelay) => {
-        clearTimer();
-        pausedRef.current = true;
-        setPaused(true);
-
-        const finishPause = () => {
-            timerRef.current = window.setTimeout(() => {
-                pausedRef.current = false;
-                setPaused(false);
-                lastRef.current = typeof performance !== 'undefined' ? performance.now() : 0;
-                timerRef.current = null;
-            }, Math.max(delayBeforeScroll, 0));
-        };
-
-        const resetToTop = () => {
-            const node = ref.current;
-            if (!node) return;
-            node.scrollTop = 0;
-            targetRef.current = 0;
-            lastRef.current = typeof performance !== 'undefined' ? performance.now() : 0;
-            finishPause();
-        };
-
-        if (delayBeforeReset <= 0) {
-            resetToTop();
-        } else {
-            timerRef.current = window.setTimeout(() => {
-                resetToTop();
-            }, delayBeforeReset);
-        }
-    }, [clearTimer, startDelay]);
-
-    useEffect(() => {
-        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-        const on = () => setReduced(mq.matches);
-        on(); mq.addEventListener?.('change', on);
-        return () => mq.removeEventListener?.('change', on);
-    }, []);
-
-    useEffect(() => {
-        const el = ref.current; if (!el) return;
-        const io = new IntersectionObserver(
-            ([entry]) => setInView(entry.isIntersecting && entry.intersectionRatio > 0.25),
-            { threshold: [0.25] }
-        );
-        io.observe(el);
-        return () => io.disconnect();
-    }, []);
-
-    useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-
-        el.scrollTop = 0;
-        targetRef.current = 0;
-        scheduleRestart(0);
-    }, [scheduleRestart, text, restartKey]);
-
-    useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-
-        targetRef.current = el.scrollTop;
-        lastRef.current = typeof performance !== 'undefined' ? performance.now() : 0;
-
-        const pauseWithRestart = (delay: number) => {
-            scheduleRestart(delay);
-        };
-
-        const handleInteractionPause = () => pauseWithRestart(interactionDelay);
-        const handlePointerDown = () => pauseWithRestart(interactionDelay);
-        const handleMouseEnter = () => {
-            pausedRef.current = true;
-            setPaused(true);
-            clearTimer();
-        };
-        const handleMouseLeave = () => {
-            pausedRef.current = false;
-            setPaused(false);
-            lastRef.current = typeof performance !== 'undefined' ? performance.now() : 0;
-        };
-
-        el.addEventListener('wheel', handleInteractionPause, { passive: true });
-        el.addEventListener('touchstart', handleInteractionPause, { passive: true });
-        el.addEventListener('pointerdown', handlePointerDown);
-        el.addEventListener('mouseenter', handleMouseEnter);
-        el.addEventListener('mouseleave', handleMouseLeave);
-
-        const step = (t: number) => {
-            const node = ref.current;
-            if (!node) return;
-
-            if (pausedRef.current || reduced || !inView) {
-                lastRef.current = t;
-            } else {
-                const dt = (t - lastRef.current) / 1000;
-                lastRef.current = t;
-                targetRef.current += speed * dt;
-
-                const maxTop = Math.max(0, node.scrollHeight - node.clientHeight);
-                if (targetRef.current >= maxTop) {
-                    targetRef.current = maxTop;
-                    node.scrollTop = targetRef.current;
-                    if (!pausedRef.current) {
-                        pauseWithRestart(restartDelay);
-                    }
-                } else {
-                    node.scrollTop = targetRef.current;
-                }
-            }
-
-            frameRef.current = requestAnimationFrame(step);
-        };
-
-        frameRef.current = requestAnimationFrame(step);
-
-        return () => {
-            cancelAnimationFrame(frameRef.current);
-            clearTimer();
-            el.removeEventListener('wheel', handleInteractionPause);
-            el.removeEventListener('touchstart', handleInteractionPause);
-            el.removeEventListener('pointerdown', handlePointerDown);
-            el.removeEventListener('mouseenter', handleMouseEnter);
-            el.removeEventListener('mouseleave', handleMouseLeave);
-        };
-    }, [clearTimer, interactionDelay, inView, reduced, restartDelay, scheduleRestart, speed]);
-
-    return (
-        <div className="relative w-full">
-            <div
-                ref={ref}
-                className={`no-scrollbar pr-2 ${className ?? ''}`}
-                style={{ overflow: 'auto', scrollbarGutter: 'stable' as any }}
-            >
-                {text}
-            </div>
-            {/* maschere soft */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-[#0d0d0d] to-transparent" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#0d0d0d] to-transparent" />
-        </div>
+const getPrimaryLink = (project: Project) => {
+    const links = project.links ?? [];
+    if (!links.length) return null;
+    const demo = links.find(
+        (link) =>
+            /demo/i.test(link.label) ||
+            /demo/i.test(link.url) ||
+            /youtu(\.be|be\.com)/i.test(link.url)
     );
-}
+    return demo ?? links[0] ?? null;
+};
 
+const getLinkIcon = (url: string) => {
+    if (/youtu(\.be|be\.com)/i.test(url)) return <FaPlay className="h-3.5 w-3.5" />;
+    if (/github\.com/i.test(url)) return <FaGithub className="h-3.5 w-3.5" />;
+    return <FaExternalLinkAlt className="h-3.5 w-3.5" />;
+};
 
 export default function Projects({ className, id = 'projects', ...sectionProps }: ProjectsProps) {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [imageIndex, setImageIndex] = useState(0);
-    const [isMobile, setIsMobile] = useState(false);
-    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-    const [focusToken, setFocusToken] = useState(0);
+    const total = projects.length;
+    const angleStep = total ? 360 / total : 0;
+
+    const [flipped, setFlipped] = useState<boolean[]>(() => projects.map(() => false));
+    const [mediaIndex, setMediaIndex] = useState<number[]>(() => projects.map(() => 0));
+    const [interactionPaused, setInteractionPaused] = useState(false);
 
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
+        setFlipped(projects.map(() => false));
+        setMediaIndex(projects.map(() => 0));
+    }, [total]);
 
-    const totalProjects = projects.length;
-    const currentProject = totalProjects ? projects[currentIndex] : null;
-
-    const goToProject = (targetIndex: number) => {
-        if (!totalProjects) return;
-        const normalized = ((targetIndex % totalProjects) + totalProjects) % totalProjects;
-        setImageIndex(0);
-        setLightboxIndex(null);
-        setCurrentIndex(normalized);
-        setFocusToken((prev) => prev + 1);
-    };
-
-    const handleNextProject = () => goToProject(currentIndex + 1);
-    const handlePrevProject = () => goToProject(currentIndex - 1);
-
-    const handleProjectDragEnd = (_: MouseEvent | TouchEvent, info: PanInfo) => {
-        if (Math.abs(info.offset.x) < PROJECT_DRAG_THRESHOLD) return;
-        info.offset.x < 0 ? handleNextProject() : handlePrevProject();
-    };
-
-    const mediaList = currentProject?.images ?? [];
-    const handleImageSwipe = (direction: 'left' | 'right') => {
-        const media = mediaList;
-        if (!media.length) return;
-        if (direction === 'left') setImageIndex((p) => (p + 1) % media.length);
-        else setImageIndex((p) => (p === 0 ? media.length - 1 : p - 1));
-        setLightboxIndex(null);
-    };
-
-    const openLightbox = (targetIndex: number) => setLightboxIndex(targetIndex);
-    const closeLightbox = () => setLightboxIndex(null);
-    const stepLightbox = (direction: 1 | -1) => {
-        setLightboxIndex((prev) => {
-            if (prev === null) return prev;
-            const total = currentProject?.images.length ?? 0;
-            if (!total) return null;
-            return (prev + direction + total) % total;
+    const toggleFlip = (index: number) => {
+        setFlipped((prev) => {
+            const next = [...prev];
+            next[index] = !next[index];
+            return next;
         });
     };
 
-    useEffect(() => setLightboxIndex(null), [currentIndex]);
-
-    useEffect(() => {
-        if (lightboxIndex === null) {
-            document.body.style.overflow = '';
-            return;
-        }
-        const handleKey = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') closeLightbox();
-            else if (event.key === 'ArrowRight') stepLightbox(1);
-            else if (event.key === 'ArrowLeft') stepLightbox(-1);
-        };
-        document.body.style.overflow = 'hidden';
-        window.addEventListener('keydown', handleKey);
-        return () => {
-            window.removeEventListener('keydown', handleKey);
-            document.body.style.overflow = '';
-        };
-    }, [lightboxIndex, currentIndex]);
-
-    const activeLightboxItem = lightboxIndex !== null ? mediaList[lightboxIndex] : null;
-    let lightboxType: 'image' | 'video' | null = null;
-    let lightboxSrc = '';
-    if (activeLightboxItem) {
-        if (typeof activeLightboxItem === 'string') {
-            lightboxType = 'image';
-            lightboxSrc = activeLightboxItem;
-        } else {
-            lightboxType = activeLightboxItem.type ?? 'image';
-            lightboxSrc = activeLightboxItem.src;
-        }
-    }
-    const normalizedLightboxSrc = lightboxSrc && !lightboxSrc.startsWith('/') ? `/${lightboxSrc}` : lightboxSrc;
-
-    const prevIndex = (currentIndex - 1 + totalProjects) % totalProjects;
-    const nextIndex = (currentIndex + 1) % totalProjects;
-    const prevProject = totalProjects > 1 ? projects[prevIndex] : null;
-    const nextProject = totalProjects > 1 ? projects[nextIndex] : null;
-
-    const baseClasses =
-        'min-h-screen w-full flex flex-col items-center gap-4 px-4 sm:px-6 lg:px-8 pt-24 pb-14 sm:pt-28 sm:pb-14';
-
-    // Testo: usa full -> fallback a short
-    const getFullText = (p?: Project) => p?.full ?? p?.short ?? '';
-
-    /* ============ MEDIA (centrale e preview) ============ */
-    const renderMediaCarousel = (project: Project, isActive: boolean) => {
-        const media = project.images ?? [];
-        const canInteract = isActive;
-        const mediaWidth = isActive ? (isMobile ? '42%' : '60%') : (isMobile ? '28%' : '38%');
-        const mediaMaxHeight = isActive ? (isMobile ? '26%' : '72%') : (isMobile ? '26%' : '69%');
-        const neighborOffset = isActive ? (isMobile ? '50%' : '74%') : (isMobile ? '58%' : '88%');
-        const containerHeights = isActive
-            ? 'h-56 sm:h-[20rem] md:h-[22rem] lg:h-[24rem]'
-            : 'h-28 sm:h-40 md:h-44 lg:h-48';
-
-        if (!media.length) {
-            return (
-                <div className={`flex items-center justify-center ${containerHeights} w-full rounded-xl border border-white/10 bg-black/40 text-white/60`}>
-                    No media
-                </div>
-            );
-        }
-
-        return (
-            <div className="w-full flex flex-col items-center gap-0.5 sm:gap-2 h-full">
-                <motion.div
-                    className={`relative w-full max-w-lg sm:max-w-xl lg:max-w-2xl xl:max-w-3xl overflow-hidden h-full${canInteract ? ' cursor-grab active:cursor-grabbing' : ''
-                        }`}
-                    drag={canInteract ? 'x' : false}
-                    dragConstraints={{ left: 0, right: 0 }}
-                    dragElastic={0}
-                    dragMomentum={false}
-                    onDragEnd={
-                        canInteract
-                            ? (_: MouseEvent | TouchEvent, info: PanInfo) => {
-                                if (Math.abs(info.offset.x) > MEDIA_DRAG_THRESHOLD) {
-                                    info.offset.x > 0 ? handleImageSwipe('right') : handleImageSwipe('left');
-                                }
-                            }
-                            : undefined
-                    }
-                    whileTap={canInteract ? { cursor: 'grabbing' } : undefined}
-                    onWheel={(e) => {
-                        if (!canInteract) return;
-                        if (Math.abs(e.deltaY) < 10 && Math.abs(e.deltaX) < 10) return;
-                        e.preventDefault();
-                        (e.deltaY > 0 || e.deltaX > 0) ? handleImageSwipe('left') : handleImageSwipe('right');
-                    }}
-                    role="region"
-                    aria-roledescription="carousel"
-                    aria-label="Project media"
-                >
-                    <div className={`flex items-center justify-center relative ${containerHeights} w-full overflow-hidden`}>
-                        {media.map((m, idx) => {
-                            const total = media.length;
-                            const rel = (idx - imageIndex + total) % total;
-                            if (rel !== 0 && rel !== 1 && rel !== total - 1) return null;
-
-                            let type: 'image' | 'video' = 'image';
-                            let mediaSrc = '';
-                            if (typeof m === 'string') mediaSrc = m;
-                            else if (m && typeof m === 'object') {
-                                mediaSrc = m.src;
-                                type = m.type ?? 'image';
-                            }
-                            const normalizedSrc = mediaSrc.startsWith('/') ? mediaSrc : `/${mediaSrc}`;
-                            const isCurrent = rel === 0;
-                            // distanza tra media in base allo stato attivo
-                            const x = rel === 0 ? '0%' : rel === 1 ? neighborOffset : `-${neighborOffset}`;
-                            const zIndex = rel === 0 ? 10 : 5;
-
-                            return (
-                                <motion.div
-                                    key={`${project.title}-${idx}`}
-                                    className="absolute flex items-center justify-center"
-                                    animate={{ x, scale: 1, opacity: 1, zIndex }}
-                                    transition={{ duration: 0.35, ease: 'easeOut' }}
-                                >
-                                    {type === 'image' ? (
-                                        <div className="relative flex items-center justify-center w-full h-full px-1.5 sm:px-3">
-                                            <Image
-                                                src={normalizedSrc}
-                                                alt={`${project.title} screenshot ${idx + 1}`}
-                                                width={360}
-                                                height={260}
-                                                className="rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg object-contain"
-                                                style={{
-                                                    width: mediaWidth,
-                                                    maxWidth: '100%',
-                                                    height: 'auto',
-                                                    maxHeight: mediaMaxHeight,
-                                                }}
-                                                sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 560px"
-                                                priority={isCurrent}
-                                                quality={90}
-                                            />
-                                            {canInteract && isCurrent && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => openLightbox(idx)}
-                                                    className="absolute top-3 right-3 rounded-full bg-black/60 p-2 text-white transition hover:bg-black/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                                                    aria-label="Expand image"
-                                                >
-                                                    <FaSearchPlus className="h-4 w-4" />
-                                                </button>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <div className="relative flex items-center justify-center w-full h-full px-1.5 sm:px-3">
-                                            <video
-                                                src={normalizedSrc}
-                                                className="rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg max-w-full max-h-full object-contain"
-                                                style={{
-                                                    width: mediaWidth,
-                                                    maxWidth: '100%',
-                                                    height: 'auto',
-                                                    maxHeight: mediaMaxHeight,
-                                                }}
-                                                autoPlay={isCurrent && canInteract}
-                                                muted
-                                                loop
-                                                playsInline
-                                                controls={isCurrent && canInteract}
-                                            />
-                                            {canInteract && isCurrent && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => openLightbox(idx)}
-                                                    className="absolute top-3 right-3 rounded-full bg-black/60 p-2 text-white transition hover:bg-black/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                                                    aria-label="Expand video"
-                                                >
-                                                    <FaSearchPlus className="h-4 w-4" />
-                                                </button>
-                                            )}
-                                        </div>
-                                    )}
-                                </motion.div>
-                            );
-                        })}
-                    </div>
-                </motion.div>
-
-                {/* indicatore posizione (no thumbnails) */}
-                {media.length > 1 && (
-                    <div className="flex items-center justify-center gap-1">
-                        {media.map((_, idx) => (
-                            <span
-                                key={idx}
-                                className={`block rounded-full transition-all ${idx === imageIndex ? 'w-3 h-1.5 bg-red-500' : 'w-1.5 h-1.5 bg-white/40'
-                                    }`}
-                                aria-hidden
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
-        );
+    const moveMedia = (index: number, direction: 'prev' | 'next') => {
+        setMediaIndex((prev) => {
+            const media = projects[index]?.images ?? [];
+            if (!media.length) return prev;
+            const next = [...prev];
+            const current = prev[index] ?? 0;
+            next[index] = direction === 'next'
+                ? (current + 1) % media.length
+                : (current - 1 + media.length) % media.length;
+            return next;
+        });
     };
 
-    const resolveLinkIcon = (url: string) => {
-        if (/youtu(\.be|be\.com)/i.test(url)) {
-            return <FaPlay className="h-3.5 w-3.5" />;
-        }
-        if (/github\.com/i.test(url)) {
-            return <FaGithub className="h-3.5 w-3.5" />;
-        }
-        return <FaExternalLinkAlt className="h-3.5 w-3.5" />;
-    };
+    const ringCards = useMemo(
+        () =>
+            projects.map((project, index) => ({
+                project,
+                index,
+                angle: angleStep * index,
+            })),
+        [angleStep]
+    );
 
-    const renderProjectLinks = (project: Project) => {
-        const links = project.links ?? [];
-        const demoLink = links.find(
-            (link) =>
-                /demo/i.test(link.label) ||
-                /demo/i.test(link.url) ||
-                /youtu(\.be|be\.com)/i.test(link.url)
-        );
-        const primaryLink = demoLink ?? links[0] ?? null;
-
-        return (
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-3 self-center lg:justify-start">
-                {primaryLink ? (
-                    <a
-                        key={`${project.title}-primary-link`}
-                        href={primaryLink.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex items-center gap-2 rounded-full border border-red-600/70 bg-red-600/10 px-4 py-2 text-sm font-medium text-red-700 transition hover:bg-red-600/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                    >
-                        <span className="text-red-600 transition group-hover:text-red-400">
-                            {resolveLinkIcon(primaryLink.url)}
-                        </span>
-                        <span className="tracking-wide">{primaryLink.label}</span>
-                    </a>
-                ) : (
-                    <span
-                        key={`${project.title}-demo-placeholder`}
-                        className="flex items-center gap-2 rounded-full border border-red-600/40 bg-red-600/5 px-4 py-2 text-sm font-medium text-red-200/70"
-                        aria-disabled="true"
-                    >
-                        <span className="tracking-wide">No demo available</span>
-                    </span>
-                )}
-            </div>
-        );
-    };
-
-    /* ============ CARD CONTENT ============ */
-    const renderCardContent = (project: Project, isActive: boolean, activeKey?: string) => {
-        const description = getFullText(project);
-
-        return (
-            <div className="flex w-full flex-col items-center gap-3 sm:gap-4 lg:flex-row lg:items-stretch lg:gap-10">
-                <div className="flex w-full flex-1 flex-col items-center gap-2 text-center sm:gap-3 lg:items-start lg:text-left h-full">
-                    <h3 className="text-lg sm:text-2xl lg:text-3xl font-bold text-red-700">{project.title}</h3>
-
-                    {isActive ? (
-                        <AutoscrollText
-                            text={description}
-                            className="text-sm sm:text-base md:text-lg text-red-900 h-[12rem] sm:h-[18rem] md:h-[19rem] lg:h-[20rem]"
-                            speed={22}
-                            startDelay={1600}
-                            restartKey={activeKey}
-                        />
-                    ) : (
-                        <div className="relative w-full">
-                            <div className="text-xs sm:text-base text-red-700 h-[7.5rem] sm:h-40 md:h-40 overflow-hidden pr-1 sm:pr-2 md:pr-3">
-                                {description}
-                            </div>
-                            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#0d0d0d] to-transparent" />
-                        </div>
-                    )}
-
-                    {renderProjectLinks(project)}
-                </div>
-
-                <div className="w-full flex-1 flex flex-col items-center justify-start gap-6 h-full -mt-2 sm:mt-0">
-                    {renderMediaCarousel(project, isActive)}
-                </div>
-            </div>
-        );
-    };
-
-    /* ============ PREVIEW LATERALI ============ */
-    const renderPreviewCard = (project: Project | null, position: 'left' | 'right', targetIndex: number) => {
-        if (!project) return null;
-        const offset = 560; // distanza orizzontale dal centro; aumenta se vuoi più stacco
-        const x = position === 'left' ? -offset : offset;
-
-        return (
-            <motion.button
-                key={`${project.title}-${position}`}
-                type="button"
-                onClick={() => goToProject(targetIndex)}
-                className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[5]"
-                initial={{ x, opacity: 0.95, scale: 0.98 }}         // posizione iniziale fuori schermo
-                animate={{ x, opacity: 0.95, scale: 0.98 }}         // posizione finale
-                whileHover={{ scale: 1.0 }}
-                transition={{ duration: 0.35, ease: 'easeOut' }}
-                aria-label={position === 'left' ? 'Previous project' : 'Next project'}
-            >
-                <div className="pointer-events-none">
-                    <div
-                        className="w-[300px] lg:w-[360px] h-[34rem] lg:h-[30rem] bg-[#5e5e5e99] dark:bg-[#00000080] p-4 rounded-2xl border border-white/10
-                     shadow-[inset_0_1px_0_rgba(255,255,255,0.08),_0_4px_6px_rgba(0,0,0,0.45),_0_10px_15px_rgba(0,0,0,0.28)]
-                     backdrop-blur-sm overflow-hidden"
-                    >
-                        {renderCardContent(project, false)}
-                    </div>
-                </div>
-            </motion.button>
-        );
-    };
-
-
-
-    const totalLightboxItems = mediaList.length;
+    const anyFlipped = flipped.some(Boolean);
+    const isRotationPaused = interactionPaused || anyFlipped;
 
     return (
         <section
             id={id}
             {...sectionProps}
-            className={`${baseClasses}${className ? ` ${className}` : ''}`}
+            className={`min-h-screen w-full px-6 pt-24 pb-16 flex flex-col items-center gap-10 bg-[#0d0d0d] text-white${className ? ` ${className}` : ''
+                }`}
             aria-labelledby="projects-title"
         >
             <h2
                 id="projects-title"
-                className="-translate-y-16 sm:translate-y-0 text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-6 text-red-700 text-center"
+                className="text-2xl sm:text-3xl md:text-4xl font-bold text-red-600 tracking-[0.03em]"
             >
                 My Projects
             </h2>
 
-            <div className="flex-1 w-full flex items-center justify-center">
-                <div className="relative w-full max-w-7xl flex items-center justify-center h-full">
-                    {/* più largo per dare respiro ai preview */}
-                    <div className="relative w-full max-w-6xl mx-auto h-full flex flex-col sm:flex-row items-center sm:items-stretch justify-center overflow-visible">
-                        {renderPreviewCard(prevProject, 'left', prevIndex)}
-                        {renderPreviewCard(nextProject, 'right', nextIndex)}
+            <div className="ring-scene relative w-full max-w-6xl h-[25rem] mt-6 [perspective:1200px]">
+                <div
+                    className="relative w-full h-full [transform-style:preserve-3d] animate-[ringSpin_26s_linear_infinite] will-change-transform hover:[animation-play-state:paused]"
+                    aria-label="Projects carousel"
+                    style={isRotationPaused ? { animationPlayState: 'paused' } : undefined}
+                    onPointerDown={() => setInteractionPaused(true)}
+                    onPointerUp={() => setInteractionPaused(false)}
+                    onPointerCancel={() => setInteractionPaused(false)}
+                    onPointerLeave={() => setInteractionPaused(false)}
+                >
+                    {ringCards.map(({ project, index, angle }) => {
+                        const media = project.images?.map(normalizeMedia) ?? [];
+                        const currentMedia = media[mediaIndex[index] ?? 0];
+                        const normalizedSrc = currentMedia?.src?.startsWith('/')
+                            ? currentMedia.src
+                            : currentMedia?.src
+                                ? `/${currentMedia.src}`
+                                : '';
+                        const primaryLink = getPrimaryLink(project);
+                        const hasMedia = media.length > 0;
+                        const isFlipped = flipped[index];
 
-                        {/* scheda centrale */}
-                        <motion.div
-                            className="relative z-10 w-[86%] sm:w-full md:w-[82%] lg:w-[74%] xl:w-[68%] max-w-5xl h-[34rem] lg:h-[30rem] mt-[-4.5rem] sm:mt-0 flex flex-col items-stretch gap-7
-              bg-[#5e5e5ec5] dark:bg-[#000000b9] px-4 sm:px-6 lg:px-10 py-5 sm:py-6 lg:py-8 rounded-3xl overflow-visible cursor-grab active:cursor-grabbing
-              shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_4px_6px_rgba(0,0,0,0.6),_0_10px_15px_rgba(0,0,0,0.3)] hover:shadow-[0_0_24px_rgba(255,0,0,0.28)] transition-shadow duration-500"
-                            drag="x"
-                            dragConstraints={{ left: 0, right: 0 }}
-                            dragElastic={0}
-                            dragMomentum={false}
-                            onDragEnd={handleProjectDragEnd}
-                            whileTap={{ cursor: 'grabbing' }}
-                            role="region"
-                            aria-roledescription="carousel"
-                            aria-label="Projects carousel"
-                        >
-                            {currentProject ? (
-                                renderCardContent(currentProject, true, `${focusToken}-${currentProject.title}`)
-                            ) : (
-                                <div className="flex h-full items-center justify-center text-center text-lg text-red-800">
-                                    No projects available
+                        return (
+                            <div
+                                key={`${project.title}-${index}`}
+                                className="absolute top-1/2 left-1/2 [transform-style:preserve-3d]"
+                                style={
+                                    {
+                                        width: 'var(--card-width)',
+                                        height: 'var(--card-height)',
+                                        transform: `translate(-50%, -50%) rotateY(${angle}deg) translateZ(var(--ring-radius)) scale(var(--card-scale))`,
+                                    } as CSSProperties
+                                }
+                            >
+                                <div
+                                    className="relative h-full w-full transition-transform duration-500 ease-in-out cursor-pointer outline-none [transform-style:preserve-3d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500 focus-visible:outline-offset-4"
+                                    style={{ transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+                                >
+                                    <div
+                                        className="absolute inset-0 rounded-2xl border-2 border-red-500/20 bg-black/90 shadow-[0_12px_30px_rgba(0,0,0,0.45)] p-5 flex flex-col gap-4"
+                                        style={{ backfaceVisibility: 'hidden' }}
+                                    >
+                                        <h3 className="text-lg font-bold text-red-400 text-center">{project.title}</h3>
+
+                                        {hasMedia ? (
+                                            <div className="relative w-full flex-1 min-h-0 rounded-2xl overflow-hidden bg-[#111] border border-white/10 flex items-center justify-center">
+                                                {currentMedia?.type === 'video' ? (
+                                                    <video
+                                                        src={normalizedSrc}
+                                                        className="w-full h-full object-cover rounded-xl"
+                                                        controls
+                                                        muted
+                                                        playsInline
+                                                        onClick={(event) => event.stopPropagation()}
+                                                    />
+                                                ) : (
+                                                    normalizedSrc && (
+                                                        <Image
+                                                            src={normalizedSrc}
+                                                            alt={`${project.title} preview`}
+                                                            fill
+                                                            sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 320px"
+                                                            className="object-cover"
+                                                            priority={index === 0}
+                                                        />
+                                                    )
+                                                )}
+
+                                                {media.length > 1 && (
+                                                    <>
+                                                        <button
+                                                            type="button"
+                                                            className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/70 text-white grid place-items-center"
+                                                            onClick={(event) => {
+                                                                event.stopPropagation();
+                                                                moveMedia(index, 'prev');
+                                                            }}
+                                                            aria-label="Previous media"
+                                                        >
+                                                            <FaChevronLeft />
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/70 text-white grid place-items-center"
+                                                            onClick={(event) => {
+                                                                event.stopPropagation();
+                                                                moveMedia(index, 'next');
+                                                            }}
+                                                            aria-label="Next media"
+                                                        >
+                                                            <FaChevronRight />
+                                                        </button>
+                                                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 pointer-events-none">
+                                                            {media.map((_, dotIndex) => (
+                                                                <span
+                                                                    key={dotIndex}
+                                                                    className={`h-1.5 rounded-full transition-all ${dotIndex === (mediaIndex[index] ?? 0)
+                                                                            ? 'w-4 bg-red-500'
+                                                                            : 'w-1.5 bg-white/40'
+                                                                        }`}
+                                                                    aria-hidden
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="flex-1 min-h-0 rounded-2xl border border-dashed border-white/20 text-white/70 flex items-center justify-center">
+                                                {primaryLink ? (
+                                                    <a
+                                                        href={primaryLink.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-500/60 bg-red-500/10 text-red-100 text-sm"
+                                                        onClick={(event) => event.stopPropagation()}
+                                                    >
+                                                        <span className="inline-flex">{getLinkIcon(primaryLink.url)}</span>
+                                                        <span>{primaryLink.label}</span>
+                                                    </a>
+                                                ) : (
+                                                    <span className="text-xs uppercase tracking-[0.2em]">No media available</span>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleFlip(index)}
+                                            className="mt-auto text-center text-xs uppercase tracking-[0.2em] text-red-500/60 hover:text-white transition"
+                                            aria-label={`Flip ${project.title}`}
+                                        >
+                                            tap to flip
+                                        </button>
+                                    </div>
+
+                                    <div
+                                        className="absolute inset-0 rounded-2xl border border-white/10 bg-black/90 shadow-[0_12px_30px_rgba(0,0,0,0.45)] p-5 flex flex-col gap-4"
+                                        style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                                    >
+                                        <div className="flex-1 overflow-auto pr-2">
+                                            <p className="text-xs leading-relaxed text-white/75">{project.full}</p>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleFlip(index)}
+                                            className="mt-auto text-center text-xs uppercase tracking-[0.2em] text-red-500/60 hover:text-white transition"
+                                            aria-label={`Return to front of ${project.title}`}
+                                        >
+                                            tap to return
+                                        </button>
+                                    </div>
                                 </div>
-                            )}
-
-                        </motion.div>
-
-                        <div className="sm:hidden mt-3">
-                            <ShinyText
-                                text="SLIDE FOR MORE"
-                                disabled={false}
-                                speed={10}
-                                className='custom-class'
-                            />
-                        </div>
-                    </div>   
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 
-            {/* LIGHTBOX */}
-            {lightboxIndex !== null && activeLightboxItem && normalizedLightboxSrc && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-8">
-                    <div className="absolute inset-0 bg-black/70" onClick={closeLightbox} aria-hidden />
-                    <div
-                        className="relative z-10 w-full max-w-5xl text-red-700"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label="Media viewer"
-                    >
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-base sm:text-lg font-semibold">{currentProject?.title ?? ''}</h3>
-                            <button
-                                type="button"
-                                onClick={closeLightbox}
-                                className="rounded-full bg-black/60 p-2 hover:bg-black/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                                aria-label="Close media viewer"
-                            >
-                                <FaTimes />
-                            </button>
-                        </div>
-
-                        <div className="relative bg-black/80 rounded-2xl p-4 flex items-center justify-center shadow-2xl">
-                            {totalLightboxItems > 1 && (
-                                <>
-                                    <button
-                                        type="button"
-                                        onClick={() => stepLightbox(-1)}
-                                        className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-3 hover:bg-black/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                                        aria-label="Previous media"
-                                    >
-                                        <FaChevronLeft className="h-5 w-5" />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => stepLightbox(1)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-3 hover:bg-black/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                                        aria-label="Next media"
-                                    >
-                                        <FaChevronRight className="h-5 w-5" />
-                                    </button>
-                                </>
-                            )}
-
-                            {lightboxType === 'image' && (
-                                <Image
-                                    src={normalizedLightboxSrc}
-                                    alt={`${currentProject?.title ?? 'Project'} enlarged`}
-                                    width={1200}
-                                    height={800}
-                                    className="max-h-[75vh] w-auto rounded-xl object-contain"
-                                    sizes="(max-width: 1024px) 90vw, 70vw"
-                                    priority
-                                />
-                            )}
-                            {lightboxType === 'video' && (
-                                <video
-                                    src={normalizedLightboxSrc}
-                                    className="max-h-[75vh] w-full rounded-xl bg-black"
-                                    controls
-                                    autoPlay
-                                    loop
-                                />
-                            )}
-                        </div>
-
-                        {totalLightboxItems > 1 && (
-                            <>
-                                <div className="mt-4 flex justify-center gap-2">
-                                    {mediaList.map((_, idx) => {
-                                        const active = idx === lightboxIndex;
-                                        return (
-                                            <button
-                                                key={idx}
-                                                type="button"
-                                                onClick={() => setLightboxIndex(idx)}
-                                                className={`h-2 rounded-full transition-all ${active ? 'w-6 bg-red-500' : 'w-2 bg-white/40 hover:bg-white/70'
-                                                    }`}
-                                                aria-label={`Show media ${idx + 1}`}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                                <p className="mt-2 text-center text-sm text-white/70">
-                                    {lightboxIndex + 1} / {totalLightboxItems}
-                                </p>
-                            </>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* utilità globale per nascondere le scrollbar, se non l’hai già */}
             <style jsx global>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
+                .ring-scene {
+                    --ring-radius: clamp(140px, 28vw, 320px);
+                    --card-width: clamp(180px, 50vw, 250px);
+                    --card-height: clamp(270px, 72vw, 355px);
+                    --card-scale: 1;
+                }
+
+                @keyframes ringSpin {
+                    from {
+                        transform: rotateY(0deg);
+                    }
+                    to {
+                        transform: rotateY(360deg);
+                    }
+                }
+
+                @media (max-width: 820px) {
+                    .ring-scene {
+                        height: 23.5rem;
+                        --ring-radius: clamp(220px, 54vw, 360px);
+                        --card-width: clamp(175px, 58vw, 235px);
+                        --card-height: clamp(245px, 74vw, 320px);
+                        --card-scale: 0.97;
+                    }
+                }
+
+                @media (max-width: 560px) {
+                    .ring-scene {
+                        height: 26rem;
+                        --ring-radius: clamp(230px, 78vw, 360px);
+                        --card-width: clamp(150px, 68vw, 205px);
+                        --card-height: clamp(280px, 110vw, 380px);
+                        --card-scale: 0.92;
+                    }
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                    .animate-\\[ringSpin_26s_linear_infinite\\] {
+                        animation: none !important;
+                    }
+                }
+            `}</style>
         </section>
     );
 }
-
