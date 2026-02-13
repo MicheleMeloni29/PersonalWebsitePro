@@ -1,6 +1,6 @@
 'use client';
 
-import { ComponentPropsWithoutRef, useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { ComponentPropsWithoutRef, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import { FaChevronLeft, FaChevronRight, FaExternalLinkAlt, FaGithub, FaPlay } from 'react-icons/fa';
 import { projects, Project } from './data/projectsStructure';
@@ -42,6 +42,9 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
     const [flipped, setFlipped] = useState<boolean[]>(() => projects.map(() => false));
     const [mediaIndex, setMediaIndex] = useState<number[]>(() => projects.map(() => 0));
     const [interactionPaused, setInteractionPaused] = useState(false);
+    const [manualPaused, setManualPaused] = useState(false);
+    const tapTimeoutRef = useRef<number[]>([]);
+    const lastTapRef = useRef<number[]>([]);
 
     useEffect(() => {
         setFlipped(projects.map(() => false));
@@ -80,7 +83,31 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
     );
 
     const anyFlipped = flipped.some(Boolean);
-    const isRotationPaused = interactionPaused || anyFlipped;
+    const isRotationPaused = interactionPaused || anyFlipped || manualPaused;
+
+    const handleFrontTap = (index: number) => {
+        const now = Date.now();
+        const lastTap = lastTapRef.current[index] ?? 0;
+        const threshold = 260;
+
+        if (now - lastTap < threshold) {
+            if (tapTimeoutRef.current[index]) {
+                window.clearTimeout(tapTimeoutRef.current[index]);
+            }
+            lastTapRef.current[index] = 0;
+            toggleFlip(index);
+            return;
+        }
+
+        lastTapRef.current[index] = now;
+        if (tapTimeoutRef.current[index]) {
+            window.clearTimeout(tapTimeoutRef.current[index]);
+        }
+        tapTimeoutRef.current[index] = window.setTimeout(() => {
+            setManualPaused((prev) => !prev);
+            lastTapRef.current[index] = 0;
+        }, threshold);
+    };
 
     return (
         <section
@@ -142,26 +169,30 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                         <h3 className="text-lg font-bold text-red-400 text-center">{project.title}</h3>
 
                                         {hasMedia ? (
-                                            <div className="relative w-full flex-1 min-h-0 rounded-2xl overflow-hidden bg-[#111] border border-white/10 flex items-center justify-center">
+                                            <div className="relative w-full flex-1 min-h-0 rounded-2xl overflow-hidden bg-[#0b0b0b] border border-white/10 flex items-center justify-center">
                                                 {currentMedia?.type === 'video' ? (
-                                                    <video
-                                                        src={normalizedSrc}
-                                                        className="w-full h-full object-cover rounded-xl"
-                                                        controls
-                                                        muted
-                                                        playsInline
-                                                        onClick={(event) => event.stopPropagation()}
-                                                    />
+                                                    <div className="flex items-center justify-center w-full h-full p-2">
+                                                        <video
+                                                            src={normalizedSrc}
+                                                            className="w-full h-full object-contain rounded-xl"
+                                                            controls
+                                                            muted
+                                                            playsInline
+                                                            onClick={(event) => event.stopPropagation()}
+                                                        />
+                                                    </div>
                                                 ) : (
                                                     normalizedSrc && (
-                                                        <Image
-                                                            src={normalizedSrc}
-                                                            alt={`${project.title} preview`}
-                                                            fill
-                                                            sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 320px"
-                                                            className="object-cover"
-                                                            priority={index === 0}
-                                                        />
+                                                        <div className="relative w-full h-full p-2">
+                                                            <Image
+                                                                src={normalizedSrc}
+                                                                alt={`${project.title} preview`}
+                                                                fill
+                                                                sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 320px"
+                                                                className="object-contain"
+                                                                priority={index === 0}
+                                                            />
+                                                        </div>
                                                     )
                                                 )}
 
@@ -225,11 +256,11 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
 
                                         <button
                                             type="button"
-                                            onClick={() => toggleFlip(index)}
-                                            className="mt-auto text-center text-xs uppercase tracking-[0.2em] text-red-500/60 hover:text-white transition"
+                                            onClick={() => handleFrontTap(index)}
+                                            className="mt-auto text-center text-[0.5rem] uppercase tracking-[0.18em] text-red-500/80 hover:text-white transition touch-manipulation"
                                             aria-label={`Flip ${project.title}`}
                                         >
-                                            tap to flip
+                                            One tap to stop, two to flip
                                         </button>
                                     </div>
 
@@ -244,7 +275,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                         <button
                                             type="button"
                                             onClick={() => toggleFlip(index)}
-                                            className="mt-auto text-center text-xs uppercase tracking-[0.2em] text-red-500/60 hover:text-white transition"
+                                            className="mt-auto text-center text-xs uppercase tracking-[0.2em] text-red-500/80 hover:text-white transition"
                                             aria-label={`Return to front of ${project.title}`}
                                         >
                                             tap to return
