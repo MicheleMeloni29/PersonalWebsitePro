@@ -9,10 +9,12 @@ import {
     type HTMLMotionProps,
 } from 'framer-motion';
 import DecryptedText from './UI/DecriptedText';
+import { useLanguage } from './data/LanguageProvider';
 
 type AboutProps = HTMLMotionProps<'section'>;
 
 export default function About({ className, id = 'about', ...sectionProps }: AboutProps) {
+    const { dict } = useLanguage();
     const [isMobile, setIsMobile] = useState(false);
     const reduce = useReducedMotion();
     const sectionRef = useRef<HTMLElement | null>(null);
@@ -153,7 +155,7 @@ export default function About({ className, id = 'about', ...sectionProps }: Abou
                      text-xl sm:text-3xl md:text-4xl
                      leading-tight sm:leading-snug"
                 >
-                    About Me
+                    {dict.About.title}
                 </motion.h2>
 
                 <motion.p
@@ -165,7 +167,7 @@ export default function About({ className, id = 'about', ...sectionProps }: Abou
                      mt-10 sm:mt-8 md:mt-10 mb-4"
                 >
                     <DecryptedText
-                        text="Hi, I'm Michele. I started programming in college, and it changed everything."
+                        text={dict.About.intro}
                         animateOn="view"
                         sequential
                         revealDirection="start"
@@ -183,9 +185,7 @@ export default function About({ className, id = 'about', ...sectionProps }: Abou
                      leading-relaxed sm:leading-relaxed md:leading-normal
                      mt-8 sm:mt-6 md:mt-8"
                 >
-                    The first lines of code, written just for fun, turned into a passion. I dove deep into
-                    mobile and frontend development, discovering React, React Native, TypeScript,
-                    JavaScript, and Flutter.
+                    {dict.About.blockRight}
                 </motion.p>
 
                 <motion.p
@@ -197,8 +197,7 @@ export default function About({ className, id = 'about', ...sectionProps }: Abou
                      leading-relaxed sm:leading-relaxed md:leading-normal
                      mt-8 sm:mt-5 md:mt-8"
                 >
-                    As a self-taught developer, I built projects, explored backend with Python, and keep
-                    learning every day. I code to grow, to solve problems, and to turn ideas into reality.
+                    {dict.About.blockLeft}
                 </motion.p>
             </div>
         </motion.section>

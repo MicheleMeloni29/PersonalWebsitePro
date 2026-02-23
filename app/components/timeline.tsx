@@ -1,18 +1,27 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { ComponentPropsWithoutRef } from "react";
-import { TimelineEntry } from "./data/TimelineStructure";
-import { timelineData } from "./data/TimelineStructure";
+import { ComponentPropsWithoutRef, useMemo } from "react";
+import type { TimelineEntry } from "./data/TimelineStructure";
+import { useLanguage } from "./data/LanguageProvider";
 
-// ---- split dopo “Smartphone Technician”
-const SPLIT_AT = (() => {
-    const idx = timelineData.findIndex((e) => e.title === 'Smartphone Technician');
-    return idx >= 0 ? idx + 1 : 4;
-})();
+const DEFAULT_SPLIT_AT = 4;
 
-const TIMELINE_PART_ONE_ITEMS = timelineData.slice(0, SPLIT_AT);
-const TIMELINE_PART_TWO_ITEMS = timelineData.slice(SPLIT_AT);
+function useTimelineParts() {
+    const { dict } = useLanguage();
+    const items = dict.Timeline.items as TimelineEntry[];
+    const splitAt = Number(dict.Timeline.splitAt ?? DEFAULT_SPLIT_AT);
+    const heading = dict.Timeline.heading;
+
+    return useMemo(() => {
+        const safeSplit = Math.max(0, Math.min(items.length, splitAt));
+        return {
+            partOne: items.slice(0, safeSplit),
+            partTwo: items.slice(safeSplit),
+            heading,
+        };
+    }, [items, splitAt, heading]);
+}
 
 type TimelineSectionProps = ComponentPropsWithoutRef<'section'> & {
     items: TimelineEntry[];
@@ -26,7 +35,7 @@ function TimelineSection({
     className,
     id = 'timeline',
     items,
-    heading = 'My Journey',
+    heading = '',
     showHeading = true,
     fullHeightLine = false,
     ...sectionProps
@@ -132,16 +141,17 @@ function TimelineSection({
 type TimelinePartProps = Omit<TimelineSectionProps, 'items'>;
 
 export function TimelinePartOne({
-    heading = 'My Journey',
+    heading,
     id = 'timeline',
     ...props
 }: TimelinePartProps) {
+    const { partOne, heading: defaultHeading } = useTimelineParts();
     return (
         <TimelineSection
             {...props}
             id={id}
-            items={TIMELINE_PART_ONE_ITEMS}
-            heading={heading}
+            items={partOne}
+            heading={heading ?? defaultHeading}
             showHeading
             fullHeightLine
         />
@@ -153,11 +163,12 @@ export function TimelinePartTwo({
     id = 'timeline-continued',
     ...props
 }: TimelinePartProps) {
+    const { partTwo } = useTimelineParts();
     return (
         <TimelineSection
             {...props}
             id={id}
-            items={TIMELINE_PART_TWO_ITEMS}
+            items={partTwo}
             showHeading={false}
             className="mt-[-3rem] sm:mt-0"
         // no fullHeightLine
@@ -165,6 +176,4 @@ export function TimelinePartTwo({
     );
 }
 
-export const timelinePartOneItems = TIMELINE_PART_ONE_ITEMS;
-export const timelinePartTwoItems = TIMELINE_PART_TWO_ITEMS;
 export { TimelineSection as TimelineBase };

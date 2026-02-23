@@ -2,25 +2,7 @@
 import { ComponentPropsWithoutRef, useMemo } from "react";
 import ProfileCard from "./UI/profileCard";
 import RotatingText from "./UI/RotatingText";
-
-const LANGUAGES = [
-    "TypeScript",
-    "ReactNative",
-    "Java",
-    "Python",
-    "C",
-    "HTML",
-    "CSS",
-];
-
-const TECHNOLOGIES = [
-    "Expo",
-    "Next.js",
-    "Firebase",
-    "TailwindCSS",
-    "GitHub",
-    "Vercel",
-];
+import { useLanguage } from "./data/LanguageProvider";
 
 function LabeledRotator({
     label,
@@ -69,6 +51,10 @@ function LabeledRotator({
 type HeroProps = ComponentPropsWithoutRef<"section">;
 
 export default function Hero({ className, ...sectionProps }: HeroProps) {
+    const { t, dict } = useLanguage();
+    const languages = dict.Hero.rotators.languages;
+    const tech = dict.Hero.rotators.tech;
+
     const baseClasses = [
         "px-6",
         "pt-[clamp(8px,30vh,56px)]",
@@ -91,25 +77,26 @@ export default function Hero({ className, ...sectionProps }: HeroProps) {
                 <div className="flex justify-center lg:justify-start lg:mt-24 sm:mt-4 xl:mt-12">
                     <div className= "w-full max-w-md sm:max-w-lg lg:max-w-2xl">
                         <ProfileCard
-                            name="Michele Meloni"
-                            role="Frontend Developer"
-                            location="Sestu, Sardinia (IT)"
+                            name={dict.Hero.profile.name}
+                            role={dict.Hero.profile.role}
+                            location={dict.Hero.profile.location}
                             photo="profileIMGReal.png"
-                            bio="I build modern web & mobile apps. Passionate about UI/UX and performance."
+                            bio={dict.Hero.profile.bio}
                             imageScale={0.95}
                             imageInset={12}
                             objectPosition="50% 60%"
                             imageOffsetY={0}
                             imageOpacity={0.3}
                             className="sm:aspect-[4/5] lg:aspect-[4/5]" // aspect ratio adattivo
+                            flipLabel={t("Aria", "flipCard")}
                         />
                     </div>
                 </div>
 
                 {/* Destra (desktop): RotatingText */}
                 <div className="mb-10 flex flex-col gap-6 items-center lg:items-start lg:gap-24">
-                    <LabeledRotator label="Languages" texts={LANGUAGES} />
-                    <LabeledRotator label="Tech" texts={TECHNOLOGIES} />
+                    <LabeledRotator label={dict.Hero.labels.languages} texts={languages} />
+                    <LabeledRotator label={dict.Hero.labels.tech} texts={tech} />
                 </div>
             </div>
         </section>

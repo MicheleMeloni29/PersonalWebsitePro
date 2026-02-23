@@ -3,7 +3,8 @@
 import { ComponentPropsWithoutRef, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import { FaChevronLeft, FaChevronRight, FaExternalLinkAlt, FaGithub, FaPlay } from 'react-icons/fa';
-import { projects, Project } from './data/projectsStructure';
+import type { Project } from './data/projectsStructure';
+import { useLanguage } from './data/LanguageProvider';
 
 type ProjectsProps = ComponentPropsWithoutRef<'section'>;
 
@@ -36,6 +37,8 @@ const getLinkIcon = (url: string) => {
 };
 
 export default function Projects({ className, id = 'projects', ...sectionProps }: ProjectsProps) {
+    const { t, dict } = useLanguage();
+    const projects = dict.Projects.items as Project[];
     const total = projects.length;
     const angleStep = total ? 360 / total : 0;
 
@@ -46,11 +49,16 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
     const tapTimeoutRef = useRef<number[]>([]);
     const lastTapRef = useRef<number[]>([]);
     const resumeTimeoutRef = useRef<number | null>(null);
+    const backScrollRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const backContentRefs = useRef<(HTMLParagraphElement | null)[]>([]);
+    const autoScrollTimeoutsRef = useRef<(number | null)[]>([]);
+    const flippedRef = useRef<boolean[]>([]);
+    const prevFlippedRef = useRef<boolean[]>([]);
 
     useEffect(() => {
         setFlipped(projects.map(() => false));
         setMediaIndex(projects.map(() => 0));
-    }, [total]);
+    }, [projects]);
 
     const toggleFlip = (index: number) => {
         setFlipped((prev) => {
@@ -80,7 +88,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                 index,
                 angle: angleStep * index,
             })),
-        [angleStep]
+        [projects, angleStep]
     );
 
     const anyFlipped = flipped.some(Boolean);
@@ -120,6 +128,63 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         }, delay);
     };
 
+    const stopAutoScroll = (index: number) => {
+        const timeoutId = autoScrollTimeoutsRef.current[index];
+        if (timeoutId) {
+            window.clearTimeout(timeoutId);
+            autoScrollTimeoutsRef.current[index] = null;
+        }
+        const content = backContentRefs.current[index];
+        if (content) {
+            content.style.animation = 'none';
+            content.style.transform = 'translateY(0px)';
+        }
+    };
+
+    const startAutoScroll = (index: number) => {
+        const container = backScrollRefs.current[index];
+        const content = backContentRefs.current[index];
+        if (!container || !content) return;
+
+        stopAutoScroll(index);
+
+        autoScrollTimeoutsRef.current[index] = window.setTimeout(() => {
+            const distance = content.scrollHeight - container.clientHeight;
+            if (distance <= 0) return;
+
+            const speed = 6; // px per second
+            const duration = Math.max(8, distance / speed);
+
+            content.style.setProperty('--scroll-distance', `${distance}px`);
+            content.style.animation = 'none';
+            // force reflow to restart animation reliably
+            void content.offsetHeight;
+            content.style.animation = `backTextScroll ${duration}s linear forwards`;
+        }, 3000);
+    };
+
+    useEffect(() => {
+        flippedRef.current = flipped;
+    }, [flipped]);
+
+    useEffect(() => {
+        const prev = prevFlippedRef.current;
+        flipped.forEach((isFlipped, index) => {
+            const wasFlipped = prev[index] ?? false;
+            if (isFlipped && !wasFlipped) startAutoScroll(index);
+            if (!isFlipped && wasFlipped) stopAutoScroll(index);
+        });
+        prevFlippedRef.current = flipped;
+    }, [flipped]);
+
+    useEffect(() => {
+        return () => {
+            autoScrollTimeoutsRef.current.forEach((id) => {
+                if (id) window.clearTimeout(id);
+            });
+        };
+    }, []);
+
     return (
         <section
             id={id}
@@ -132,13 +197,13 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                 id="projects-title"
                 className="text-2xl sm:text-3xl md:text-4xl font-bold text-red-600 tracking-[0.03em]"
             >
-                My Projects
+                {t("Projects", "title")}
             </h2>
 
             <div className="ring-scene relative w-full max-w-6xl h-[25rem] mt-6 [perspective:1200px]">
                 <div
                     className="relative w-full h-full [transform-style:preserve-3d] animate-[ringSpin_26s_linear_infinite] will-change-transform hover:[animation-play-state:paused]"
-                    aria-label="Projects carousel"
+                    aria-label={t("Projects", "carouselLabel")}
                     style={isRotationPaused ? { animationPlayState: 'paused' } : undefined}
                     onPointerDown={() => setInteractionPaused(true)}
                     onPointerUp={() => setInteractionPaused(false)}
@@ -175,13 +240,16 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                 >
                                     <div
                                         className="absolute inset-0 rounded-2xl border-2 border-red-500/20 bg-black/90 shadow-[0_12px_30px_rgba(0,0,0,0.45)] p-5 flex flex-col gap-4"
-                                        style={{ backfaceVisibility: 'hidden' }}
+                                        style={{
+                                            backfaceVisibility: 'hidden',
+                                            pointerEvents: isFlipped ? 'none' : 'auto',
+                                        }}
                                     >
                                         <h3 className="text-lg font-bold text-red-400 text-center">{project.title}</h3>
 
                                         {hasMedia ? (
                                             <div className="relative w-full flex-1 min-h-0">
-                                                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[#0b0b0b] border border-white/10 flex items-center justify-center">
+                                                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black/90 flex items-center justify-center">
                                                     {currentMedia?.type === 'video' ? (
                                                         <div className="flex items-center justify-center w-full h-full p-2">
                                                             <video
@@ -198,7 +266,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                                             <div className="relative w-full h-full p-2">
                                                                 <Image
                                                                     src={normalizedSrc}
-                                                                    alt={`${project.title} preview`}
+                                                                    alt={t("Projects", "previewAlt", { title: project.title })}
                                                                     fill
                                                                     sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 320px"
                                                                     className="object-contain"
@@ -218,7 +286,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                                                 event.stopPropagation();
                                                                 setInteractionPaused(true);
                                                             }}
-                                                            onPointerUp={(event) => {
+                                                            onClick={(event) => {
                                                                 event.stopPropagation();
                                                                 moveMedia(index, 'prev');
                                                                 scheduleResume();
@@ -227,7 +295,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                                                 event.stopPropagation();
                                                                 scheduleResume(0);
                                                             }}
-                                                            aria-label="Previous media"
+                                                            aria-label={t("Projects", "previousMedia")}
                                                         >
                                                             <FaChevronLeft />
                                                         </button>
@@ -238,7 +306,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                                                 event.stopPropagation();
                                                                 setInteractionPaused(true);
                                                             }}
-                                                            onPointerUp={(event) => {
+                                                            onClick={(event) => {
                                                                 event.stopPropagation();
                                                                 moveMedia(index, 'next');
                                                                 scheduleResume();
@@ -247,7 +315,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                                                 event.stopPropagation();
                                                                 scheduleResume(0);
                                                             }}
-                                                            aria-label="Next media"
+                                                            aria-label={t("Projects", "nextMedia")}
                                                         >
                                                             <FaChevronRight />
                                                         </button>
@@ -267,7 +335,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                                 )}
                                             </div>
                                         ) : (
-                                            <div className="flex-1 min-h-0 rounded-2xl border border-dashed border-white/20 text-white/70 flex items-center justify-center">
+                                            <div className="flex-1 min-h-0 rounded-2xl text-white/70 flex items-center justify-center">
                                                 {primaryLink ? (
                                                     <a
                                                         href={primaryLink.url}
@@ -280,7 +348,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                                         <span>{primaryLink.label}</span>
                                                     </a>
                                                 ) : (
-                                                    <span className="text-xs uppercase tracking-[0.2em]">No media available</span>
+                                                    <span className="text-xs uppercase tracking-[0.2em]">{t("Projects", "noMedia")}</span>
                                                 )}
                                             </div>
                                         )}
@@ -289,27 +357,43 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                             type="button"
                                             onClick={() => handleFrontTap(index)}
                                             className="mt-auto text-center text-[0.5rem] uppercase tracking-[0.18em] text-red-500/80 hover:text-white transition touch-manipulation"
-                                            aria-label={`Flip ${project.title}`}
+                                            aria-label={t("Projects", "flipAria", { title: project.title })}
                                         >
-                                            One tap to stop, two to flip
+                                            {t("Projects", "flipHint")}
                                         </button>
                                     </div>
 
                                     <div
-                                        className="absolute inset-0 rounded-2xl border border-white/10 bg-black/90 shadow-[0_12px_30px_rgba(0,0,0,0.45)] p-5 flex flex-col gap-4"
-                                        style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+                                        className="absolute inset-0 rounded-2xl border border-white/10 bg-black/90 shadow-[0_12px_30px_rgba(0,0,0,0.45)] p-5 flex flex-col gap-4 min-h-0"
+                                        style={{
+                                            backfaceVisibility: 'hidden',
+                                            transform: 'rotateY(180deg)',
+                                            pointerEvents: isFlipped ? 'auto' : 'none',
+                                        }}
                                     >
-                                        <div className="flex-1 overflow-auto pr-2">
-                                            <p className="text-xs leading-relaxed text-white/75">{project.full}</p>
+                                        <div
+                                            ref={(el) => {
+                                                backScrollRefs.current[index] = el;
+                                            }}
+                                            className="flex-1 min-h-0 overflow-hidden"
+                                        >
+                                            <p
+                                                ref={(el) => {
+                                                    backContentRefs.current[index] = el;
+                                                }}
+                                                className="text-xs leading-relaxed text-white/75 will-change-transform"
+                                            >
+                                                {project.full}
+                                            </p>
                                         </div>
 
                                         <button
                                             type="button"
                                             onClick={() => toggleFlip(index)}
                                             className="mt-auto text-center text-xs uppercase tracking-[0.2em] text-red-500/80 hover:text-white transition"
-                                            aria-label={`Return to front of ${project.title}`}
+                                            aria-label={t("Projects", "returnAria", { title: project.title })}
                                         >
-                                            tap to return
+                                            {t("Projects", "returnHint")}
                                         </button>
                                     </div>
                                 </div>
@@ -336,6 +420,15 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                     }
                 }
 
+                @keyframes backTextScroll {
+                    from {
+                        transform: translateY(0);
+                    }
+                    to {
+                        transform: translateY(calc(-1 * var(--scroll-distance, 0px)));
+                    }
+                }
+
                 @media (max-width: 820px) {
                     .ring-scene {
                         height: 23.5rem;
@@ -353,6 +446,12 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                         --card-width: clamp(150px, 68vw, 205px);
                         --card-height: clamp(280px, 110vw, 380px);
                         --card-scale: 0.92;
+                    }
+                }
+
+                @media (min-width: 1440px) {
+                    .ring-scene {
+                        margin-top: 3rem;
                     }
                 }
 

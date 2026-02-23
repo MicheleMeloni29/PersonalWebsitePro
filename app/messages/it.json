@@ -1,0 +1,222 @@
+{
+  "Header": {
+    "home": "Home",
+    "about": "Chi sono",
+    "timeline": "Timeline",
+    "projects": "Progetti",
+    "contact": "Contatti",
+    "changeLanguage": "Cambia lingua"
+  },
+  "Hero": {
+    "profile": {
+      "name": "Michele Meloni",
+      "role": "Sviluppatore Frontend",
+      "location": "Sestu, Sardegna (IT)",
+      "bio": "Realizzo app web e mobile moderne. Appassionato di UI/UX e prestazioni."
+    },
+    "labels": {
+      "languages": "Linguaggi",
+      "tech": "Tecnologie"
+    },
+    "rotators": {
+      "languages": [
+        "TypeScript",
+        "React Native",
+        "Java",
+        "Python",
+        "C",
+        "HTML",
+        "CSS"
+      ],
+      "tech": [
+        "Expo",
+        "Next.js",
+        "Firebase",
+        "Tailwind CSS",
+        "GitHub",
+        "Vercel"
+      ]
+    }
+  },
+  "About": {
+    "title": "Chi sono",
+    "intro": "Ciao, sono Michele. Ho iniziato a programmare all'università e ha cambiato tutto.",
+    "blockRight": "Le prime righe di codice, scritte per gioco, sono diventate una passione. Mi sono immerso nello sviluppo mobile e frontend, scoprendo React, React Native, TypeScript, JavaScript e Flutter.",
+    "blockLeft": "Da autodidatta ho costruito progetti, esplorato il backend con Python e continuo a imparare ogni giorno. Programmo per crescere, risolvere problemi e trasformare idee in realtà."
+  },
+  "Timeline": {
+    "heading": "Il mio percorso",
+    "splitAt": 4,
+    "items": [
+      {
+        "year": "Giugno 2018",
+        "title": "Diploma",
+        "description": "Ho conseguito il diploma all'IIS \"Diongi Scano - Ottone Bacaredda\" di Cagliari, Italia."
+      },
+      {
+        "year": "Luglio 2018-",
+        "title": "Primo lavoro",
+        "description": "Ho trascorso l'estate lavorando come autista per un'azienda di noleggio auto."
+      },
+      {
+        "year": "Ottobre 2018 - Giugno 2024",
+        "title": "Autista",
+        "description": "Ho iniziato a lavorare come autista per una pizzeria locale."
+      },
+      {
+        "year": "Gennaio 2019 - Maggio 2019",
+        "title": "Tecnico smartphone",
+        "description": "Ho lavorato in un negozio di riparazioni elettroniche, riparando principalmente smartphone e fornendo assistenza clienti."
+      },
+      {
+        "year": "Settembre 2020",
+        "title": "Inizio studi di informatica",
+        "description": "Mi sono iscritto al corso di \"Informatica\" presso l'Università di Cagliari, Italia."
+      },
+      {
+        "year": "2021",
+        "title": "Basi di programmazione",
+        "description": "Ho iniziato a imparare le basi della programmazione, con il linguaggio C."
+      },
+      {
+        "year": "2022",
+        "title": "Primo sviluppo mobile/web",
+        "description": "Ho imparato Java e iniziato a sviluppare applicazioni Android e pagine web in HTML/CSS."
+      },
+      {
+        "year": "2023",
+        "title": "Inizio passione per lo sviluppo web e mobile",
+        "description": "Ho appreso le basi del backend e scoperto tecnologie mobile come Flutter e React Native."
+      },
+      {
+        "year": "2024",
+        "title": "Passione per lo sviluppo",
+        "description": "Sviluppo applicazioni con React Native, studio Django e Next.js per il full-stack."
+      }
+    ]
+  },
+  "Projects": {
+    "title": "I miei progetti",
+    "carouselLabel": "Carosello dei progetti",
+    "previousMedia": "Media precedente",
+    "nextMedia": "Media successivo",
+    "noMedia": "Nessun media disponibile",
+    "flipHint": "Un tap per fermare, due per girare",
+    "returnHint": "Tocca per tornare",
+    "previewAlt": "Anteprima di {{title}}",
+    "flipAria": "Gira {{title}}",
+    "returnAria": "Torna al fronte di {{title}}",
+    "items": [
+      {
+        "title": "Orto Verde",
+        "short": "Progetto svolto in team con due colleghi per completare la parte pratica del corso \"Interazione uomo-macchina\".",
+        "full": "Avevamo il compito di progettare e realizzare un'applicazione Android usando il linguaggio Java. Abbiamo quindi creato un'app che permette agli utenti di organizzare il proprio orto domestico e tenerlo sotto controllo anche da remoto con vari sensori di umidità e un dispositivo di irrigazione remoto. Il login è gestito in modo che, per accedere, l'utente debba prima registrarsi compilando i campi obbligatori. Una volta salvati i dati, può effettuare l'accesso. La home mostra lo stato dei sensori e la possibilità di irrigare l'orto. L'app consente inoltre di aggiungere nuove piante, consultare lo storico di irrigazione e dei sensori e ricevere notifiche quando le piante necessitano attenzione. Il progetto è stato un'ottima occasione per applicare le nostre conoscenze di Java e sviluppo Android e lavorare in team.",
+        "images": [
+          "/IlMioOrto/Start.png",
+          "/IlMioOrto/Login.png",
+          "/IlMioOrto/Signin.png",
+          "/IlMioOrto/Home.png"
+        ]
+      },
+      {
+        "title": "Frogger",
+        "short": "Videogioco creato in C con la libreria lncurses per il corso \"Sistemi Operativi\" con un collega.",
+        "full": "È un videogioco realizzato in C usando la libreria lncurses, che consente di creare interfacce testuali. Il gioco si ispira al classico Frogger, dove il giocatore deve far attraversare a una rana una strada trafficata e un fiume pieno di ostacoli. Il giocatore controlla la rana con le frecce direzionali per muoversi su, giù, a sinistra o a destra. L'obiettivo è raggiungere l'altra parte dello schermo senza essere colpiti dalle auto o cadere in acqua. Il gioco prevede un semplice sistema di punteggio, dove si guadagnano punti per ogni attraversamento riuscito. La partita termina quando il giocatore raggiunge il traguardo o perde tutte le vite.",
+        "images": [
+          {
+            "type": "video",
+            "src": "/Frogger/Video.mp4"
+          }
+        ]
+      },
+      {
+        "title": "WeatherApp",
+        "short": "App sviluppata in React Native e testata con Expo per previsioni meteo locali e località aggiunte.",
+        "full": "Ho sviluppato questa app con l'obiettivo di iniziare a usare chiamate API e geolocalizzazione. Ho quindi creato un'app che consente di visualizzare le previsioni meteo (usando le API di OpenWeatherMap). Gli utenti possono registrarsi, accedere al database e aprire la propria sessione, che memorizza le impostazioni e le località scelte per le previsioni. Per impostazione predefinita, è sempre presente la scheda meteo per la posizione corrente del dispositivo. Se si vogliono vedere previsioni per altre località, si può usare la schermata dedicata per cercare la località o selezionarla sulla mappa e inserirla. In seguito si avrà una nuova scheda nella home con la nuova località e le sue previsioni.",
+        "images": [
+          "WeatherApp/welcomeLight.png",
+          "WeatherApp/welcomeUncompleteLight.png",
+          "WeatherApp/welcomeDark.png",
+          "WeatherApp/registerEmptyLight.png",
+          "WeatherApp/regiterErrorLight.png",
+          "WeatherApp/registerLightOk.png",
+          "WeatherApp/registerDark.png",
+          "WeatherApp/homeLight.png",
+          "WeatherApp/homeLight+.png",
+          "WeatherApp/homeDark.png",
+          "WeatherApp/addLocationLight1.png",
+          "WeatherApp/addLocationLight2.png",
+          "WeatherApp/addLocationLight3.png",
+          "WeatherApp/addLocationDark.png",
+          "WeatherApp/settingsLight.png",
+          "WeatherApp/settingsDark.png"
+        ]
+      },
+      {
+        "title": "Serie A Excange",
+        "short": "Un'altra app sviluppata in React Native e testata con Expo, con backend sviluppato interamente da me con Python e Django.",
+        "full": "PROGETTO ANCORA IN SVILUPPO!!! Dopo aver compreso React Native e iniziato a vedere il potenziale del backend, ho deciso di sviluppare un backend proprietario per questo progetto usando Python (Django). È un'app che permette agli utenti di guadagnare crediti di gioco tramite quiz o altri metodi che implementerò in seguito. Questi crediti possono poi essere usati per acquistare pacchetti di carte. Al momento le carte possono solo essere collezionate, ma sto lavorando ad altre funzionalità, come lo scambio tra utenti o addirittura giochi di carte in cui gli utenti si sfidano con le proprie carte. Guarda il video dimostrativo qui sotto.",
+        "images": [],
+        "links": [
+          {
+            "label": "Guarda demo",
+            "url": "https://www.youtube.com/watch?v=UFcIKJ8q8GY"
+          }
+        ]
+      },
+      {
+        "title": "Su Stentu Website",
+        "short": "Sito web per un ristorante locale, sviluppato in team usando Next.js e Vercel per pubblicarlo online.",
+        "full": "Nel periodo agosto/settembre 2025 ho collaborato alla creazione di un sito dedicato a presentare un ristorante, con l'obiettivo di valorizzarne storia, piatti, posizione e menu attraverso un design moderno e un'esperienza utente intuitiva. Il progetto è stato sviluppato in team utilizzando Next.js come framework principale per realizzare un sito performante, SEO-friendly e facilmente scalabile. Durante lo sviluppo ho esplorato l'uso di repository condivisi (Git/GitHub), imparando a gestire branch, merge e pull request, migliorando la mia capacità di collaborazione in contesti strutturati. Oltre allo sviluppo, ho avuto l'opportunità di osservare e contribuire a vari aspetti della gestione di un sito in produzione, tra cui: ottimizzazione per i motori di ricerca (SEO), monitoraggio delle statistiche di utilizzo e del comportamento degli utenti.",
+        "images": [],
+        "links": [
+          {
+            "label": "Visita sito",
+            "url": "https://www.sustentu.com"
+          }
+        ]
+      },
+      {
+        "title": "Core Studio",
+        "short": "Portfolio web per una graphic designer, sviluppato da me con Next.js e ospitato su Vercel.",
+        "full": "Nel dicembre 2025 ho realizzato un portfolio web per una graphic designer, partendo da un brief minimale costituito solo da palette colori e testi. Ho gestito in autonomia l'intero processo creativo e tecnico: progettazione della struttura, definizione dello stile visivo, sviluppo delle animazioni, gestione dello scroll e costruzione di una narrazione visiva coerente con l'identità del cliente. Il focus era l'esperienza utente e la valorizzazione dei lavori, usando transizioni fluide, sequenze animate e un layout pensato per guidare la navigazione. Il sito è stato deployato su Vercel e finalizzato con l'associazione di un dominio personalizzato, garantendo prestazioni e affidabilità in produzione.",
+        "images": [],
+        "links": [
+          {
+            "label": "Visita sito",
+            "url": "https://www.corestudio.art"
+          }
+        ]
+      },
+      {
+        "title": "NexusApp",
+        "short": "",
+        "full": "Ho iniziato il 2026 unendomi a una startup come sviluppatore full-stack. Ho progettato un sito web, attualmente una versione demo del progetto finale. Questo sito permette agli utenti di collegare i propri account Steam/Riot e, tramite API, generare un riepilogo con statistiche utente sulle piattaforme di gaming, arrivando a creare una \"Player Card\" basata sui dati ottenuti. Progetto ancora in sviluppo.",
+        "images": [],
+        "links": [
+          {
+            "label": "Visita sito",
+            "url": "https://app.nexusapp.space/"
+          }
+        ]
+      }
+    ]
+  },
+  "Contacts": {
+    "title": "Mettiamoci in contatto",
+    "intro": "Sono sempre aperto a nuove opportunità, collaborazioni o anche solo una chiacchierata sulla tecnologia.",
+    "repoHint": "E per vedere i repository dei miei progetti",
+    "aria": {
+      "mail": "Email",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "github": "GitHub"
+    }
+  },
+  "Footer": {
+    "copyright": "© 2025 Michele Meloni"
+  },
+  "Aria": {
+    "flipCard": "Gira scheda"
+  }
+}

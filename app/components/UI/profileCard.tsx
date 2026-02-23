@@ -39,6 +39,7 @@ type Props = {
     flipDelayMs?: number;
     flipDurationMs?: number;
     enableClickFlip?: boolean;
+    flipLabel?: string;
 };
 
 export default function ProfileHeroCard({
@@ -61,6 +62,7 @@ export default function ProfileHeroCard({
     flipDelayMs = 650,
     flipDurationMs = 900,
     enableClickFlip = true,
+    flipLabel = "Flip card",
 }: Props) {
     const wrapperRef = useRef<HTMLDivElement>(null);
     const cardRef = useRef<HTMLDivElement>(null);
@@ -224,7 +226,7 @@ export default function ProfileHeroCard({
                 onClick={enableClickFlip ? toggleFlip : undefined}
                 onKeyDown={onKeyDown}
                 aria-pressed={enableClickFlip ? (flipY.get() >= 90) : undefined}
-                aria-label={enableClickFlip ? "Flip card" : undefined}
+                aria-label={enableClickFlip ? flipLabel : undefined}
             >
                 {/* ===== LATO A (COVER) ===== */}
                 <div

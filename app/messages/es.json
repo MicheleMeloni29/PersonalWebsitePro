@@ -1,0 +1,222 @@
+{
+  "Header": {
+    "home": "Inicio",
+    "about": "Sobre mí",
+    "timeline": "Cronología",
+    "projects": "Proyectos",
+    "contact": "Contacto",
+    "changeLanguage": "Cambiar idioma"
+  },
+  "Hero": {
+    "profile": {
+      "name": "Michele Meloni",
+      "role": "Desarrollador Frontend",
+      "location": "Sestu, Cerdeña (IT)",
+      "bio": "Construyo apps web y móviles modernas. Apasionado por la UI/UX y el rendimiento."
+    },
+    "labels": {
+      "languages": "Lenguajes",
+      "tech": "Tecnologías"
+    },
+    "rotators": {
+      "languages": [
+        "TypeScript",
+        "React Native",
+        "Java",
+        "Python",
+        "C",
+        "HTML",
+        "CSS"
+      ],
+      "tech": [
+        "Expo",
+        "Next.js",
+        "Firebase",
+        "Tailwind CSS",
+        "GitHub",
+        "Vercel"
+      ]
+    }
+  },
+  "About": {
+    "title": "Sobre mí",
+    "intro": "Hola, soy Michele. Empecé a programar en la universidad y lo cambió todo.",
+    "blockRight": "Las primeras líneas de código, escritas solo por diversión, se convirtieron en una pasión. Me sumergí en el desarrollo móvil y frontend, descubriendo React, React Native, TypeScript, JavaScript y Flutter.",
+    "blockLeft": "Como desarrollador autodidacta, construí proyectos, exploré el backend con Python y sigo aprendiendo cada día. Programo para crecer, resolver problemas y convertir ideas en realidad."
+  },
+  "Timeline": {
+    "heading": "Mi trayectoria",
+    "splitAt": 4,
+    "items": [
+      {
+        "year": "Junio 2018",
+        "title": "Diploma",
+        "description": "Obtuve mi diploma en el IIS \"Diongi Scano - Ottone Bacaredda\" en Cagliari, Italia."
+      },
+      {
+        "year": "Julio 2018-",
+        "title": "Primer trabajo",
+        "description": "Pasé el verano trabajando como conductor para una empresa de alquiler de coches."
+      },
+      {
+        "year": "Octubre 2018 - Junio 2024",
+        "title": "Conductor",
+        "description": "Empecé a trabajar como conductor para una pizzería local."
+      },
+      {
+        "year": "Enero 2019 - Mayo 2019",
+        "title": "Técnico de smartphones",
+        "description": "Trabajé en un taller de reparación de electrónica, principalmente arreglando smartphones y dando soporte al cliente."
+      },
+      {
+        "year": "Septiembre 2020",
+        "title": "Inicio de estudios de informática",
+        "description": "Me matriculé en la carrera de \"Informática\" en la Universidad de Cagliari, Italia."
+      },
+      {
+        "year": "2021",
+        "title": "Bases de programación",
+        "description": "Empecé a aprender las bases de la programación, con el lenguaje C."
+      },
+      {
+        "year": "2022",
+        "title": "Primer desarrollo móvil/web",
+        "description": "Aprendí Java y empecé a desarrollar aplicaciones Android y páginas web con HTML/CSS."
+      },
+      {
+        "year": "2023",
+        "title": "Inicio de la pasión por el desarrollo web y móvil",
+        "description": "Aprendí fundamentos de backend y descubrí tecnologías móviles como Flutter y React Native."
+      },
+      {
+        "year": "2024",
+        "title": "Pasión por el desarrollo",
+        "description": "Desarrollo aplicaciones con React Native, aprendo Django y Next.js para desarrollo full-stack."
+      }
+    ]
+  },
+  "Projects": {
+    "title": "Mis proyectos",
+    "carouselLabel": "Carrusel de proyectos",
+    "previousMedia": "Medio anterior",
+    "nextMedia": "Siguiente medio",
+    "noMedia": "No hay medios disponibles",
+    "flipHint": "Un toque para detener, dos para girar",
+    "returnHint": "Toca para volver",
+    "previewAlt": "Vista previa de {{title}}",
+    "flipAria": "Girar {{title}}",
+    "returnAria": "Volver al frente de {{title}}",
+    "items": [
+      {
+        "title": "Orto Verde",
+        "short": "Proyecto realizado en equipo con dos compañeros para completar la parte práctica del curso \"Interacción humano-máquina\".",
+        "full": "Teníamos la tarea de diseñar y crear una aplicación Android usando el lenguaje Java. Así que decidimos crear una aplicación que permite a los usuarios organizar su propio pequeño huerto en casa y mantenerlo bajo control incluso de forma remota con varios sensores de humedad y un dispositivo de riego remoto. El inicio de sesión está gestionado para que, cada vez que el usuario quiera acceder, primero deba registrarse completando los campos obligatorios. Una vez almacenados los datos, puede iniciar sesión. La página principal muestra el estado de los sensores y la posibilidad de regar el huerto. La aplicación también permite añadir nuevas plantas, ver el historial de riego y datos de sensores, y recibir notificaciones cuando las plantas necesitan atención. El proyecto fue una gran oportunidad para aplicar nuestros conocimientos de Java y desarrollo Android, así como para trabajar en equipo.",
+        "images": [
+          "/IlMioOrto/Start.png",
+          "/IlMioOrto/Login.png",
+          "/IlMioOrto/Signin.png",
+          "/IlMioOrto/Home.png"
+        ]
+      },
+      {
+        "title": "Frogger",
+        "short": "Videojuego creado en C con la librería lncurses para el curso \"Sistemas Operativos\" con un compañero.",
+        "full": "Es un videojuego creado en C usando la librería lncurses, que permite crear interfaces de usuario basadas en texto. El juego está inspirado en el clásico Frogger, donde el jugador debe llevar una rana a través de una carretera transitada y un río lleno de obstáculos. El jugador controla la rana con las flechas para moverse arriba, abajo, izquierda o derecha. El objetivo es llegar al otro lado de la pantalla sin ser golpeado por coches o caer al agua. El juego incluye un sistema de puntuación sencillo, donde el jugador gana puntos por cruzar con éxito. La partida termina cuando el jugador llega a la meta o pierde todas sus vidas.",
+        "images": [
+          {
+            "type": "video",
+            "src": "/Frogger/Video.mp4"
+          }
+        ]
+      },
+      {
+        "title": "WeatherApp",
+        "short": "App desarrollada en React Native y probada con Expo para previsiones meteorológicas locales y ubicaciones añadidas.",
+        "full": "Desarrollé esta app con el objetivo de comenzar con llamadas a APIs y geolocalización. Por eso creé una app que permite ver previsiones del tiempo (usando las APIs de OpenWeatherMap). Los usuarios pueden registrarse, lo que los guarda en la base de datos, y luego iniciar sesión en su propia sesión, que guarda sus ajustes y las ubicaciones elegidas para la previsión. De forma predeterminada, siempre hay una tarjeta con la previsión de la ubicación actual del dispositivo. Si se quieren ver previsiones de otras ubicaciones, se puede usar la pantalla dedicada para buscar la ubicación elegida o buscarla en el mapa e insertarla. Después se tendrá una nueva tarjeta en la pantalla principal con la nueva ubicación y su previsión.",
+        "images": [
+          "WeatherApp/welcomeLight.png",
+          "WeatherApp/welcomeUncompleteLight.png",
+          "WeatherApp/welcomeDark.png",
+          "WeatherApp/registerEmptyLight.png",
+          "WeatherApp/regiterErrorLight.png",
+          "WeatherApp/registerLightOk.png",
+          "WeatherApp/registerDark.png",
+          "WeatherApp/homeLight.png",
+          "WeatherApp/homeLight+.png",
+          "WeatherApp/homeDark.png",
+          "WeatherApp/addLocationLight1.png",
+          "WeatherApp/addLocationLight2.png",
+          "WeatherApp/addLocationLight3.png",
+          "WeatherApp/addLocationDark.png",
+          "WeatherApp/settingsLight.png",
+          "WeatherApp/settingsDark.png"
+        ]
+      },
+      {
+        "title": "Serie A Excange",
+        "short": "Otra app desarrollada en React Native y probada con Expo, con backend desarrollado íntegramente por mí con Python y Django.",
+        "full": "¡PROYECTO AÚN EN DESARROLLO! Tras comprender React Native y empezar a ver el potencial del backend, decidí desarrollar mi propio backend para este proyecto usando Python (Django). Es una app que permite a los usuarios ganar créditos de juego mediante cuestionarios u otros métodos que implementaré más adelante. Estos créditos pueden usarse para comprar sobres de cartas. Por ahora las cartas solo se pueden coleccionar, pero estoy trabajando en otras funciones, como el intercambio de cartas entre usuarios o incluso juegos de cartas donde los usuarios se desafían con sus propias cartas. Mira el vídeo de demostración a continuación.",
+        "images": [],
+        "links": [
+          {
+            "label": "Ver demo",
+            "url": "https://www.youtube.com/watch?v=UFcIKJ8q8GY"
+          }
+        ]
+      },
+      {
+        "title": "Su Stentu Website",
+        "short": "Sitio web para un restaurante local, desarrollado en equipo usando Next.js y Vercel para alojarlo online.",
+        "full": "En agosto/septiembre de 2025 colaboré en la creación de un sitio web dedicado a presentar un restaurante, con el objetivo de mostrar su historia, platos, ubicación y menú a través de un diseño moderno y una experiencia de usuario intuitiva. El proyecto se desarrolló en equipo, utilizando Next.js como framework principal para crear un sitio de alto rendimiento, SEO-friendly y fácilmente escalable. Durante el desarrollo exploré el uso de repositorios compartidos (Git/GitHub), aprendiendo a gestionar ramas, merges y pull requests, mejorando así mi capacidad de colaboración en entornos estructurados. Además del desarrollo, tuve la oportunidad de observar y contribuir a varios aspectos de la gestión de un sitio en producción, incluyendo: Optimización para motores de búsqueda (SEO), monitorización de estadísticas de uso y comportamiento de los usuarios.",
+        "images": [],
+        "links": [
+          {
+            "label": "Visitar sitio",
+            "url": "https://www.sustentu.com"
+          }
+        ]
+      },
+      {
+        "title": "Core Studio",
+        "short": "Portafolio web para una diseñadora gráfica, desarrollado por mí con Next.js y alojado en Vercel.",
+        "full": "En diciembre de 2025 creé un portafolio web para una diseñadora gráfica, partiendo de un brief mínimo compuesto solo por paletas de color y contenidos de texto. Gestioné de forma independiente todo el proceso creativo y técnico: diseño de la estructura, definición del estilo visual, desarrollo de animaciones, gestión del scroll y construcción de una narrativa visual coherente con la identidad del cliente. El foco estuvo en la experiencia de usuario y en realzar el trabajo, utilizando transiciones fluidas, secuencias animadas y un layout pensado para guiar la navegación. El sitio se desplegó en Vercel y se finalizó con la asociación de un dominio personalizado, garantizando rendimiento y fiabilidad en producción.",
+        "images": [],
+        "links": [
+          {
+            "label": "Visitar sitio",
+            "url": "https://www.corestudio.art"
+          }
+        ]
+      },
+      {
+        "title": "NexusApp",
+        "short": "",
+        "full": "Empecé 2026 uniéndome a una startup como desarrollador full-stack. Diseñé un sitio web, actualmente una versión demo del proyecto final. Este sitio permite a los usuarios conectar sus cuentas de Steam/Riot y, mediante API, generar un resumen con estadísticas de usuario en plataformas de juego, creando finalmente una \"Player Card\" basada en los datos obtenidos. Proyecto aún en desarrollo.",
+        "images": [],
+        "links": [
+          {
+            "label": "Visitar sitio",
+            "url": "https://app.nexusapp.space/"
+          }
+        ]
+      }
+    ]
+  },
+  "Contacts": {
+    "title": "Pongámonos en contacto",
+    "intro": "Siempre estoy abierto a nuevas oportunidades, colaboraciones o simplemente a charlar sobre tecnología.",
+    "repoHint": "Y para ver los repositorios de mis proyectos",
+    "aria": {
+      "mail": "Correo",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "github": "GitHub"
+    }
+  },
+  "Footer": {
+    "copyright": "© 2025 Michele Meloni"
+  },
+  "Aria": {
+    "flipCard": "Girar tarjeta"
+  }
+}
