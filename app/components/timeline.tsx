@@ -99,10 +99,9 @@ function TimelineSection({
                             {/* dot */}
                             <span
                                 className="
-                  absolute -left-[9px] top-0.5
-                  h-1.5 w-1.5 rounded-full bg-red-600 ring-[1.5px] ring-red-600/25
-                  sm:-left-[11px] sm:top-1.5 sm:h-2 sm:w-2 sm:ring-4
-                "
+                                    absolute -left-[9px] top-0.5
+                                    h-1.5 w-1.5 rounded-full bg-red-600 ring-[1.5px] ring-red-600/25
+                                    sm:-left-[11px] sm:top-1.5 sm:h-2 sm:w-2 sm:ring-4"
                             />
 
                             <p className="text-[10px] sm:text-xs uppercase tracking-wide text-red-900/90">

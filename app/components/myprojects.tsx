@@ -1,8 +1,16 @@
 'use client';
 
-import { ComponentPropsWithoutRef, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import {
+    ComponentPropsWithoutRef,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type CSSProperties,
+    type PointerEvent as ReactPointerEvent,
+} from 'react';
 import Image from 'next/image';
-import { FaChevronLeft, FaChevronRight, FaExternalLinkAlt, FaGithub, FaPlay } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaGithub, FaPlay } from 'react-icons/fa';
 import type { Project } from './data/projectsStructure';
 import { useLanguage } from './data/LanguageProvider';
 
@@ -48,10 +56,10 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
     const [manualPaused, setManualPaused] = useState(false);
     const tapTimeoutRef = useRef<number[]>([]);
     const lastTapRef = useRef<number[]>([]);
-    const resumeTimeoutRef = useRef<number | null>(null);
     const backScrollRefs = useRef<(HTMLDivElement | null)[]>([]);
     const backContentRefs = useRef<(HTMLParagraphElement | null)[]>([]);
     const autoScrollTimeoutsRef = useRef<(number | null)[]>([]);
+    const autoMediaIntervalsRef = useRef<(number | null)[]>([]);
     const flippedRef = useRef<boolean[]>([]);
     const prevFlippedRef = useRef<boolean[]>([]);
 
@@ -64,19 +72,6 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         setFlipped((prev) => {
             const next = [...prev];
             next[index] = !next[index];
-            return next;
-        });
-    };
-
-    const moveMedia = (index: number, direction: 'prev' | 'next') => {
-        setMediaIndex((prev) => {
-            const media = projects[index]?.images ?? [];
-            if (!media.length) return prev;
-            const next = [...prev];
-            const current = prev[index] ?? 0;
-            next[index] = direction === 'next'
-                ? (current + 1) % media.length
-                : (current - 1 + media.length) % media.length;
             return next;
         });
     };
@@ -118,14 +113,14 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         }, threshold);
     };
 
-    const scheduleResume = (delay = 120) => {
-        if (resumeTimeoutRef.current) {
-            window.clearTimeout(resumeTimeoutRef.current);
-        }
-        resumeTimeoutRef.current = window.setTimeout(() => {
-            setInteractionPaused(false);
-            resumeTimeoutRef.current = null;
-        }, delay);
+    const handleMediaPointerDown = (event: ReactPointerEvent) => {
+        event.stopPropagation();
+        setInteractionPaused(true);
+    };
+
+    const handleMediaPointerUp = (event: ReactPointerEvent) => {
+        event.stopPropagation();
+        setInteractionPaused(false);
     };
 
     const stopAutoScroll = (index: number) => {
@@ -168,6 +163,35 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
     }, [flipped]);
 
     useEffect(() => {
+        autoMediaIntervalsRef.current.forEach((id) => {
+            if (id) window.clearInterval(id);
+        });
+
+        autoMediaIntervalsRef.current = projects.map((project, index) => {
+            const media = project.images ?? [];
+            if (media.length <= 1) return null;
+
+            return window.setInterval(() => {
+                if (flippedRef.current[index]) return;
+                setMediaIndex((prev) => {
+                    const currentMedia = projects[index]?.images ?? [];
+                    if (currentMedia.length <= 1) return prev;
+                    const next = [...prev];
+                    const current = prev[index] ?? 0;
+                    next[index] = (current + 1) % currentMedia.length;
+                    return next;
+                });
+            }, 4500);
+        });
+
+        return () => {
+            autoMediaIntervalsRef.current.forEach((id) => {
+                if (id) window.clearInterval(id);
+            });
+        };
+    }, [projects]);
+
+    useEffect(() => {
         const prev = prevFlippedRef.current;
         flipped.forEach((isFlipped, index) => {
             const wasFlipped = prev[index] ?? false;
@@ -181,6 +205,9 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         return () => {
             autoScrollTimeoutsRef.current.forEach((id) => {
                 if (id) window.clearTimeout(id);
+            });
+            autoMediaIntervalsRef.current.forEach((id) => {
+                if (id) window.clearInterval(id);
             });
         };
     }, []);
@@ -248,17 +275,27 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                         <h3 className="text-lg font-bold text-red-400 text-center">{project.title}</h3>
 
                                         {hasMedia ? (
-                                            <div className="relative w-full flex-1 min-h-0">
+                                            <div
+                                                className={`relative w-full flex-1 min-h-0${
+                                                    currentMedia?.type === 'image' ? ' -mt-1' : ''
+                                                }`}
+                                            >
                                                 <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black/90 flex items-center justify-center">
                                                     {currentMedia?.type === 'video' ? (
-                                                        <div className="flex items-center justify-center w-full h-full p-2">
+                                                        <div
+                                                            className="flex items-center justify-center w-full h-full p-2"
+                                                            onPointerDown={handleMediaPointerDown}
+                                                            onPointerUp={handleMediaPointerUp}
+                                                            onPointerLeave={handleMediaPointerUp}
+                                                            onPointerCancel={handleMediaPointerUp}
+                                                        >
                                                             <video
                                                                 src={normalizedSrc}
                                                                 className="w-full h-full object-contain rounded-xl"
+                                                                autoPlay
                                                                 controls
                                                                 muted
                                                                 playsInline
-                                                                onClick={(event) => event.stopPropagation()}
                                                             />
                                                         </div>
                                                     ) : (
@@ -279,46 +316,6 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
 
                                                 {media.length > 1 && (
                                                     <>
-                                                        <button
-                                                            type="button"
-                                                            className="absolute -left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-transparent text-white/80 hover:text-white grid place-items-center z-10 touch-manipulation"
-                                                            onPointerDown={(event) => {
-                                                                event.stopPropagation();
-                                                                setInteractionPaused(true);
-                                                            }}
-                                                            onClick={(event) => {
-                                                                event.stopPropagation();
-                                                                moveMedia(index, 'prev');
-                                                                scheduleResume();
-                                                            }}
-                                                            onPointerCancel={(event) => {
-                                                                event.stopPropagation();
-                                                                scheduleResume(0);
-                                                            }}
-                                                            aria-label={t("Projects", "previousMedia")}
-                                                        >
-                                                            <FaChevronLeft />
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="absolute -right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-transparent text-white/80 hover:text-white grid place-items-center z-10 touch-manipulation"
-                                                            onPointerDown={(event) => {
-                                                                event.stopPropagation();
-                                                                setInteractionPaused(true);
-                                                            }}
-                                                            onClick={(event) => {
-                                                                event.stopPropagation();
-                                                                moveMedia(index, 'next');
-                                                                scheduleResume();
-                                                            }}
-                                                            onPointerCancel={(event) => {
-                                                                event.stopPropagation();
-                                                                scheduleResume(0);
-                                                            }}
-                                                            aria-label={t("Projects", "nextMedia")}
-                                                        >
-                                                            <FaChevronRight />
-                                                        </button>
                                                         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 pointer-events-none">
                                                             {media.map((_, dotIndex) => (
                                                                 <span
