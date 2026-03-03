@@ -187,18 +187,6 @@
             "url": "https://www.corestudio.art"
           }
         ]
-      },
-      {
-        "title": "NexusApp",
-        "short": "",
-        "full": "Empecé 2026 uniéndome a una startup como desarrollador full-stack. Diseñé un sitio web, actualmente una versión demo del proyecto final. Este sitio permite a los usuarios conectar sus cuentas de Steam/Riot y, mediante API, generar un resumen con estadísticas de usuario en plataformas de juego, creando finalmente una \"Player Card\" basada en los datos obtenidos. Proyecto aún en desarrollo.",
-        "images": [],
-        "links": [
-          {
-            "label": "Visitar sitio",
-            "url": "https://app.nexusapp.space/"
-          }
-        ]
       }
     ]
   },
