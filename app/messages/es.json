@@ -187,6 +187,18 @@
             "url": "https://www.corestudio.art"
           }
         ]
+      },
+      {
+        "title": "Nexus App",
+        "short": "Demo para startup sobre gestión de equipos, entrenamiento y torneos de eSports, desarrollada por mí con Next.js alojada en Vercel para el frontend y Django con fastAPI para el backend alojado en Render.",
+        "full": "Desarrollé esta demo, adaptándola a las necesidades del creador, con el objetivo de crear una demostración de un proyecto final más extenso y complejo. Gestioné todo el proyecto de forma independiente, incluyendo el diseño, el desarrollo y la implementación en línea. La aplicación permite al usuario crear un wrap dinámico y animado, que luego puede reproducirse de forma estática en cualquier momento, con sus propias estadísticas de las plataformas Riot y Steam, tras iniciar sesión de forma segura y con la autorización del usuario. ",
+        "images": [],
+        "links": [
+          {
+            "label": "Visita sito",
+            "url": "https://app.nexusapp.space"
+          }
+        ]
       }
     ]
   },
