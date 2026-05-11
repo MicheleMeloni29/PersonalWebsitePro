@@ -188,6 +188,18 @@
           }
         ]
       }
+      {
+        "title": "Core Studio",
+        "short": "Demo per strtup sulla gestione team, coaching e tornei per e-sport, sviluppata da me con Next.js e ospitata su Vercel.",
+        "full": "Ho sviluppato questa demo, creandola su misur secondo l'esigenza dell'ideatore, con l'obbiettivo di realizzare una demo di un progetto finale piu' grande e complesso. Mi sono occupato autonommente dell'intero proggetto, design compreso, sviluppo e deploy su Online. L'app permette all'utente di creare un wrap dinamico e animato, poi riproducibile in qualsiasi momento in maniera statica, con le proprie statistiche delle piattaforme Riot e Steam, dopo aver effettuato il login in modo sicuro e con l'autorizzazione dell'utente. ",
+        "images": [],
+        "links": [
+          {
+            "label": "Visita sito",
+            "url": "https://app.nexusapp.space"
+          }
+        ]
+      }
     ]
   },
   "Contacts": {
