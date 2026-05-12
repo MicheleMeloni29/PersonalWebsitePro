@@ -1,3 +1,5 @@
+// Component taken directly from the open source online library "reactbits" and adapted for use in this project.
+// Compared to other components taken from reactbits, this one has undergone more substantial modifications to adapt it to the site's design, but the core and rendering logic have remained unchanged. It was adapted from the open-source online library "reactbits" for use in this project.
 "use client";
 
 import Image, { type StaticImageData } from "next/image";

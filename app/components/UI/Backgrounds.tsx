@@ -1,6 +1,6 @@
+// Components for the visual backgrounds, with variants and animations based on SVG and blur filters.
+//
 "use client";
-
-import { useId } from "react";
 
 export type VariantProps = {
     scale: number;
@@ -10,7 +10,7 @@ export type VariantProps = {
 };
 
 
-// BackgroundVariantA: cerchi sfumati con gradiente freddo
+// BackgroundVariantA: blurred circles with a cool gradient, positioned on the top-left and bottom-right to create a dynamic composition.
 export function BackgroundVariantA({ scale = 1 }: { scale?: number }) {
 
     return (
@@ -38,7 +38,7 @@ export function BackgroundVariantA({ scale = 1 }: { scale?: number }) {
                         <stop offset="100%" stopColor="#7f1d1d" stopOpacity="0" />
                     </radialGradient>
 
-                    {/* Filtro oversize anti-clipping (standard) */}
+                    {/* Oversized anti-clipping filter (standard) */}
                     <filter
                         id="softBlur"
                         filterUnits="userSpaceOnUse"
@@ -51,7 +51,7 @@ export function BackgroundVariantA({ scale = 1 }: { scale?: number }) {
                         <feGaussianBlur stdDeviation="180" edgeMode="none" />
                     </filter>
 
-                    {/* Filtro più leggero per TL landscape (r più piccolo) */}
+                    {/* Lighter filter for top-left landscape mode (smaller radius) */}
                     <filter
                         id="softBlurTRland"
                         filterUnits="userSpaceOnUse"
@@ -66,7 +66,7 @@ export function BackgroundVariantA({ scale = 1 }: { scale?: number }) {
                 </defs>
                 
                 {/*  ---- TOP-LEFT -----  */}
-                { /* Versione mobile-verticale */}
+                { /* Mobile portrait version */}
                 <g className="tl tl-portrait" transform="translate(0, 0)">
                     <circle
                         cx={-900}
@@ -77,7 +77,7 @@ export function BackgroundVariantA({ scale = 1 }: { scale?: number }) {
                     />
                 </g>
 
-                { /* Versione desktop-orizzontale */}
+                { /* Desktop landscape version */}
                 <g className="tl tl-landscape" transform="translate(0, 0)">
                     <circle
                         cx={-900}
@@ -89,7 +89,7 @@ export function BackgroundVariantA({ scale = 1 }: { scale?: number }) {
                 </g>
 
                 {/* ------ BOTTOM-RIGHT ------ */}
-                { /* Versione mobile-verticale */}
+                { /* Mobile portrait version */}
                 <g className="br br-portrait" transform="translate(1920, 1080)">
                     <circle
                         cx={2000}
@@ -100,7 +100,7 @@ export function BackgroundVariantA({ scale = 1 }: { scale?: number }) {
                     />
                 </g>
 
-                { /* Versione desktop-orizzontale */}
+                { /* Desktop landscape version */}
                 <g className="br br-landscape" transform="translate(1920, 1080)">
                     <circle
                         cx={1350}
@@ -115,7 +115,7 @@ export function BackgroundVariantA({ scale = 1 }: { scale?: number }) {
     );
 }
 
-// BackgroundVariantB: versione specchiata del gradiente freddo
+// BackgroundVariantB: mirrored version of the variant A, with the circles on the top-right and bottom-left, to create a more dynamic composition.
 export function BackgroundVariantB({ scale = 1 }: { scale?: number }) {
 
     return (
@@ -143,7 +143,7 @@ export function BackgroundVariantB({ scale = 1 }: { scale?: number }) {
                         <stop offset="100%" stopColor="#7f1d1d" stopOpacity="0" />
                     </radialGradient>
 
-                    {/* Filtro oversize anti-clipping (standard) */}
+                    {/* Oversized anti-clipping filter (standard) */}
                     <filter
                         id="softBlur"
                         filterUnits="userSpaceOnUse"
@@ -156,7 +156,7 @@ export function BackgroundVariantB({ scale = 1 }: { scale?: number }) {
                         <feGaussianBlur stdDeviation="180" edgeMode="none" />
                     </filter>
 
-                    {/* Filtro più leggero per TL landscape (r più piccolo) */}
+                    {/* Lighter filter for top-left landscape mode (smaller radius) */}
                     <filter
                         id="ssoftBlurTRland"
                         filterUnits="userSpaceOnUse"
@@ -171,7 +171,7 @@ export function BackgroundVariantB({ scale = 1 }: { scale?: number }) {
                 </defs>
 
                 {/* ---------- TOP ----------- */}
-                {/* Versione PORTRAIT (mobile/verticale) */}
+                {/* PORTRAIT version (mobile/vertical) */}
                 <g className="tr tr-portrait" transform="translate(1920, 0)">
                     <circle
                         cx={-900}
@@ -182,7 +182,7 @@ export function BackgroundVariantB({ scale = 1 }: { scale?: number }) {
                     />
                 </g>
 
-                {/* Versione LANDSCAPE (desktop/orizzontale) */}
+                {/* LANDSCAPE version (desktop/horizontal) */}
                 <g className="tr tr-landscape" transform="translate(1920, 0)">
                     <circle
                         cx={800}
@@ -194,7 +194,7 @@ export function BackgroundVariantB({ scale = 1 }: { scale?: number }) {
                 </g>
 
                 {/* ---------- BOTTOM ----------- */}
-                {/* Versione PORTRAIT (mobile/verticale) */}
+                {/* PORTRAIT version (mobile/vertical) */}
                 <g className="bl bl-portrait" transform="translate(0, 1080)">
                     <circle
                         cx={960}
@@ -219,7 +219,7 @@ export function BackgroundVariantB({ scale = 1 }: { scale?: number }) {
     );
 }
 
-// BackgroundVariantC: pattern caldo ai lati
+// BackgroundVariantC: warm side pattern, with circles on the left and right sides to create a more enveloping and cozy atmosphere, while maintaining visual interest.
 export function BackgroundVariantC({ scale = 1 }: { scale?: number }) {
 
     return (
@@ -247,7 +247,7 @@ export function BackgroundVariantC({ scale = 1 }: { scale?: number }) {
                         <stop offset="100%" stopColor="#7f1d1d" stopOpacity="0" />
                     </radialGradient>
 
-                    {/* Filtro oversize anti-clipping (standard) */}
+                    {/* Oversized anti-clipping filter (standard) */}
                     <filter
                         id="softBlur"
                         filterUnits="userSpaceOnUse"
@@ -260,7 +260,7 @@ export function BackgroundVariantC({ scale = 1 }: { scale?: number }) {
                         <feGaussianBlur stdDeviation="180" edgeMode="none" />
                     </filter>
 
-                    {/* Filtro più leggero per TR landscape (r più piccolo) */}
+                    {/* Lighter filter for top-right landscape mode (smaller radius) */}
                     <filter
                         id="softBlurTRland"
                         filterUnits="userSpaceOnUse"
@@ -275,7 +275,7 @@ export function BackgroundVariantC({ scale = 1 }: { scale?: number }) {
                 </defs>
 
                 {/* ---------- RIGHT ---------- */}
-                {/* Versione PORTRAIT (mobile/verticale) */}
+                {/* PORTRAIT version (mobile/vertical) */}
                 <g className="tr tr-portrait" transform="translate(1920, 0)">
                     <circle
                         cx={2400}
@@ -286,7 +286,7 @@ export function BackgroundVariantC({ scale = 1 }: { scale?: number }) {
                     />
                 </g>
 
-                {/* Versione LANDSCAPE (desktop/orizzontale) */}
+                {/* LANDSCAPE version (desktop/horizontal) */}
                 <g className="tr tr-landscape" transform="translate(1920, 0)">
                     <circle
                         cx={700}
@@ -298,7 +298,7 @@ export function BackgroundVariantC({ scale = 1 }: { scale?: number }) {
                 </g>
 
                 {/* ---------- LEFT ---------- */}
-                {/* Versione PORTRAIT (mobile/verticale) */}
+                {/* PORTRAIT version (mobile/vertical) */}
                 <g className="bl bl-portrait" transform="translate(0, 0)">
                     <circle
                         cx={-2400}
@@ -309,7 +309,7 @@ export function BackgroundVariantC({ scale = 1 }: { scale?: number }) {
                     />
                 </g>
 
-                {/* Versione LANDSCAPE (desktop/orizzontale) */}
+                {/* LANDSCAPE version (desktop/horizontal) */}
                 <g className="bl bl-landscape" transform="translate(0, 0)">
                     <circle
                         cx={-700}

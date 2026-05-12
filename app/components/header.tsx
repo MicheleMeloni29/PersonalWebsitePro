@@ -1,7 +1,8 @@
+// This screen components allows the user to navigate through the different sections of the page, and also to switch between languages.
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useTheme } from "next-themes"; // se non ti serve più per altri motivi, puoi rimuoverlo
+import { useTheme } from "next-themes"; // Keep theme state only if you still want to modulate LiquidChrome colors.
 import { useReducedMotion } from "framer-motion";
 import {
   FaHome, FaUser, FaClock, FaProjectDiagram, FaEnvelope,
@@ -12,15 +13,16 @@ import { useLanguage } from "./data/LanguageProvider";
 export default function Header() {
   const { t, lang, cycleLang } = useLanguage();
 
-  // puoi mantenere il tema solo per modulare i colori del LiquidChrome
+  // Theme information is only used here to adapt the LiquidChrome palette.
   const { theme, resolvedTheme } = useTheme();
   const prefersReduced = useReducedMotion();
   const navRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
 
+  // Waits for client mount before rendering visual effects that depend on browser APIs.
   useEffect(() => setMounted(true), []);
 
-  // aggiorna CSS vars con l'altezza reale dell'header
+  // Updates CSS variables with the real header height so the layout can offset top/bottom navigation space.
   useEffect(() => {
     if (!navRef.current) return;
     const root = document.documentElement;
@@ -35,6 +37,8 @@ export default function Header() {
         root.style.setProperty("--nav-top-h", `0px`);
       }
     };
+
+    // Recomputes the offsets when the nav resizes or when the viewport crosses the desktop breakpoint.
     const ro = new ResizeObserver(setVars);
     ro.observe(navRef.current);
     setVars();
@@ -47,7 +51,7 @@ export default function Header() {
     };
   }, []);
 
-  // Link tradotti
+  // Navigation labels are translated through the language provider.
   const links = [
     { href: "#hero", label: t("Header", "home"), icon: <FaHome /> },
     { href: "#about", label: t("Header", "about"), icon: <FaUser /> },
@@ -56,15 +60,16 @@ export default function Header() {
     { href: "#contact", label: t("Header", "contact"), icon: <FaEnvelope /> },
   ];
 
-  // Colori per LiquidChrome (0..1)
+  // LiquidChrome expects normalized RGB values in the 0..1 range.
   const mode = (resolvedTheme ?? theme) as "light" | "dark" | undefined;
   const baseColor: [number, number, number] =
     mode === "dark" ? [0.08, 0.08, 0.12] : [0.88, 0.88, 0.93];
 
-  // Bandiera corrente (emoji) e label accessibile
+  // Current language shown in compact form inside the language switcher.
   const flag = lang === "en" ? "EN" : lang === "it" ? "IT" : "ES";
 
   return (
+    // The header stays fixed and moves from bottom on mobile to top on large screens.
     <header className="fixed left-1/2 -translate-x-1/2 z-50 bottom-2 lg:bottom-auto lg:top-4">
       <nav
         ref={navRef}
@@ -76,7 +81,7 @@ export default function Header() {
           shadow-[0_4px_6px_rgba(0,0,0,0.4)] backdrop-blur-md
         "
       >
-        {/* Background LiquidChrome */}
+        {/* Animated background layer, rendered only after mount to avoid hydration mismatches. */}
         {mounted && (
           <LiquidChrome
             baseColor={baseColor}
@@ -90,7 +95,7 @@ export default function Header() {
           />
         )}
 
-        {/* Contenuti nav sopra il background */}
+        {/* Foreground navigation content sits above the decorative LiquidChrome layer. */}
         <div className="relative z-10 flex items-center gap-3">
           {links.map(({ href, label, icon }) => (
             <a
@@ -102,12 +107,13 @@ export default function Header() {
                          text-red-900 dark:text-red-500"
               aria-label={label}
             >
+              {/* Each navigation item pairs an icon with a text label that appears on desktop only. */}
               {React.cloneElement(icon, { className: "text-lg", "aria-hidden": true })}
               <span className="hidden lg:inline text-sm font-medium">{label}</span>
             </a>
           ))}
 
-          {/* Language Button: 🇬🇧 → 🇮🇹 → 🇪🇸 → 🇬🇧 */}
+          {/* Cycles through EN -> IT -> ES and shows the active language in a compact badge. */}
           <button
             onClick={cycleLang}
             aria-label={t("Header", "changeLanguage")}

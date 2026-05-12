@@ -1,3 +1,5 @@
+// This component is responsible for rendering the timeline section of the page, which is split into two parts to maintain readability and visual balance. 
+// The structure of the timeline entries is defined in a separate file for better organization.
 'use client';
 
 import { motion } from "framer-motion";
@@ -7,6 +9,7 @@ import { useLanguage } from "./data/LanguageProvider";
 
 const DEFAULT_SPLIT_AT = 4;
 
+// Splits the translated timeline entries into two sections while keeping the heading together.
 function useTimelineParts() {
     const { dict } = useLanguage();
     const items = dict.Timeline.items as TimelineEntry[];
@@ -27,7 +30,7 @@ type TimelineSectionProps = ComponentPropsWithoutRef<'section'> & {
     items: TimelineEntry[];
     heading?: string;
     showHeading?: boolean;
-    /** Per la parte 1 vogliamo la linea a tutta altezza */
+    /** For part one we want the vertical line to span the full available height. */
     fullHeightLine?: boolean;
 };
 
@@ -40,7 +43,7 @@ function TimelineSection({
     fullHeightLine = false,
     ...sectionProps
 }: TimelineSectionProps) {
-    // mobile-first: spazi e font più compatti, si allargano con le breakpoint
+    // Mobile-first spacing keeps the section compact on small screens and expands it at larger breakpoints.
     const mobileTopPadding = showHeading ? 'pt-12' : 'pt-3';
     const mobileBottomPadding = showHeading ? 'pb-12' : 'pb-8';
     const baseClasses = [
@@ -74,9 +77,9 @@ function TimelineSection({
                     )}
                 </div>
 
-                {/* colonna timeline */}
+                {/* Timeline column containing the vertical guide line and the ordered entries. */}
                 <div className="relative pl-4 sm:pl-6 space-y-6 sm:space-y-10 md:space-y-12">
-                    {/* linea verticale */}
+                    {/* Vertical guide line that connects all timeline entries. */}
                     {fullHeightLine ? (
                         <span
                             aria-hidden
@@ -86,7 +89,7 @@ function TimelineSection({
                         <span aria-hidden className="pointer-events-none absolute left-0 top-0 w-px bg-red-800 h-full" />
                     )}
 
-                    {/* items */}
+                    {/* Each item fades and slides in as it enters the viewport. */}
                     {items.map((item, idx) => (
                         <motion.div
                             key={`${item.title}-${idx}`}
@@ -96,7 +99,7 @@ function TimelineSection({
                             transition={{ duration: 0.35, delay: idx * 0.05 }}
                             className="relative"
                         >
-                            {/* dot */}
+                            {/* Small marker aligned with the vertical line. */}
                             <span
                                 className="
                                     absolute -left-[9px] top-0.5
@@ -104,10 +107,12 @@ function TimelineSection({
                                     sm:-left-[11px] sm:top-1.5 sm:h-2 sm:w-2 sm:ring-4"
                             />
 
+                            {/* Year label acts as the compact chronological anchor. */}
                             <p className="text-[10px] sm:text-xs uppercase tracking-wide text-red-900/90">
                                 {item.year}
                             </p>
 
+                            {/* Entry title highlights the milestone or role. */}
                             <h3
                                 className="
                   text-sm sm:text-lg md:text-xl
@@ -118,6 +123,7 @@ function TimelineSection({
                                 {item.title}
                             </h3>
 
+                            {/* Description provides the details for the corresponding timeline point. */}
                             <p
                                 className="
                   text-[12px] sm:text-sm md:text-base
@@ -136,7 +142,7 @@ function TimelineSection({
     );
 }
 
-// Parte 1: titolo + linea a tutta altezza
+// Part one: heading included, with the vertical line stretched across the full section.
 type TimelinePartProps = Omit<TimelineSectionProps, 'items'>;
 
 export function TimelinePartOne({
@@ -157,7 +163,7 @@ export function TimelinePartOne({
     );
 }
 
-// Parte 2: continua, niente titolo (rispetta lo spazio)
+// Part two: continuation without repeating the heading, while preserving visual alignment.
 export function TimelinePartTwo({
     id = 'timeline-continued',
     ...props
@@ -170,7 +176,7 @@ export function TimelinePartTwo({
             items={partTwo}
             showHeading={false}
             className="mt-[-3rem] sm:mt-0"
-        // no fullHeightLine
+            // fullHeightLine intentionally omitted for the continuation segment.
         />
     );
 }

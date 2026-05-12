@@ -1,3 +1,4 @@
+// This file contains the "Projects" section, which features an interactive 3D carousel of project cards. Each card can be flipped to reveal more detail. 
 'use client';
 
 import {
@@ -21,11 +22,13 @@ type MediaItem = {
     src: string;
 };
 
+// Normalizes legacy string entries and explicit media objects into one consistent shape.
 const normalizeMedia = (item: string | { type?: 'image' | 'video'; src: string }): MediaItem => {
     if (typeof item === 'string') return { type: 'image', src: item };
     return { type: item.type ?? 'image', src: item.src };
 };
 
+// Prefers demo-like links for the primary CTA, falling back to the first available link.
 const getPrimaryLink = (project: Project) => {
     const links = project.links ?? [];
     if (!links.length) return null;
@@ -38,6 +41,7 @@ const getPrimaryLink = (project: Project) => {
     return demo ?? links[0] ?? null;
 };
 
+// Matches the CTA icon to the destination type.
 const getLinkIcon = (url: string) => {
     if (/youtu(\.be|be\.com)/i.test(url)) return <FaPlay className="h-3.5 w-3.5" />;
     if (/github\.com/i.test(url)) return <FaGithub className="h-3.5 w-3.5" />;
@@ -50,10 +54,12 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
     const total = projects.length;
     const angleStep = total ? 360 / total : 0;
 
+    // Per-card UI state: flip side, active media slide, and global pause conditions.
     const [flipped, setFlipped] = useState<boolean[]>(() => projects.map(() => false));
     const [mediaIndex, setMediaIndex] = useState<number[]>(() => projects.map(() => 0));
     const [interactionPaused, setInteractionPaused] = useState(false);
     const [manualPaused, setManualPaused] = useState(false);
+    // Refs store timers and DOM nodes without forcing rerenders during interactions.
     const tapTimeoutRef = useRef<number[]>([]);
     const lastTapRef = useRef<number[]>([]);
     const backScrollRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -63,11 +69,13 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
     const flippedRef = useRef<boolean[]>([]);
     const prevFlippedRef = useRef<boolean[]>([]);
 
+    // Resets derived state whenever the translated project list changes.
     useEffect(() => {
         setFlipped(projects.map(() => false));
         setMediaIndex(projects.map(() => 0));
     }, [projects]);
 
+    // Flips a single card without affecting the others.
     const toggleFlip = (index: number) => {
         setFlipped((prev) => {
             const next = [...prev];
@@ -76,6 +84,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         });
     };
 
+    // Precomputes the angle of each card around the 3D ring.
     const ringCards = useMemo(
         () =>
             projects.map((project, index) => ({
@@ -89,6 +98,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
     const anyFlipped = flipped.some(Boolean);
     const isRotationPaused = interactionPaused || anyFlipped || manualPaused;
 
+    // Single tap pauses the carousel, double tap flips the card on touch devices.
     const handleFrontTap = (index: number) => {
         const now = Date.now();
         const lastTap = lastTapRef.current[index] ?? 0;
@@ -113,6 +123,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         }, threshold);
     };
 
+    // Media interactions should not propagate to the card or carousel gesture handlers.
     const handleMediaPointerDown = (event: ReactPointerEvent) => {
         event.stopPropagation();
         setInteractionPaused(true);
@@ -123,6 +134,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         setInteractionPaused(false);
     };
 
+    // Stops the delayed auto-scroll and restores the back text to its initial position.
     const stopAutoScroll = (index: number) => {
         const timeoutId = autoScrollTimeoutsRef.current[index];
         if (timeoutId) {
@@ -136,6 +148,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         }
     };
 
+    // Starts an automatic vertical scroll for long descriptions after a short reading delay.
     const startAutoScroll = (index: number) => {
         const container = backScrollRefs.current[index];
         const content = backContentRefs.current[index];
@@ -152,16 +165,18 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
 
             content.style.setProperty('--scroll-distance', `${distance}px`);
             content.style.animation = 'none';
-            // force reflow to restart animation reliably
+            // Forces a reflow so the CSS animation restarts reliably each time.
             void content.offsetHeight;
             content.style.animation = `backTextScroll ${duration}s linear forwards`;
         }, 3000);
     };
 
+    // Keeps the latest flip state available inside interval callbacks.
     useEffect(() => {
         flippedRef.current = flipped;
     }, [flipped]);
 
+    // Auto-advances media on cards with multiple assets, but only while the card front is visible.
     useEffect(() => {
         autoMediaIntervalsRef.current.forEach((id) => {
             if (id) window.clearInterval(id);
@@ -191,6 +206,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         };
     }, [projects]);
 
+    // Starts or stops back-side text scrolling only when a card actually changes side.
     useEffect(() => {
         const prev = prevFlippedRef.current;
         flipped.forEach((isFlipped, index) => {
@@ -201,6 +217,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         prevFlippedRef.current = flipped;
     }, [flipped]);
 
+    // Clears any pending timers when the component unmounts.
     useEffect(() => {
         return () => {
             autoScrollTimeoutsRef.current.forEach((id) => {
@@ -227,6 +244,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                 {t("Projects", "title")}
             </h2>
 
+            {/* Perspective wrapper for the rotating 3D ring of project cards. */}
             <div className="ring-scene relative w-full max-w-6xl h-[25rem] mt-6 [perspective:1200px]">
                 <div
                     className="relative w-full h-full [transform-style:preserve-3d] animate-[ringSpin_26s_linear_infinite] will-change-transform hover:[animation-play-state:paused]"
@@ -238,6 +256,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                     onPointerLeave={() => setInteractionPaused(false)}
                 >
                     {ringCards.map(({ project, index, angle }) => {
+                        // Each card resolves its active media item and builds a normalized asset path.
                         const media = project.images?.map(normalizeMedia) ?? [];
                         const currentMedia = media[mediaIndex[index] ?? 0];
                         const normalizedSrc = currentMedia?.src?.startsWith('/')
@@ -265,6 +284,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                     className="relative h-full w-full transition-transform duration-500 ease-in-out cursor-pointer outline-none [transform-style:preserve-3d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500 focus-visible:outline-offset-4"
                                     style={{ transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
                                 >
+                                    {/* Front face: preview media plus the interaction hint to flip/pause. */}
                                     <div
                                         className="absolute inset-0 rounded-2xl border-2 border-red-500/20 bg-black/90 shadow-[0_12px_30px_rgba(0,0,0,0.45)] p-5 flex flex-col gap-4"
                                         style={{
@@ -315,6 +335,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                                 </div>
 
                                                 {media.length > 1 && (
+                                                    // Progress dots reflect the currently visible media item.
                                                     <>
                                                         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 pointer-events-none">
                                                             {media.map((_, dotIndex) => (
@@ -331,7 +352,8 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                                     </>
                                                 )}
                                             </div>
-                                        ) : (
+                                                ) : (
+                                            // If no gallery is available, fall back to a single primary project link.
                                             <div className="flex-1 min-h-0 rounded-2xl text-white/70 flex items-center justify-center">
                                                 {primaryLink ? (
                                                     <a
@@ -360,6 +382,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                                         </button>
                                     </div>
 
+                                    {/* Back face: full project description with delayed auto-scroll. */}
                                     <div
                                         className="absolute inset-0 rounded-2xl border border-white/10 bg-black/90 shadow-[0_12px_30px_rgba(0,0,0,0.45)] p-5 flex flex-col gap-4 min-h-0"
                                         style={{
@@ -401,6 +424,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
             </div>
 
             <style jsx global>{`
+                /* Shared sizing variables keep the ring responsive without recalculating transforms in JS. */
                 .ring-scene {
                     --ring-radius: clamp(140px, 28vw, 320px);
                     --card-width: clamp(180px, 50vw, 250px);
@@ -426,6 +450,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                     }
                 }
 
+                /* Tightens the ring geometry for tablets and medium screens. */
                 @media (max-width: 820px) {
                     .ring-scene {
                         height: 23.5rem;
@@ -436,6 +461,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                     }
                 }
 
+                /* Uses smaller cards and a deeper radius on compact phones. */
                 @media (max-width: 560px) {
                     .ring-scene {
                         height: 26rem;
@@ -446,12 +472,14 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                     }
                 }
 
+                /* Adds a bit more vertical breathing room on very wide screens. */
                 @media (min-width: 1440px) {
                     .ring-scene {
                         margin-top: 3rem;
                     }
                 }
 
+                /* Disables the carousel rotation when the user prefers reduced motion. */
                 @media (prefers-reduced-motion: reduce) {
                     .animate-\\[ringSpin_26s_linear_infinite\\] {
                         animation: none !important;

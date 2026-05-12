@@ -1,4 +1,4 @@
-// src/components/DecryptedText.tsx
+// Component taken directly from the open source online library "reactbits" and adapted for use in this project.
 "use client";
 
 import { useEffect, useState, useRef } from "react";
