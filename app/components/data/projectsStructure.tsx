@@ -14,10 +14,18 @@ export interface ProjectLink {
     url: string;
 }
 
+export type ProjectKind = "app" | "website";
+
 // Defines the full data shape required to render a project entry.
 export interface Project {
+    // Distinguishes apps from websites so the card can render the right layout.
+    kind: ProjectKind;
     // Project name shown in cards and detail views.
     title: string;
+    // Hero image used as the card background when available.
+    coverImage?: string;
+    // Main technologies shown as compact chips on the card.
+    stack: string[];
     // Short summary used in compact UI sections.
     short: string;
     // Full description used when expanded or displayed in detail.

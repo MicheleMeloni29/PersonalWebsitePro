@@ -1,4 +1,5 @@
-// This file contains the "Projects" section, which features an interactive 3D carousel of project cards. Each card can be flipped to reveal more detail. 
+// This file contains the "Projects" section with an initial rotating carousel
+// that gives way to a static grid while the user scrolls through the section.
 'use client';
 
 import {
@@ -7,75 +8,32 @@ import {
     useMemo,
     useRef,
     useState,
-    type CSSProperties,
-    type PointerEvent as ReactPointerEvent,
 } from 'react';
-import Image from 'next/image';
-import { FaExternalLinkAlt, FaGithub, FaPlay } from 'react-icons/fa';
 import type { Project } from './data/projectsStructure';
 import { useLanguage } from './data/LanguageProvider';
+import ProjectCard from './UI/project-card';
+import ProjectInfoPanel from './UI/project-info-panel';
 
 type ProjectsProps = ComponentPropsWithoutRef<'section'>;
-
-type MediaItem = {
-    type: 'image' | 'video';
-    src: string;
-};
-
-// Normalizes legacy string entries and explicit media objects into one consistent shape.
-const normalizeMedia = (item: string | { type?: 'image' | 'video'; src: string }): MediaItem => {
-    if (typeof item === 'string') return { type: 'image', src: item };
-    return { type: item.type ?? 'image', src: item.src };
-};
-
-// Prefers demo-like links for the primary CTA, falling back to the first available link.
-const getPrimaryLink = (project: Project) => {
-    const links = project.links ?? [];
-    if (!links.length) return null;
-    const demo = links.find(
-        (link) =>
-            /demo/i.test(link.label) ||
-            /demo/i.test(link.url) ||
-            /youtu(\.be|be\.com)/i.test(link.url)
-    );
-    return demo ?? links[0] ?? null;
-};
-
-// Matches the CTA icon to the destination type.
-const getLinkIcon = (url: string) => {
-    if (/youtu(\.be|be\.com)/i.test(url)) return <FaPlay className="h-3.5 w-3.5" />;
-    if (/github\.com/i.test(url)) return <FaGithub className="h-3.5 w-3.5" />;
-    return <FaExternalLinkAlt className="h-3.5 w-3.5" />;
-};
 
 export default function Projects({ className, id = 'projects', ...sectionProps }: ProjectsProps) {
     const { t, dict } = useLanguage();
     const projects = dict.Projects.items as Project[];
     const total = projects.length;
     const angleStep = total ? 360 / total : 0;
+    const sectionRef = useRef<HTMLElement | null>(null);
 
-    // Per-card UI state: flip side, active media slide, and global pause conditions.
     const [flipped, setFlipped] = useState<boolean[]>(() => projects.map(() => false));
-    const [mediaIndex, setMediaIndex] = useState<number[]>(() => projects.map(() => 0));
-    const [interactionPaused, setInteractionPaused] = useState(false);
-    const [manualPaused, setManualPaused] = useState(false);
-    // Refs store timers and DOM nodes without forcing rerenders during interactions.
-    const tapTimeoutRef = useRef<number[]>([]);
-    const lastTapRef = useRef<number[]>([]);
-    const backScrollRefs = useRef<(HTMLDivElement | null)[]>([]);
-    const backContentRefs = useRef<(HTMLParagraphElement | null)[]>([]);
-    const autoScrollTimeoutsRef = useRef<(number | null)[]>([]);
-    const autoMediaIntervalsRef = useRef<(number | null)[]>([]);
-    const flippedRef = useRef<boolean[]>([]);
-    const prevFlippedRef = useRef<boolean[]>([]);
+    const [selectedProjectIndex, setSelectedProjectIndex] = useState<number | null>(null);
+    const [detailMediaIndex, setDetailMediaIndex] = useState(0);
+    const [gridReveal, setGridReveal] = useState(0);
 
-    // Resets derived state whenever the translated project list changes.
     useEffect(() => {
         setFlipped(projects.map(() => false));
-        setMediaIndex(projects.map(() => 0));
+        setSelectedProjectIndex(null);
+        setDetailMediaIndex(0);
     }, [projects]);
 
-    // Flips a single card without affecting the others.
     const toggleFlip = (index: number) => {
         setFlipped((prev) => {
             const next = [...prev];
@@ -84,7 +42,19 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         });
     };
 
-    // Precomputes the angle of each card around the 3D ring.
+    const openInfo = (index: number) => {
+        setSelectedProjectIndex(index);
+        setDetailMediaIndex(0);
+    };
+
+    const closeInfo = () => {
+        setSelectedProjectIndex(null);
+        setDetailMediaIndex(0);
+    };
+
+    const selectedProject =
+        selectedProjectIndex !== null ? projects[selectedProjectIndex] ?? null : null;
+
     const ringCards = useMemo(
         () =>
             projects.map((project, index) => ({
@@ -95,340 +65,147 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
         [projects, angleStep]
     );
 
-    const anyFlipped = flipped.some(Boolean);
-    const isRotationPaused = interactionPaused || anyFlipped || manualPaused;
-
-    // Single tap pauses the carousel, double tap flips the card on touch devices.
-    const handleFrontTap = (index: number) => {
-        const now = Date.now();
-        const lastTap = lastTapRef.current[index] ?? 0;
-        const threshold = 260;
-
-        if (now - lastTap < threshold) {
-            if (tapTimeoutRef.current[index]) {
-                window.clearTimeout(tapTimeoutRef.current[index]);
-            }
-            lastTapRef.current[index] = 0;
-            toggleFlip(index);
-            return;
-        }
-
-        lastTapRef.current[index] = now;
-        if (tapTimeoutRef.current[index]) {
-            window.clearTimeout(tapTimeoutRef.current[index]);
-        }
-        tapTimeoutRef.current[index] = window.setTimeout(() => {
-            setManualPaused((prev) => !prev);
-            lastTapRef.current[index] = 0;
-        }, threshold);
-    };
-
-    // Media interactions should not propagate to the card or carousel gesture handlers.
-    const handleMediaPointerDown = (event: ReactPointerEvent) => {
-        event.stopPropagation();
-        setInteractionPaused(true);
-    };
-
-    const handleMediaPointerUp = (event: ReactPointerEvent) => {
-        event.stopPropagation();
-        setInteractionPaused(false);
-    };
-
-    // Stops the delayed auto-scroll and restores the back text to its initial position.
-    const stopAutoScroll = (index: number) => {
-        const timeoutId = autoScrollTimeoutsRef.current[index];
-        if (timeoutId) {
-            window.clearTimeout(timeoutId);
-            autoScrollTimeoutsRef.current[index] = null;
-        }
-        const content = backContentRefs.current[index];
-        if (content) {
-            content.style.animation = 'none';
-            content.style.transform = 'translateY(0px)';
-        }
-    };
-
-    // Starts an automatic vertical scroll for long descriptions after a short reading delay.
-    const startAutoScroll = (index: number) => {
-        const container = backScrollRefs.current[index];
-        const content = backContentRefs.current[index];
-        if (!container || !content) return;
-
-        stopAutoScroll(index);
-
-        autoScrollTimeoutsRef.current[index] = window.setTimeout(() => {
-            const distance = content.scrollHeight - container.clientHeight;
-            if (distance <= 0) return;
-
-            const speed = 6; // px per second
-            const duration = Math.max(8, distance / speed);
-
-            content.style.setProperty('--scroll-distance', `${distance}px`);
-            content.style.animation = 'none';
-            // Forces a reflow so the CSS animation restarts reliably each time.
-            void content.offsetHeight;
-            content.style.animation = `backTextScroll ${duration}s linear forwards`;
-        }, 3000);
-    };
-
-    // Keeps the latest flip state available inside interval callbacks.
     useEffect(() => {
-        flippedRef.current = flipped;
-    }, [flipped]);
+        let frame = 0;
 
-    // Auto-advances media on cards with multiple assets, but only while the card front is visible.
-    useEffect(() => {
-        autoMediaIntervalsRef.current.forEach((id) => {
-            if (id) window.clearInterval(id);
-        });
+        const updateReveal = () => {
+            if (!sectionRef.current) return;
 
-        autoMediaIntervalsRef.current = projects.map((project, index) => {
-            const media = project.images ?? [];
-            if (media.length <= 1) return null;
+            const rect = sectionRef.current.getBoundingClientRect();
+            const viewport = window.innerHeight;
+            const start = viewport * 0.08;
+            const end = viewport * 0.72;
+            const nextReveal = Math.min(1, Math.max(0, (start - rect.top) / (end - start)));
 
-            return window.setInterval(() => {
-                if (flippedRef.current[index]) return;
-                setMediaIndex((prev) => {
-                    const currentMedia = projects[index]?.images ?? [];
-                    if (currentMedia.length <= 1) return prev;
-                    const next = [...prev];
-                    const current = prev[index] ?? 0;
-                    next[index] = (current + 1) % currentMedia.length;
-                    return next;
-                });
-            }, 4500);
-        });
+            setGridReveal((prev) => (Math.abs(prev - nextReveal) > 0.01 ? nextReveal : prev));
+        };
 
-        return () => {
-            autoMediaIntervalsRef.current.forEach((id) => {
-                if (id) window.clearInterval(id);
+        const queueUpdate = () => {
+            if (frame) return;
+            frame = window.requestAnimationFrame(() => {
+                frame = 0;
+                updateReveal();
             });
         };
-    }, [projects]);
 
-    // Starts or stops back-side text scrolling only when a card actually changes side.
-    useEffect(() => {
-        const prev = prevFlippedRef.current;
-        flipped.forEach((isFlipped, index) => {
-            const wasFlipped = prev[index] ?? false;
-            if (isFlipped && !wasFlipped) startAutoScroll(index);
-            if (!isFlipped && wasFlipped) stopAutoScroll(index);
-        });
-        prevFlippedRef.current = flipped;
-    }, [flipped]);
+        updateReveal();
+        window.addEventListener('scroll', queueUpdate, { passive: true });
+        window.addEventListener('resize', queueUpdate);
 
-    // Clears any pending timers when the component unmounts.
-    useEffect(() => {
         return () => {
-            autoScrollTimeoutsRef.current.forEach((id) => {
-                if (id) window.clearTimeout(id);
-            });
-            autoMediaIntervalsRef.current.forEach((id) => {
-                if (id) window.clearInterval(id);
-            });
+            if (frame) window.cancelAnimationFrame(frame);
+            window.removeEventListener('scroll', queueUpdate);
+            window.removeEventListener('resize', queueUpdate);
         };
     }, []);
 
+    const anyFlipped = flipped.some(Boolean);
+    const isRotationPaused = anyFlipped || gridReveal > 0.18 || selectedProjectIndex !== null;
+    const carouselOpacity = 1 - Math.min(1, gridReveal * 1.35);
+    const gridOpacity = Math.min(1, Math.max(0, (gridReveal - 0.18) / 0.62));
+    const gridTranslateY = 48 - gridOpacity * 48;
+
+    const nextDetailMedia = () => {
+        if (!selectedProject) return;
+        const totalMedia = selectedProject.images.length;
+        if (totalMedia <= 1) return;
+        setDetailMediaIndex((prev) => (prev + 1) % totalMedia);
+    };
+
+    const previousDetailMedia = () => {
+        if (!selectedProject) return;
+        const totalMedia = selectedProject.images.length;
+        if (totalMedia <= 1) return;
+        setDetailMediaIndex((prev) => (prev - 1 + totalMedia) % totalMedia);
+    };
+
     return (
         <section
+            ref={sectionRef}
             id={id}
             {...sectionProps}
-            className={`min-h-screen w-full px-6 pt-24 pb-16 flex flex-col items-center gap-10 bg-[#0d0d0d] text-white${className ? ` ${className}` : ''
-                }`}
+            className={`relative w-full bg-[#0d0d0d] text-white${className ? ` ${className}` : ''}`}
             aria-labelledby="projects-title"
         >
-            <h2
-                id="projects-title"
-                className="text-2xl sm:text-3xl md:text-4xl font-bold text-red-600 tracking-[0.03em]"
-            >
-                {t("Projects", "title")}
-            </h2>
-
-            {/* Perspective wrapper for the rotating 3D ring of project cards. */}
-            <div className="ring-scene relative w-full max-w-6xl h-[25rem] mt-6 [perspective:1200px]">
+            <div className="sticky top-0 z-0 flex min-h-screen items-center justify-center px-6 pt-24 pb-12">
                 <div
-                    className="relative w-full h-full [transform-style:preserve-3d] animate-[ringSpin_26s_linear_infinite] will-change-transform hover:[animation-play-state:paused]"
-                    aria-label={t("Projects", "carouselLabel")}
-                    style={isRotationPaused ? { animationPlayState: 'paused' } : undefined}
-                    onPointerDown={() => setInteractionPaused(true)}
-                    onPointerUp={() => setInteractionPaused(false)}
-                    onPointerCancel={() => setInteractionPaused(false)}
-                    onPointerLeave={() => setInteractionPaused(false)}
+                    className="w-full max-w-6xl transition-[opacity,transform] duration-300 ease-out"
+                    style={{
+                        opacity: carouselOpacity,
+                        transform: `translateY(${-gridReveal * 28}px) scale(${1 - gridReveal * 0.05})`,
+                        pointerEvents: gridReveal > 0.78 ? 'none' : 'auto',
+                    }}
                 >
-                    {ringCards.map(({ project, index, angle }) => {
-                        // Each card resolves its active media item and builds a normalized asset path.
-                        const media = project.images?.map(normalizeMedia) ?? [];
-                        const currentMedia = media[mediaIndex[index] ?? 0];
-                        const normalizedSrc = currentMedia?.src?.startsWith('/')
-                            ? currentMedia.src
-                            : currentMedia?.src
-                                ? `/${currentMedia.src}`
-                                : '';
-                        const primaryLink = getPrimaryLink(project);
-                        const hasMedia = media.length > 0;
-                        const isFlipped = flipped[index];
+                    <h2
+                        id="projects-title"
+                        className="text-center text-2xl font-bold tracking-[0.03em] text-red-600 sm:text-3xl md:text-4xl"
+                    >
+                        {t('Projects', 'title')}
+                    </h2>
 
-                        return (
-                            <div
-                                key={`${project.title}-${index}`}
-                                className="absolute top-1/2 left-1/2 [transform-style:preserve-3d]"
-                                style={
-                                    {
-                                        width: 'var(--card-width)',
-                                        height: 'var(--card-height)',
-                                        transform: `translate(-50%, -50%) rotateY(${angle}deg) translateZ(var(--ring-radius)) scale(var(--card-scale))`,
-                                    } as CSSProperties
-                                }
-                            >
-                                <div
-                                    className="relative h-full w-full transition-transform duration-500 ease-in-out cursor-pointer outline-none [transform-style:preserve-3d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500 focus-visible:outline-offset-4"
-                                    style={{ transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
-                                >
-                                    {/* Front face: preview media plus the interaction hint to flip/pause. */}
-                                    <div
-                                        className="absolute inset-0 rounded-2xl border-2 border-red-500/20 bg-black/90 shadow-[0_12px_30px_rgba(0,0,0,0.45)] p-5 flex flex-col gap-4"
-                                        style={{
-                                            backfaceVisibility: 'hidden',
-                                            pointerEvents: isFlipped ? 'none' : 'auto',
-                                        }}
-                                    >
-                                        <h3 className="text-lg font-bold text-red-400 text-center">{project.title}</h3>
-
-                                        {hasMedia ? (
-                                            <div
-                                                className={`relative w-full flex-1 min-h-0${
-                                                    currentMedia?.type === 'image' ? ' -mt-1' : ''
-                                                }`}
-                                            >
-                                                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black/90 flex items-center justify-center">
-                                                    {currentMedia?.type === 'video' ? (
-                                                        <div
-                                                            className="flex items-center justify-center w-full h-full p-2"
-                                                            onPointerDown={handleMediaPointerDown}
-                                                            onPointerUp={handleMediaPointerUp}
-                                                            onPointerLeave={handleMediaPointerUp}
-                                                            onPointerCancel={handleMediaPointerUp}
-                                                        >
-                                                            <video
-                                                                src={normalizedSrc}
-                                                                className="w-full h-full object-contain rounded-xl"
-                                                                autoPlay
-                                                                controls
-                                                                muted
-                                                                playsInline
-                                                            />
-                                                        </div>
-                                                    ) : (
-                                                        normalizedSrc && (
-                                                            <div className="relative w-full h-full p-2">
-                                                                <Image
-                                                                    src={normalizedSrc}
-                                                                    alt={t("Projects", "previewAlt", { title: project.title })}
-                                                                    fill
-                                                                    sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 320px"
-                                                                    className="object-contain"
-                                                                    priority={index === 0}
-                                                                />
-                                                            </div>
-                                                        )
-                                                    )}
-                                                </div>
-
-                                                {media.length > 1 && (
-                                                    // Progress dots reflect the currently visible media item.
-                                                    <>
-                                                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 pointer-events-none">
-                                                            {media.map((_, dotIndex) => (
-                                                                <span
-                                                                    key={dotIndex}
-                                                                    className={`h-1.5 rounded-full transition-all ${dotIndex === (mediaIndex[index] ?? 0)
-                                                                            ? 'w-4 bg-red-500'
-                                                                            : 'w-1.5 bg-white/40'
-                                                                        }`}
-                                                                    aria-hidden
-                                                                />
-                                                            ))}
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
-                                                ) : (
-                                            // If no gallery is available, fall back to a single primary project link.
-                                            <div className="flex-1 min-h-0 rounded-2xl text-white/70 flex items-center justify-center">
-                                                {primaryLink ? (
-                                                    <a
-                                                        href={primaryLink.url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-500/60 bg-red-500/10 text-red-100 text-sm"
-                                                        onClick={(event) => event.stopPropagation()}
-                                                    >
-                                                        <span className="inline-flex">{getLinkIcon(primaryLink.url)}</span>
-                                                        <span>{primaryLink.label}</span>
-                                                    </a>
-                                                ) : (
-                                                    <span className="text-xs uppercase tracking-[0.2em]">{t("Projects", "noMedia")}</span>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        <button
-                                            type="button"
-                                            onClick={() => handleFrontTap(index)}
-                                            className="mt-auto text-center text-[0.5rem] uppercase tracking-[0.18em] text-red-500/80 hover:text-white transition touch-manipulation"
-                                            aria-label={t("Projects", "flipAria", { title: project.title })}
-                                        >
-                                            {t("Projects", "flipHint")}
-                                        </button>
-                                    </div>
-
-                                    {/* Back face: full project description with delayed auto-scroll. */}
-                                    <div
-                                        className="absolute inset-0 rounded-2xl border border-white/10 bg-black/90 shadow-[0_12px_30px_rgba(0,0,0,0.45)] p-5 flex flex-col gap-4 min-h-0"
-                                        style={{
-                                            backfaceVisibility: 'hidden',
-                                            transform: 'rotateY(180deg)',
-                                            pointerEvents: isFlipped ? 'auto' : 'none',
-                                        }}
-                                    >
-                                        <div
-                                            ref={(el) => {
-                                                backScrollRefs.current[index] = el;
-                                            }}
-                                            className="flex-1 min-h-0 overflow-hidden"
-                                        >
-                                            <p
-                                                ref={(el) => {
-                                                    backContentRefs.current[index] = el;
-                                                }}
-                                                className="text-xs leading-relaxed text-white/75 will-change-transform"
-                                            >
-                                                {project.full}
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            type="button"
-                                            onClick={() => toggleFlip(index)}
-                                            className="mt-auto text-center text-xs uppercase tracking-[0.2em] text-red-500/80 hover:text-white transition"
-                                            aria-label={t("Projects", "returnAria", { title: project.title })}
-                                        >
-                                            {t("Projects", "returnHint")}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })}
+                    <div className="ring-scene relative mt-8 h-[25rem] w-full [perspective:1200px]">
+                        <div
+                            className="relative h-full w-full [transform-style:preserve-3d] animate-[ringSpin_26s_linear_infinite] will-change-transform hover:[animation-play-state:paused]"
+                            aria-label={t('Projects', 'carouselLabel')}
+                            style={isRotationPaused ? { animationPlayState: 'paused' } : undefined}
+                        >
+                            {ringCards.map(({ project, index, angle }) => (
+                                <ProjectCard
+                                    key={`carousel-${project.title}-${index}`}
+                                    project={project}
+                                    index={index}
+                                    angle={angle}
+                                    isFlipped={flipped[index] ?? false}
+                                    layout="carousel"
+                                    onToggleFlip={toggleFlip}
+                                    onOpenInfo={openInfo}
+                                    t={t}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <div className="relative z-10 h-[42vh]" aria-hidden />
+
+            <div
+                className="relative z-10 mx-auto w-full max-w-6xl px-6 pb-20 transition-[opacity,transform] duration-300 ease-out"
+                style={{
+                    opacity: gridOpacity,
+                    transform: `translateY(${gridTranslateY}px)`,
+                }}
+            >
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                    {projects.map((project, index) => (
+                        <ProjectCard
+                            key={`grid-${project.title}-${index}`}
+                            project={project}
+                            index={index}
+                            isFlipped={flipped[index] ?? false}
+                            layout="grid"
+                            onToggleFlip={toggleFlip}
+                            onOpenInfo={openInfo}
+                            t={t}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            <ProjectInfoPanel
+                project={selectedProject}
+                activeMediaIndex={detailMediaIndex}
+                onClose={closeInfo}
+                onNextMedia={nextDetailMedia}
+                onPreviousMedia={previousDetailMedia}
+                t={t}
+            />
+
             <style jsx global>{`
-                /* Shared sizing variables keep the ring responsive without recalculating transforms in JS. */
                 .ring-scene {
-                    --ring-radius: clamp(140px, 28vw, 320px);
-                    --card-width: clamp(180px, 50vw, 250px);
-                    --card-height: clamp(270px, 72vw, 355px);
+                    --ring-radius: clamp(190px, 31vw, 360px);
+                    --card-width: clamp(220px, 54vw, 300px);
+                    --card-height: clamp(350px, 80vw, 430px);
                     --card-scale: 1;
                 }
 
@@ -441,45 +218,26 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                     }
                 }
 
-                @keyframes backTextScroll {
-                    from {
-                        transform: translateY(0);
-                    }
-                    to {
-                        transform: translateY(calc(-1 * var(--scroll-distance, 0px)));
-                    }
-                }
-
-                /* Tightens the ring geometry for tablets and medium screens. */
                 @media (max-width: 820px) {
                     .ring-scene {
-                        height: 23.5rem;
-                        --ring-radius: clamp(220px, 54vw, 360px);
-                        --card-width: clamp(175px, 58vw, 235px);
-                        --card-height: clamp(245px, 74vw, 320px);
-                        --card-scale: 0.97;
+                        height: 27rem;
+                        --ring-radius: clamp(230px, 58vw, 380px);
+                        --card-width: clamp(198px, 62vw, 262px);
+                        --card-height: clamp(330px, 92vw, 400px);
+                        --card-scale: 0.95;
                     }
                 }
 
-                /* Uses smaller cards and a deeper radius on compact phones. */
                 @media (max-width: 560px) {
                     .ring-scene {
-                        height: 26rem;
-                        --ring-radius: clamp(230px, 78vw, 360px);
-                        --card-width: clamp(150px, 68vw, 205px);
-                        --card-height: clamp(280px, 110vw, 380px);
-                        --card-scale: 0.92;
+                        height: 30rem;
+                        --ring-radius: clamp(248px, 84vw, 390px);
+                        --card-width: clamp(180px, 76vw, 228px);
+                        --card-height: clamp(322px, 126vw, 410px);
+                        --card-scale: 0.9;
                     }
                 }
 
-                /* Adds a bit more vertical breathing room on very wide screens. */
-                @media (min-width: 1440px) {
-                    .ring-scene {
-                        margin-top: 3rem;
-                    }
-                }
-
-                /* Disables the carousel rotation when the user prefers reduced motion. */
                 @media (prefers-reduced-motion: reduce) {
                     .animate-\\[ringSpin_26s_linear_infinite\\] {
                         animation: none !important;

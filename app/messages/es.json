@@ -116,9 +116,33 @@
                      "previewAlt":  "Vista previa de {{title}}",
                      "flipAria":  "Girar {{title}}",
                      "returnAria":  "Volver al frente de {{title}}",
+                     "typeLabels":  {
+                                        "app":  "App",
+                                        "website":  "Sitio web"
+                                    },
+                     "stackLabel":  "Stack",
+                     "stackCount":  "{{count}} tecnologÃ­as",
+                     "previewLabel":  "Media",
+                     "directLinkLabel":  "Enlace directo",
+                     "descriptionLabel":  "DescripciÃ³n",
+                     "mediaFallback":  "Media prÃ³ximamente",
+                     "flipButton":  "Flip",
+                     "backButton":  "Volver",
+                     "infoButton":  "Info+",
+                     "infoAria":  "Abrir detalles de {{title}}",
+                     "closeInfo":  "Cerrar detalles del proyecto",
+                     "noDirectLink":  "Enlace no disponible",
+                     "galleryLabel":  "GalerÃƒÂ­a del proyecto",
                      "items":  [
                                    {
                                        "title":  "Orto Verde",
+                                       "kind":  "app",
+                                       "coverImage":  "/IlMioOrto/Home.png",
+                                       "stack":  [
+                                                     "Java",
+                                                     "Android",
+                                                     "IoT"
+                                                 ],
                                        "short":  "Proyecto realizado en equipo con dos compaÃ±eros para completar la parte prÃ¡ctica del curso \"InteracciÃ³n humano-mÃ¡quina\".",
                                        "full":  "TenÃ­amos la tarea de diseÃ±ar y crear una aplicaciÃ³n Android usando el lenguaje Java. AsÃ­ que decidimos crear una aplicaciÃ³n que permite a los usuarios organizar su propio pequeÃ±o huerto en casa y mantenerlo bajo control incluso de forma remota con varios sensores de humedad y un dispositivo de riego remoto. El inicio de sesiÃ³n estÃ¡ gestionado para que, cada vez que el usuario quiera acceder, primero deba registrarse completando los campos obligatorios. Una vez almacenados los datos, puede iniciar sesiÃ³n. La pÃ¡gina principal muestra el estado de los sensores y la posibilidad de regar el huerto. La aplicaciÃ³n tambiÃ©n permite aÃ±adir nuevas plantas, ver el historial de riego y datos de sensores, y recibir notificaciones cuando las plantas necesitan atenciÃ³n. El proyecto fue una gran oportunidad para aplicar nuestros conocimientos de Java y desarrollo Android, asÃ­ como para trabajar en equipo.",
                                        "images":  [
@@ -130,6 +154,13 @@
                                    },
                                    {
                                        "title":  "Frogger",
+                                       "kind":  "app",
+                                       "coverImage":  "/Frogger/Immagine1.png",
+                                       "stack":  [
+                                                     "C",
+                                                     "ncurses",
+                                                     "Linux"
+                                                 ],
                                        "short":  "Videojuego creado en C con la librerÃ­a lncurses para el curso \"Sistemas Operativos\" con un compaÃ±ero.",
                                        "full":  "Es un videojuego creado en C usando la librerÃ­a lncurses, que permite crear interfaces de usuario basadas en texto. El juego estÃ¡ inspirado en el clÃ¡sico Frogger, donde el jugador debe llevar una rana a travÃ©s de una carretera transitada y un rÃ­o lleno de obstÃ¡culos. El jugador controla la rana con las flechas para moverse arriba, abajo, izquierda o derecha. El objetivo es llegar al otro lado de la pantalla sin ser golpeado por coches o caer al agua. El juego incluye un sistema de puntuaciÃ³n sencillo, donde el jugador gana puntos por cruzar con Ã©xito. La partida termina cuando el jugador llega a la meta o pierde todas sus vidas.",
                                        "images":  [
@@ -141,6 +172,13 @@
                                    },
                                    {
                                        "title":  "WeatherApp",
+                                       "kind":  "app",
+                                       "coverImage":  "/WeatherApp/homeLight.png",
+                                       "stack":  [
+                                                     "React Native",
+                                                     "Expo",
+                                                     "OpenWeatherMap"
+                                                 ],
                                        "short":  "App desarrollada en React Native y probada con Expo para previsiones meteorolÃ³gicas locales y ubicaciones aÃ±adidas.",
                                        "full":  "DesarrollÃ© esta app con el objetivo de comenzar con llamadas a APIs y geolocalizaciÃ³n. Por eso creÃ© una app que permite ver previsiones del tiempo (usando las APIs de OpenWeatherMap). Los usuarios pueden registrarse, lo que los guarda en la base de datos, y luego iniciar sesiÃ³n en su propia sesiÃ³n, que guarda sus ajustes y las ubicaciones elegidas para la previsiÃ³n. De forma predeterminada, siempre hay una tarjeta con la previsiÃ³n de la ubicaciÃ³n actual del dispositivo. Si se quieren ver previsiones de otras ubicaciones, se puede usar la pantalla dedicada para buscar la ubicaciÃ³n elegida o buscarla en el mapa e insertarla. DespuÃ©s se tendrÃ¡ una nueva tarjeta en la pantalla principal con la nueva ubicaciÃ³n y su previsiÃ³n.",
                                        "images":  [
@@ -164,6 +202,13 @@
                                    },
                                    {
                                        "title":  "Serie A Excange",
+                                       "kind":  "app",
+                                       "stack":  [
+                                                     "React Native",
+                                                     "Expo",
+                                                     "Python",
+                                                     "Django"
+                                                 ],
                                        "short":  "Otra app desarrollada en React Native y probada con Expo, con backend desarrollado Ã­ntegramente por mÃ­ con Python y Django.",
                                        "full":  "Â¡PROYECTO AÃšN EN DESARROLLO! Tras comprender React Native y empezar a ver el potencial del backend, decidÃ­ desarrollar mi propio backend para este proyecto usando Python (Django). Es una app que permite a los usuarios ganar crÃ©ditos de juego mediante cuestionarios u otros mÃ©todos que implementarÃ© mÃ¡s adelante. Estos crÃ©ditos pueden usarse para comprar sobres de cartas. Por ahora las cartas solo se pueden coleccionar, pero estoy trabajando en otras funciones, como el intercambio de cartas entre usuarios o incluso juegos de cartas donde los usuarios se desafÃ­an con sus propias cartas. Mira el vÃ­deo de demostraciÃ³n a continuaciÃ³n.",
                                        "images":  [
@@ -178,6 +223,12 @@
                                    },
                                    {
                                        "title":  "Su Stentu Website",
+                                       "kind":  "website",
+                                       "stack":  [
+                                                     "Next.js",
+                                                     "Vercel",
+                                                     "GitHub"
+                                                 ],
                                        "short":  "Sitio web para un restaurante local, desarrollado en equipo usando Next.js y Vercel para alojarlo online.",
                                        "full":  "En agosto/septiembre de 2025 colaborÃ© en la creaciÃ³n de un sitio web dedicado a presentar un restaurante, con el objetivo de mostrar su historia, platos, ubicaciÃ³n y menÃº a travÃ©s de un diseÃ±o moderno y una experiencia de usuario intuitiva. El proyecto se desarrollÃ³ en equipo, utilizando Next.js como framework principal para crear un sitio de alto rendimiento, SEO-friendly y fÃ¡cilmente escalable. Durante el desarrollo explorÃ© el uso de repositorios compartidos (Git/GitHub), aprendiendo a gestionar ramas, merges y pull requests, mejorando asÃ­ mi capacidad de colaboraciÃ³n en entornos estructurados. AdemÃ¡s del desarrollo, tuve la oportunidad de observar y contribuir a varios aspectos de la gestiÃ³n de un sitio en producciÃ³n, incluyendo: OptimizaciÃ³n para motores de bÃºsqueda (SEO), monitorizaciÃ³n de estadÃ­sticas de uso y comportamiento de los usuarios.",
                                        "images":  [
@@ -192,6 +243,12 @@
                                    },
                                    {
                                        "title":  "Core Studio",
+                                       "kind":  "website",
+                                       "stack":  [
+                                                     "Next.js",
+                                                     "Vercel",
+                                                     "GSAP"
+                                                 ],
                                        "short":  "Portafolio web para una diseÃ±adora grÃ¡fica, desarrollado por mÃ­ con Next.js y alojado en Vercel.",
                                        "full":  "En diciembre de 2025 creÃ© un portafolio web para una diseÃ±adora grÃ¡fica, partiendo de un brief mÃ­nimo compuesto solo por paletas de color y contenidos de texto. GestionÃ© de forma independiente todo el proceso creativo y tÃ©cnico: diseÃ±o de la estructura, definiciÃ³n del estilo visual, desarrollo de animaciones, gestiÃ³n del scroll y construcciÃ³n de una narrativa visual coherente con la identidad del cliente. El foco estuvo en la experiencia de usuario y en realzar el trabajo, utilizando transiciones fluidas, secuencias animadas y un layout pensado para guiar la navegaciÃ³n. El sitio se desplegÃ³ en Vercel y se finalizÃ³ con la asociaciÃ³n de un dominio personalizado, garantizando rendimiento y fiabilidad en producciÃ³n.",
                                        "images":  [
@@ -206,6 +263,14 @@
                                    },
                                    {
                                        "title":  "Nexus App",
+                                       "kind":  "website",
+                                       "stack":  [
+                                                     "Next.js",
+                                                     "Django",
+                                                     "FastAPI",
+                                                     "Vercel",
+                                                     "Render"
+                                                 ],
                                        "short":  "Demo para startup sobre gestiÃ³n de equipos, entrenamiento y torneos de eSports, desarrollada por mÃ­ con Next.js alojada en Vercel para el frontend y Django con fastAPI para el backend alojado en Render.",
                                        "full":  "DesarrollÃ© esta demo, adaptÃ¡ndola a las necesidades del creador, con el objetivo de crear una demostraciÃ³n de un proyecto final mÃ¡s extenso y complejo. GestionÃ© todo el proyecto de forma independiente, incluyendo el diseÃ±o, el desarrollo y la implementaciÃ³n en lÃ­nea. La aplicaciÃ³n permite al usuario crear un wrap dinÃ¡mico y animado, que luego puede reproducirse de forma estÃ¡tica en cualquier momento, con sus propias estadÃ­sticas de las plataformas Riot y Steam, tras iniciar sesiÃ³n de forma segura y con la autorizaciÃ³n del usuario. ",
                                        "images":  [
