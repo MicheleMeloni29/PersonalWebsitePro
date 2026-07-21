@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 // CONTENUTO
 import Hero from './components/hero';
 import About from './components/about';
-import { TimelinePartOne, TimelinePartTwo } from './components/timeline';
+import { Timeline } from './components/timeline';
 import Projects from './components/myprojects';
 import Contacts from './components/contacts';
 import Footer from './components/footer';
@@ -17,20 +17,20 @@ import {
   BackgroundVariantC,
 } from './components/UI/Backgrounds';
 
-type SceneIndex = 0 | 1 | 2 | 3 | 4 | 5;
+type SceneIndex = 0 | 1 | 2 | 3 | 4;
 
 export default function Page() {
-  // scene: 0 A/Hero, 1 B/About, 2 C/TL1, 3 C/TL2, 4 A/Projects, 5 B/Contacts
+  // scene: 0 A/Hero, 1 B/About, 2 C/Timeline, 3 A/Projects, 4 B/Contacts
   const [scene, setScene] = useState<SceneIndex>(0);
 
   const scrollerRef = useRef<HTMLElement>(null);
   const sectionsRef = useRef<HTMLDivElement>(null);
 
-  // intro: prima A leggermente più lenta
+  // intro: prima A leggermente piu lenta
   const [intro, setIntro] = useState(true);
   const [didInitialA, setDidInitialA] = useState(false);
 
-  // fasi per A/B (C resta sticky → un solo layer)
+  // fasi per A/B (C resta sticky -> un solo layer)
   const [aPhase, setAPhase] = useState<0 | 1>(0);
   const [bPhase, setBPhase] = useState<0 | 1>(0);
 
@@ -41,7 +41,7 @@ export default function Page() {
 
   const log = (...a: unknown[]) => console.log('[ScrollDebug]', ...a);
 
-  // IntersectionObserver per capire quale section è dominante
+  // IntersectionObserver per capire quale section e dominante
   useEffect(() => {
     const r = requestAnimationFrame(() => setIntro(false));
 
@@ -59,7 +59,7 @@ export default function Page() {
         const next = Number((visible.target as HTMLElement).dataset.index) as SceneIndex;
         setScene(next);
       },
-      { threshold: [0.5], root: scrollerRef.current || null }
+      { threshold: [0, 0.15, 0.3, 0.5], root: scrollerRef.current || null }
     );
 
     root.querySelectorAll<HTMLElement>('[data-index]').forEach((el) => io.observe(el));
@@ -89,8 +89,8 @@ export default function Page() {
   }, []);
 
   function mkMorphStyle(opts: {
-    active: boolean; // family attiva ora
-    isOn: boolean;   // true = entrante, false = uscente
+    active: boolean;
+    isOn: boolean;
     z: number;
     initialSlow?: boolean;
   }): React.CSSProperties {
@@ -123,20 +123,18 @@ export default function Page() {
     };
   }
 
-  // Mappatura variant per scena (ordine richiesto)
   const variantFor = (s: number): 'A' | 'B' | 'C' => {
-    if (s === 0) return 'A';             // Hero
-    if (s === 1) return 'B';             // About
-    if (s === 2 || s === 3) return 'C';  // Timeline1 & Timeline2 (C "sticky")
-    if (s === 4) return 'A';             // Projects
-    return 'B';                          // Contacts
+    if (s === 0) return 'A';
+    if (s === 1) return 'B';
+    if (s === 2) return 'C';
+    if (s === 3) return 'A';
+    return 'B';
   };
 
-  const aActive = scene === 0 || scene === 4;
-  const bActive = scene === 1 || scene === 5;
-  const cActive = scene === 2 || scene === 3; // C resta attivo su entrambe
+  const aActive = scene === 0 || scene === 3;
+  const bActive = scene === 1 || scene === 4;
+  const cActive = scene === 2;
 
-  // Toggle fasi SOLO quando si cambia *variant* (non tra 2→3 che resta C)
   useEffect(() => {
     const curr = variantFor(scene);
     const prev = prevVariantRef.current;
@@ -148,15 +146,31 @@ export default function Page() {
     sceneRef.current = scene;
   }, [scene]);
 
-  // scroll controllato: una sezione per “tacca”
+  // Scroll controllato: le sezioni standard restano a scatto,
+  // la timeline invece rimane a scroll libero.
   useEffect(() => {
     const scroller = scrollerRef.current;
     const root = sectionsRef.current;
     if (!scroller || !root) return;
 
+    const getTimelineBounds = () => {
+      const timeline = root.querySelector<HTMLElement>('#timeline');
+      if (!timeline) return null;
+
+      const start = timeline.offsetTop;
+      const end = Math.max(start, start + timeline.offsetHeight - scroller.clientHeight);
+      return { start, end };
+    };
+
+    const isWithinTimelineRange = () => {
+      const bounds = getTimelineBounds();
+      if (!bounds) return false;
+      return scroller.scrollTop >= bounds.start && scroller.scrollTop <= bounds.end;
+    };
+
     const clamp = (v: number): SceneIndex => {
       const totalSections = root.querySelectorAll('[data-index]').length;
-      const maxIndex = Math.min(Math.max(totalSections - 1, 0), 5);
+      const maxIndex = Math.min(Math.max(totalSections - 1, 0), 4);
       const normalized = Math.max(0, Math.min(maxIndex, Math.round(v)));
       return normalized as SceneIndex;
     };
@@ -165,7 +179,7 @@ export default function Page() {
       const el = root.querySelector<HTMLElement>(`[data-index="${target}"]`);
       if (!el) return;
       const scrollerRect = scroller.getBoundingClientRect();
-      const elRect = el.getBoundingClientRect();  
+      const elRect = el.getBoundingClientRect();
       const offset = elRect.top - scrollerRect.top + scroller.scrollTop;
 
       isProgrammaticScrollRef.current = true;
@@ -181,6 +195,7 @@ export default function Page() {
     };
 
     const onWheel = (e: WheelEvent) => {
+      if (isWithinTimelineRange()) return;
       e.preventDefault();
       if (isProgrammaticScrollRef.current) return;
       if (Math.abs(e.deltaY) < 10) return;
@@ -199,6 +214,7 @@ export default function Page() {
       if (handled || touchStartY === 0) return;
       const dy = touchStartY - (e.touches[0]?.clientY ?? 0);
       if (Math.abs(dy) < 40) return;
+      if (isWithinTimelineRange()) return;
       e.preventDefault();
       handled = true;
       if (isProgrammaticScrollRef.current) return;
@@ -213,6 +229,7 @@ export default function Page() {
 
     const onKey = (e: KeyboardEvent) => {
       if (!['ArrowDown', 'PageDown', 'ArrowUp', 'PageUp'].includes(e.key)) return;
+      if (isWithinTimelineRange()) return;
       e.preventDefault();
       const dir = ['ArrowDown', 'PageDown'].includes(e.key) ? 1 : -1;
       const next = clamp(sceneRef.current + dir);
@@ -240,12 +257,10 @@ export default function Page() {
     };
   }, []);
 
-  // Prima A più lenta
   useEffect(() => {
     if (!intro && aActive && !didInitialA) setDidInitialA(true);
   }, [intro, aActive, didInitialA]);
 
-  // STILI LAYER
   const aStyle1: React.CSSProperties = mkMorphStyle({
     active: aActive && aPhase === 0,
     isOn: aActive && aPhase === 0,
@@ -269,7 +284,6 @@ export default function Page() {
     z: 2,
   });
 
-  // C STICKY: un solo layer, nessun toggle tra scena 2→3
   const cStyle: React.CSSProperties = mkMorphStyle({
     active: cActive,
     isOn: cActive,
@@ -280,51 +294,36 @@ export default function Page() {
     <main
       ref={scrollerRef}
       tabIndex={0}
-      className="relative h-dvh overflow-y-auto no-scrollbar snap-y snap-mandatory z-10 bg-black text-white"
+      className="relative h-dvh overflow-y-auto no-scrollbar snap-y snap-proximity z-10 bg-black text-white"
     >
       {/* BACKGROUND FISSO */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        {/* A (2 layer) */}
         <div className="absolute inset-0" style={aStyle1}><BackgroundVariantA /></div>
         <div className="absolute inset-0" style={aStyle2}><BackgroundVariantA /></div>
 
-        {/* B (2 layer) */}
         <div className="absolute inset-0" style={bStyle1}><BackgroundVariantB /></div>
         <div className="absolute inset-0" style={bStyle2}><BackgroundVariantB /></div>
 
-        {/* C (STICKY, 1 layer) */}
         <div className="absolute inset-0" style={cStyle}><BackgroundVariantC /></div>
       </div>
 
       {/* SEZIONI */}
       <div ref={sectionsRef}>
-        {/* 0 - A / Hero */}
         <section id="hero" data-index={0} className="h-dvh snap-start snap-always flex items-center justify-center">
           <Hero />
         </section>
 
-        {/* 1 - B / About */}
         <section id="about" data-index={1} className="h-dvh snap-start snap-always flex items-center justify-center">
           <About />
         </section>
 
-        {/* 2 - C / Timeline Parte 1 */}
-        <section id="timeline" data-index={2} className="h-dvh snap-start snap-always flex items-center justify-center">
-          <TimelinePartOne className="h-dvh" />
-        </section>
+        <Timeline data-index={2} />
 
-        {/* 3 - C / Timeline Parte 2 (C resta attivo, niente re-animazione) */}
-        <section id="timeline-continued" data-index={3} className="h-dvh snap-start snap-always flex items-center justify-center">
-          <TimelinePartTwo className="h-dvh" />
-        </section>
-
-        {/* 4 - A / Projects */}
-        <section id="projects" data-index={4} className="h-dvh snap-start snap-always flex items-center justify-center">
+        <section id="projects" data-index={3} className="h-dvh snap-start snap-always flex items-center justify-center">
           <Projects />
         </section>
 
-        {/* 5 - B / Contacts */}
-        <section id="contact" data-index={5} className="h-dvh snap-start snap-always flex items-center justify-center">
+        <section id="contact" data-index={4} className="h-dvh snap-start snap-always flex items-center justify-center">
           <div className="w-full max-w-6xl px-4">
             <Contacts />
           </div>

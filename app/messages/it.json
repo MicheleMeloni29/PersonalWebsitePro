@@ -92,6 +92,16 @@
         "year": "2024",
         "title": "Passione per lo sviluppo",
         "description": "Sviluppo applicazioni con React Native, studio Django e Next.js per il full-stack."
+      },
+      {
+        "year": "2025",
+        "title": "Primi siti completi",
+        "description": "Ho iniziato a sviluppare i primi siti completi, come il mio portfolio personale o siti per aziende o per professionisti, utilizzando librerie esterne o creando elementi e componenti da 0. Per alcuni lavori ho sviluppato tutto in autonomia, per altri ho avuto l'aiuto di designer che mi fornivano mockup completi."
+      },
+      {
+        "year": "2026",
+        "title": "Sviluppo web full-stack",
+        "description": "Continuato nello sviluppo web integrando backend con Django o Node.js, integrando gestione utenti, ho sviluppato una demo per una startup, continuato a sviluppare siti web per aziende, sempre con Next.js. Per tutti i lavori ho ideato e sviluppato il progetto in autonomia."
       }
     ]
   },

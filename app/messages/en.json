@@ -93,6 +93,16 @@
         "year": "2024",
         "title": "Development Passion",
         "description": "I develop applications with React Native and learn Django and Next.js for full-stack development."
+      },
+      {
+        "year": "2025",
+        "title": "First Complete Websites",
+        "description": "I started building my first complete websites, such as my personal portfolio and websites for companies or professionals, using external libraries or creating elements and components from scratch. For some projects I developed everything on my own, while for others I worked from complete mockups provided by designers."
+      },
+      {
+        "year": "2026",
+        "title": "Full-Stack Web Development",
+        "description": "I continued in web development by integrating backends with Django or Node.js, including user management. I developed a demo for a startup and kept building websites for companies, always with Next.js. For every project I designed and developed the whole solution independently."
       }
     ]
   },
