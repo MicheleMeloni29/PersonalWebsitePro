@@ -127,7 +127,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
             className={`relative w-full bg-[#0d0d0d] text-white${className ? ` ${className}` : ''}`}
             aria-labelledby="projects-title"
         >
-            <div className="sticky top-0 z-0 flex min-h-screen items-center justify-center px-6 pt-24 pb-12">
+            <div className="sticky top-0 z-0 flex min-h-screen items-center justify-center px-6 pt-24 pb-10">
                 <div
                     className="w-full max-w-6xl transition-[opacity,transform] duration-300 ease-out"
                     style={{
@@ -143,7 +143,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                         {t('Projects', 'title')}
                     </h2>
 
-                    <div className="ring-scene relative mt-8 h-[25rem] w-full [perspective:1200px]">
+                    <div className="ring-scene relative mt-5 h-[18.5rem] w-full [perspective:1200px]">
                         <div
                             className="relative h-full w-full [transform-style:preserve-3d] animate-[ringSpin_26s_linear_infinite] will-change-transform hover:[animation-play-state:paused]"
                             aria-label={t('Projects', 'carouselLabel')}
@@ -176,7 +176,7 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
                     transform: `translateY(${gridTranslateY}px)`,
                 }}
             >
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {projects.map((project, index) => (
                         <ProjectCard
                             key={`grid-${project.title}-${index}`}
@@ -203,9 +203,9 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
 
             <style jsx global>{`
                 .ring-scene {
-                    --ring-radius: clamp(190px, 31vw, 360px);
-                    --card-width: clamp(220px, 54vw, 300px);
-                    --card-height: clamp(350px, 80vw, 430px);
+                    --ring-radius: clamp(205px, 33vw, 365px);
+                    --card-width: clamp(150px, 32vw, 210px);
+                    --card-height: clamp(246px, 48vw, 310px);
                     --card-scale: 1;
                 }
 
@@ -220,20 +220,20 @@ export default function Projects({ className, id = 'projects', ...sectionProps }
 
                 @media (max-width: 820px) {
                     .ring-scene {
-                        height: 27rem;
-                        --ring-radius: clamp(230px, 58vw, 380px);
-                        --card-width: clamp(198px, 62vw, 262px);
-                        --card-height: clamp(330px, 92vw, 400px);
-                        --card-scale: 0.95;
+                        height: 19.5rem;
+                        --ring-radius: clamp(205px, 48vw, 315px);
+                        --card-width: clamp(142px, 34vw, 184px);
+                        --card-height: clamp(238px, 58vw, 278px);
+                        --card-scale: 0.93;
                     }
                 }
 
                 @media (max-width: 560px) {
                     .ring-scene {
-                        height: 30rem;
-                        --ring-radius: clamp(248px, 84vw, 390px);
-                        --card-width: clamp(180px, 76vw, 228px);
-                        --card-height: clamp(322px, 126vw, 410px);
+                        height: 17.5rem;
+                        --ring-radius: clamp(170px, 56vw, 250px);
+                        --card-width: clamp(126px, 42vw, 156px);
+                        --card-height: clamp(216px, 70vw, 246px);
                         --card-scale: 0.9;
                     }
                 }

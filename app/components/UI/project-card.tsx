@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import type { Project } from '../data/projectsStructure';
+import LiquidChrome from './LiquidChrome';
 
 type ProjectCardProps = {
     project: Project;
@@ -54,7 +55,7 @@ export default function ProjectCard({
     const wrapperClassName =
         layout === 'carousel'
             ? 'absolute top-1/2 left-1/2 [transform-style:preserve-3d]'
-            : 'relative h-[24rem] w-full [transform-style:preserve-3d]';
+            : 'relative h-[17.5rem] w-full max-w-[15rem] justify-self-center [transform-style:preserve-3d] sm:h-[18.25rem] sm:max-w-[15.5rem] lg:h-[18.75rem] lg:max-w-[16rem]';
     const wrapperStyle =
         layout === 'carousel'
             ? ({
@@ -69,6 +70,7 @@ export default function ProjectCard({
             <div
                 className="relative h-full w-full [transform-style:preserve-3d] transition-transform duration-500 ease-in-out"
                 style={{ transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+                onClick={() => onToggleFlip(index)}
             >
                 <div
                     className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/10 bg-black shadow-[0_20px_46px_rgba(0,0,0,0.32)]"
@@ -83,7 +85,7 @@ export default function ProjectCard({
                             alt={t('Projects', 'previewAlt', { title: project.title })}
                             fill
                             sizes="(max-width: 768px) 92vw, 320px"
-                            className="object-cover"
+                            className="object-contain scale-[0.88] p-3 sm:p-4"
                             priority={layout === 'carousel' && index === 0}
                         />
                     ) : (
@@ -92,16 +94,16 @@ export default function ProjectCard({
 
                     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.22),rgba(0,0,0,0.46)_38%,rgba(0,0,0,0.88)_100%)]" />
 
-                    <div className="relative z-10 flex h-full flex-col justify-between p-5">
+                    <div className="relative z-10 flex h-full flex-col justify-between p-3.5 sm:p-4">
                         <div>
-                            <h3 className="max-w-[12ch] text-[1.45rem] font-semibold leading-[1.02] text-white">
+                            <h3 className="max-w-[12ch] text-[1.02rem] font-semibold leading-[1.05] text-white sm:text-[1.12rem]">
                                 {project.title}
                             </h3>
-                            <div className="mt-4 flex flex-wrap gap-2">
+                            <div className="mt-2.5 flex flex-wrap gap-1">
                                 {project.stack.map((item) => (
                                     <span
                                         key={item}
-                                        className="rounded-full border border-white/14 bg-black/26 px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.16em] text-white/82 backdrop-blur-sm"
+                                        className="rounded-full border border-white/14 bg-black/26 px-1.5 py-0.5 text-[0.48rem] uppercase tracking-[0.12em] text-white/82 backdrop-blur-sm sm:text-[0.52rem]"
                                     >
                                         {item}
                                     </span>
@@ -115,30 +117,26 @@ export default function ProjectCard({
                                     href={primaryLink.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/14 bg-white/10 px-4 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-white/16"
+                                    onClick={(event) => event.stopPropagation()}
+                                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-white/14 bg-white/10 px-2.5 py-2 text-[0.54rem] font-semibold uppercase tracking-[0.14em] text-white transition hover:bg-white/16 sm:text-[0.58rem]"
                                 >
-                                    <FaExternalLinkAlt className="h-3.5 w-3.5" />
+                                    <FaExternalLinkAlt className="h-3 w-3" />
                                     <span>{primaryLink.label}</span>
                                 </a>
                             ) : (
-                                <span className="flex w-full items-center justify-center rounded-full border border-white/10 bg-white/6 px-4 py-3 text-[0.68rem] uppercase tracking-[0.18em] text-white/42">
+                                <span className="flex w-full items-center justify-center rounded-full border border-white/10 bg-white/6 px-2.5 py-2 text-[0.54rem] uppercase tracking-[0.14em] text-white/42 sm:text-[0.58rem]">
                                     {t('Projects', 'noDirectLink')}
                                 </span>
                             )}
 
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 gap-2">
                                 <button
                                     type="button"
-                                    onClick={() => onToggleFlip(index)}
-                                    className="rounded-full border border-red-400/22 bg-red-500/12 px-4 py-2.5 text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-red-50 transition hover:bg-red-500/20"
-                                    aria-label={t('Projects', 'flipAria', { title: project.title })}
-                                >
-                                    {t('Projects', 'flipButton')}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => onOpenInfo(index)}
-                                    className="rounded-full border border-white/14 bg-black/26 px-4 py-2.5 text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-white transition hover:bg-white/10"
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        onOpenInfo(index);
+                                    }}
+                                    className="rounded-full border border-white/14 bg-black/26 px-2.5 py-2 text-[0.5rem] font-semibold uppercase tracking-[0.14em] text-white transition hover:bg-white/10 sm:text-[0.54rem]"
                                     aria-label={t('Projects', 'infoAria', { title: project.title })}
                                 >
                                     {t('Projects', 'infoButton')}
@@ -156,51 +154,14 @@ export default function ProjectCard({
                         pointerEvents: isFlipped ? 'auto' : 'none',
                     }}
                 >
-                    {coverSrc ? (
-                        <Image
-                            src={coverSrc}
-                            alt={t('Projects', 'previewAlt', { title: project.title })}
-                            fill
-                            sizes="(max-width: 768px) 92vw, 320px"
-                            className="object-cover"
-                        />
-                    ) : (
-                        <div className={`absolute inset-0 ${baseFallback}`} />
-                    )}
-
-                    <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.20),rgba(0,0,0,0.68))]" />
-
-                    <div className="absolute top-7 left-0 right-0 px-6 text-center">
-                        <h3 className="text-[1.65rem] font-semibold tracking-tight text-red-500 drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]">
-                            {project.title}
-                        </h3>
-                    </div>
-
-                    <div className="absolute left-5 right-5 bottom-4 rounded-2xl bg-[#1f1f1f]/95 px-4 py-4 shadow-[0_10px_30px_rgba(0,0,0,0.55)] backdrop-blur-md">
-                        <p
-                            className="text-[0.78rem] font-semibold leading-snug text-red-100/88"
-                            style={{ maxHeight: '4.7em', WebkitMaskImage: 'linear-gradient(180deg,#000 78%,transparent)' }}
-                        >
-                            {project.short}
-                        </p>
-                        <div className="mt-4 grid grid-cols-2 gap-3">
-                            <button
-                                type="button"
-                                onClick={() => onOpenInfo(index)}
-                                className="rounded-full border border-white/12 bg-white/8 px-4 py-2.5 text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-white/14"
-                            >
-                                {t('Projects', 'infoButton')}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => onToggleFlip(index)}
-                                className="rounded-full border border-red-400/18 bg-red-500/10 px-4 py-2.5 text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-red-100 transition hover:bg-red-500/18"
-                                aria-label={t('Projects', 'returnAria', { title: project.title })}
-                            >
-                                {t('Projects', 'backButton')}
-                            </button>
-                        </div>
-                    </div>
+                    <LiquidChrome
+                        baseColor={[0.8, 0.09, 0.09]}
+                        speed={0.25}
+                        amplitude={0.45}
+                        frequencyX={3}
+                        frequencyY={2.2}
+                        interactive={false}
+                    />
                 </div>
             </div>
         </div>

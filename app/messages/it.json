@@ -239,6 +239,7 @@
       },
       {
         "title": "Core Studio",
+        "coverImage": "/CoreStudio/CoreStudio.png",
         "kind": "website",
         "stack": [
           "Next.js",
@@ -257,6 +258,7 @@
       },
       {
         "title": "Nexus App",
+        "coverImage": "/NexusApp/NexusApp.png",
         "kind": "website",
         "stack": [
           "Next.js",
@@ -272,6 +274,69 @@
           {
             "label": "Visita sito",
             "url": "https://app.nexusapp.space"
+          }
+        ]
+      },
+      {
+        "title": "D&D Combat Tracker",
+        "coverImage": "/CombatTracker/Dnd_CombatTracker.png",
+        "kind": "website",
+        "stack": [
+          "Next.js",
+          "Django",
+          "FastAPI",
+          "Vercel",
+          "Render"
+        ],
+        "short": "Demo for strtup on team management, coaching and tournaments for e-sports, developed by me with Next.js hosted on vercel frontend and Django with fastAPI for the backend hosted on render",
+        "full": "Ho sviluppato questa demo, creandola su misur secondo l'esigenza dell'ideatore, con l'obbiettivo di realizzare una demo di un progetto finale piu' grande e complesso. Mi sono occupato autonommente dell'intero proggetto, design compreso, sviluppo e deploy su Online. L'app permette all'utente di creare un wrap dinamico e animato, poi riproducibile in qualsiasi momento in maniera statica, con le proprie statistiche delle piattaforme Riot e Steam, dopo aver effettuato il login in modo sicuro e con l'autorizzazione dell'utente. ",
+        "images": [],
+        "links": [
+          {
+            "label": "Visita sito",
+            "url": "https://combat-tracker-hermes.vercel.app"
+          }
+        ]
+      },
+      {
+        "title": "Two Lions",
+        "coverImage": "/TwoLions/TwoLions.png",
+        "kind": "website",
+        "stack": [
+          "Next.js",
+          "Django",
+          "FastAPI",
+          "Vercel",
+          "Render"
+        ],
+        "short": "Demo for strtup on team management, coaching and tournaments for e-sports, developed by me with Next.js hosted on vercel frontend and Django with fastAPI for the backend hosted on render",
+        "full": "Ho sviluppato questa demo, creandola su misur secondo l'esigenza dell'ideatore, con l'obbiettivo di realizzare una demo di un progetto finale piu' grande e complesso. Mi sono occupato autonommente dell'intero proggetto, design compreso, sviluppo e deploy su Online. L'app permette all'utente di creare un wrap dinamico e animato, poi riproducibile in qualsiasi momento in maniera statica, con le proprie statistiche delle piattaforme Riot e Steam, dopo aver effettuato il login in modo sicuro e con l'autorizzazione dell'utente. ",
+        "images": [],
+        "links": [
+          {
+            "label": "Visita sito",
+            "url": "https://two-lions.vercel.app"
+          }
+        ]
+      },
+      {
+        "title": "Birra Lara",
+        "coverImage": "/BirraLara/BirraLara.png",
+        "kind": "website",
+        "stack": [
+          "Next.js",
+          "Django",
+          "FastAPI",
+          "Vercel",
+          "Render"
+        ],
+        "short": "Demo for strtup on team management, coaching and tournaments for e-sports, developed by me with Next.js hosted on vercel frontend and Django with fastAPI for the backend hosted on render",
+        "full": "Ho sviluppato questa demo, creandola su misur secondo l'esigenza dell'ideatore, con l'obbiettivo di realizzare una demo di un progetto finale piu' grande e complesso. Mi sono occupato autonommente dell'intero proggetto, design compreso, sviluppo e deploy su Online. L'app permette all'utente di creare un wrap dinamico e animato, poi riproducibile in qualsiasi momento in maniera statica, con le proprie statistiche delle piattaforme Riot e Steam, dopo aver effettuato il login in modo sicuro e con l'autorizzazione dell'utente. ",
+        "images": [],
+        "links": [
+          {
+            "label": "Visita sito",
+            "url": "https://birra-lara-demo.vercel.app"
           }
         ]
       }
