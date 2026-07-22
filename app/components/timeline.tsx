@@ -18,10 +18,8 @@ export function Timeline({
     const heading = dict.Timeline.heading;
 
     const baseClasses = [
-        'min-h-dvh flex items-center justify-center',
+        'h-dvh snap-start snap-always',
         'px-3 sm:px-6 md:px-8',
-        'pt-12 sm:pt-16 md:pt-20',
-        'pb-12 sm:pb-16 md:pb-20',
     ].join(' ');
 
     return (
@@ -31,25 +29,21 @@ export function Timeline({
             className={`${baseClasses}${className ? ` ${className}` : ''}`}
             aria-labelledby={`${id}-title`}
         >
-            <div className="relative w-full max-w-[23rem] sm:max-w-[34rem] md:max-w-2xl">
-                <div className="mb-10 sm:mb-6 flex items-center justify-between">
+            <div
+                data-timeline-scroll="true"
+                className="relative mx-auto h-full w-full max-w-[23rem] overflow-y-auto no-scrollbar pt-12 pb-24 sm:max-w-[34rem] sm:pt-16 sm:pb-16 md:max-w-2xl md:pt-20 md:pb-20"
+                style={{ WebkitOverflowScrolling: 'touch' }}
+            >
+                <div className="pointer-events-none absolute inset-x-0 top-12 lg:top-30 z-20 flex justify-center">
                     <h2
                         id={`${id}-title`}
-                        className="font-bold text-red-800
-                         text-[20px] leading-tight
-                         sm:text-3xl sm:leading-snug
-                         md:text-4xl"
+                        className="text-center text-xl md:2xl lg:text-3xl font-bold uppercase tracking-[0.22em] text-[#B91C1C] "
                     >
                         {heading}
                     </h2>
                 </div>
 
-                <div className="relative pl-4 sm:pl-6 space-y-6 sm:space-y-10 md:space-y-12">
-                    <span
-                        aria-hidden
-                        className="pointer-events-none absolute left-0 top-0 bottom-0 w-px bg-red-800"
-                    />
-
+                <div className="top-24 bottom-24 lg:top-44 lg:bottom-44 xl:top-44 xl:bottom-44 2xl:top-44 2xl:bottom-44 relative pl-6 sm:pl-10 md:pl-12 space-y-16 sm:space-y-20 md:space-y-24">
                     {items.map((item, idx) => (
                         <motion.div
                             key={`${item.title}-${idx}`}
@@ -59,34 +53,37 @@ export function Timeline({
                             transition={{ duration: 0.35, delay: idx * 0.05 }}
                             className="relative"
                         >
-                            <span
-                                className="
-                                    absolute -left-[9px] top-0.5
-                                    h-1.5 w-1.5 rounded-full bg-red-600 ring-[1.5px] ring-red-600/25
-                                    sm:-left-[11px] sm:top-1.5 sm:h-2 sm:w-2 sm:ring-4"
-                            />
-
-                            <p className="text-[10px] sm:text-xs uppercase tracking-wide text-red-900/90">
+                            <p className="text-[10px] sm:text-xs uppercase tracking-wide text-red-900">
                                 {item.year}
                             </p>
 
-                            <h3
-                                className="
-                  text-sm sm:text-lg md:text-xl
-                  font-semibold md:font-bold text-red-600
-                  leading-snug sm:leading-snug md:leading-snug
-                "
-                            >
-                                {item.title}
-                            </h3>
+                            <div className="mt-2 flex items-start gap-3 sm:gap-4">
+                                <span
+                                    className="
+                                        mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full
+                                        bg-red-600 ring-[1.5px] ring-red-600
+                                        sm:mt-2 sm:h-2 sm:w-2"
+                                />
+
+                                <h3
+                                    className="
+                                        text-sm sm:text-lg md:text-xl
+                                        font-semibold md:font-bold text-red-600
+                                        leading-snug sm:leading-snug md:leading-snug
+                                    "
+                                >
+                                    {item.title}
+                                </h3>
+                            </div>
 
                             <p
                                 className="
-                  text-[12px] sm:text-sm md:text-base
-                  text-red-900/90
-                  leading-relaxed md:leading-normal
-                  break-words
-                "
+                                    pl-[18px] sm:pl-6
+                                    text-[12px] sm:text-sm md:text-base
+                                    text-red-900
+                                    leading-relaxed md:leading-normal
+                                    break-words
+                                "
                             >
                                 {item.description}
                             </p>

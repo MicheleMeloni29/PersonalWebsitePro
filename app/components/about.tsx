@@ -1,220 +1,252 @@
-﻿// Second screen the user reaches while scrolling, meant to briefly introduce who I am,
-// how I started, and how my programming career is progressing.
-'use client';
+﻿'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { ComponentPropsWithoutRef, RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import {
+    AnimatePresence,
     motion,
-    useAnimationControls,
-    useInView,
+    useMotionValueEvent,
     useReducedMotion,
-    type HTMLMotionProps,
+    useScroll,
+    type UseScrollOptions,
 } from 'framer-motion';
-import DecryptedText from './UI/DecriptedText';
 import { useLanguage } from './data/LanguageProvider';
 
-type AboutProps = HTMLMotionProps<'section'>;
+type AboutProps = ComponentPropsWithoutRef<'section'> & {
+    scrollContainerRef?: RefObject<HTMLElement | null>;
+};
 
-export default function About({ className, id = 'about', ...sectionProps }: AboutProps) {
-    const { dict } = useLanguage();
-    const [isMobile, setIsMobile] = useState(false);
+type SplitRevealProps = {
+    text: string;
+    direction: 'left' | 'right';
+    align?: 'left' | 'center' | 'right';
+    activeKey: string;
+};
+
+function SplitRevealText({
+    text,
+    direction,
+    align = 'left',
+    activeKey,
+}: SplitRevealProps) {
     const reduce = useReducedMotion();
-    const sectionRef = useRef<HTMLElement | null>(null);
-    // Triggers the animation sequence only once when the section is sufficiently visible.
-    const inView = useInView(sectionRef, {
-        once: true,
-        amount: 0.35,
-        margin: '-12% 0px -12% 0px',
-    });
-    const headingControls = useAnimationControls();
-    const introControls = useAnimationControls();
-    const blockRightControls = useAnimationControls();
-    const blockLeftControls = useAnimationControls();
-    const hasStartedRef = useRef(false);
-
-    useEffect(() => {
-        // Tracks the mobile breakpoint in JS so motion distances and timings can adapt.
-        const mq = window.matchMedia('(max-width: 640px)');
-        const on = () => setIsMobile(mq.matches);
-        on();
-        mq.addEventListener?.('change', on);
-        return () => mq.removeEventListener?.('change', on);
-    }, []);
-
-    // Responsive offsets/durations + fallback when reduce is active (animation stays subtle)
-    const X = isMobile ? 60 : 120;
-    const Y = isMobile ? 10 : 16;
-    const DUR = reduce ? 0.2 : isMobile ? 0.55 : 0.9;
-    const FADE = reduce ? 0.20 : isMobile ? 0.27 : 0.35;
-
-    const fadeEase = [0.22, 0.61, 0.36, 1] as const;
-    const slideEase = [0.16, 1, 0.3, 1] as const;
-
-    // Shared variant for elements that fade upward into place.
-    const fadeUp = {
-        hidden: { opacity: 0, y: reduce ? 0 : Y },
-        visible: { opacity: 1, y: 0 },
-    };
-
-    // Builds mirrored slide-in variants for the two text blocks.
-    const blockVariants = (direction: 'left' | 'right') => {
-        const hidden: Record<string, number> = { opacity: 0 };
-
-        if (!reduce) {
-            if (isMobile) {
-                hidden.y = Y;
-            } else {
-                hidden.x = direction === 'left' ? -X : X;
-            }
-        }
-
-        return {
-            hidden,
-            visible: {
-                opacity: 1,
-                x: 0,
-                y: 0,
-            },
-        };
-    };
-
-    const blockRight = blockVariants('right');
-    const blockLeft = blockVariants('left');
-
-    // Small stagger between each reveal step.
-    const baseGapSeconds = reduce ? 0 : isMobile ? 0.58 : 0.62;
-    const baseGapMs = baseGapSeconds * 1500;
-
-    useEffect(() => {
-        if (!inView || hasStartedRef.current) {
-            return;
-        }
-
-        hasStartedRef.current = true;
-
-        let cancelled = false;
-        // Lightweight delay helper used to space the animation steps.
-        const wait = (ms: number) =>
-            new Promise<void>((resolve) => {
-                if (ms <= 0) {
-                    resolve();
-                    return;
-                }
-                setTimeout(resolve, ms);
-            });
-
-        (async () => {
-            // Runs the section reveal in order: title, intro, right block, left block.
-            await headingControls.start('visible');
-            if (cancelled) {
-                return;
-            }
-            await wait(baseGapMs);
-
-            await introControls.start('visible');
-            if (cancelled) {
-                return;
-            }
-            await wait(baseGapMs);
-
-            await blockRightControls.start('visible');
-            if (cancelled) {
-                return;
-            }
-            await wait(baseGapMs);
-
-            if (cancelled) {
-                return;
-            }
-            await blockLeftControls.start('visible');
-        })();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [
-        inView,
-        baseGapMs,
-        headingControls,
-        introControls,
-        blockRightControls,
-        blockLeftControls,
-    ]);
-
-    // Base layout classes are kept separate to make the section markup easier to scan.
-    const baseClasses =
-        'h-dvh flex items-center justify-center px-4 sm:px-6 text-white overflow-hidden';
-    const wrapperClasses = 'w-full max-w-[28rem] sm:max-w-2xl text-left';
+    const words = useMemo(() => text.split(' '), [text]);
+    const alignClass =
+        align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : 'text-left';
+    const startX = reduce ? 0 : direction === 'left' ? -64 : 64;
 
     return (
-        <motion.section
-            id={id}
-            ref={sectionRef}
-            {...sectionProps}
-            className={`${baseClasses}${className ? ` ${className}` : ''}`}
-            aria-labelledby="about-title"
+        <motion.p
+            key={activeKey}
+            initial="hidden"
+            animate="visible"
+            variants={{
+                hidden: {},
+                visible: {
+                    transition: {
+                        staggerChildren: reduce ? 0 : 0.055,
+                    },
+                },
+            }}
+            className={`text-balance text-[0.98rem] font-medium leading-7 text-[#B91C1C] drop-shadow-[0_8px_28px_rgba(255,255,255,0.38)] sm:text-[1.08rem] sm:leading-8 lg:text-[1.48rem] lg:leading-[1.78] ${alignClass}`}
         >
-            {/* Centers the content block inside the full-screen section. */}
-            <div className={wrapperClasses}>
-                {/* Main section heading with a simple fade-up reveal. */}
-                <motion.h2
-                    id="about-title"
-                    variants={fadeUp}
-                    initial="hidden"
-                    animate={headingControls}
-                    transition={{ duration: FADE, ease: fadeEase }}
-                    className="font-bold text-red-800
-                     text-xl sm:text-3xl md:text-4xl
-                     leading-tight sm:leading-snug"
+            {words.map((word, index) => (
+                <motion.span
+                    key={`${word}-${index}`}
+                    variants={{
+                        hidden: {
+                            opacity: 0,
+                            x: startX,
+                            y: reduce ? 0 : 8,
+                            filter: reduce ? 'blur(0px)' : 'blur(6px)',
+                        },
+                        visible: {
+                            opacity: 1,
+                            x: 0,
+                            y: 0,
+                            filter: 'blur(0px)',
+                            transition: {
+                                duration: reduce ? 0.18 : 0.42,
+                                ease: [0.16, 1, 0.3, 1],
+                            },
+                        },
+                    }}
+                    className="inline-block whitespace-nowrap"
                 >
-                    {dict.About.title}
-                </motion.h2>
+                    {word}
+                    {index < words.length - 1 ? '\u00A0' : ''}
+                </motion.span>
+            ))}
+        </motion.p>
+    );
+}
 
-                {/* Intro line uses the decrypted text effect to create a more dynamic first reveal. */}
-                <motion.p
-                    variants={fadeUp}
-                    initial="hidden"
-                    animate={introControls}
-                    transition={{ duration: FADE, ease: fadeEase }}
-                    className="text-sm sm:text-lg md:text-2xl text-red-900
-                     mt-10 sm:mt-8 md:mt-10 mb-4"
-                >
-                    <DecryptedText
-                        text={dict.About.intro}
-                        animateOn="view"
-                        sequential
-                        revealDirection="start"
-                        speed={isMobile ? 36 : 40}
-                        encryptedClassName="text-rose-300/80 blur-[0.5px]"
-                    />
-                </motion.p>
+function getSceneIndex(progress: number) {
+    if (progress < 1 / 3) return 0;
+    if (progress < 2 / 3) return 1;
+    return 2;
+}
 
-                {/* First descriptive paragraph enters from the right on desktop. */}
-                <motion.p
-                    variants={blockRight}
-                    initial="hidden"
-                    animate={blockRightControls}
-                    transition={{ duration: DUR, ease: slideEase }}
-                    className="text-[13px] sm:text-base md:text-lg text-red-900
-                     leading-relaxed sm:leading-relaxed md:leading-normal
-                     mt-8 sm:mt-6 md:mt-8"
-                >
-                    {dict.About.blockRight}
-                </motion.p>
+export default function About({
+    className,
+    id = 'about',
+    scrollContainerRef,
+    ...sectionProps
+}: AboutProps) {
+    const { dict } = useLanguage();
+    const heading = dict.About.title;
+    const reduce = useReducedMotion();
+    const sectionRef = useRef<HTMLElement>(null);
+    const [sceneIndex, setSceneIndex] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
+    const [hasEnteredView, setHasEnteredView] = useState(false);
+    const sectionOffsets: NonNullable<UseScrollOptions['offset']> = ['start start', 'end end'];
+    const scrollOptions = scrollContainerRef
+        ? {
+              container: scrollContainerRef,
+              target: sectionRef,
+              offset: sectionOffsets,
+          }
+        : {
+              target: sectionRef,
+              offset: sectionOffsets,
+          };
+    const { scrollYProgress } = useScroll(scrollOptions);
 
-                {/* Second descriptive paragraph mirrors the previous one for visual balance. */}
-                <motion.p
-                    variants={blockLeft}
-                    initial="hidden"
-                    animate={blockLeftControls}
-                    transition={{ duration: DUR, ease: slideEase }}
-                    className="text-[13px] sm:text-base md:text-lg text-red-900
-                     leading-relaxed sm:leading-relaxed md:leading-normal
-                     mt-8 sm:mt-5 md:mt-8"
+    useEffect(() => {
+        const mq = window.matchMedia('(max-width: 1023px)');
+        const onChange = () => setIsMobile(mq.matches);
+        onChange();
+        mq.addEventListener?.('change', onChange);
+        return () => mq.removeEventListener?.('change', onChange);
+    }, []);
+
+    useEffect(() => {
+        const section = sectionRef.current;
+        if (!section) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries.some((entry) => entry.isIntersecting)) {
+                    setHasEnteredView(true);
+                }
+            },
+            {
+                root: scrollContainerRef?.current ?? null,
+                threshold: 0.2,
+            }
+        );
+
+        observer.observe(section);
+
+        return () => observer.disconnect();
+    }, [scrollContainerRef]);
+
+    useMotionValueEvent(scrollYProgress, 'change', (value) => {
+        const next = getSceneIndex(value);
+        setSceneIndex((current) => (current === next ? current : next));
+    });
+
+    const sharedTextMaxWidth = isMobile ? 'max-w-[18rem] sm:max-w-[22rem]' : 'max-w-[28rem] xl:max-w-[31rem]';
+
+    return (
+        <section
+            ref={sectionRef}
+            id={id}
+            {...sectionProps}
+            aria-labelledby={`${id}-title`}
+            className={`relative min-h-[300dvh] snap-none${className ? ` ${className}` : ''}`}
+        >
+            <div className="sticky top-0 h-dvh overflow-hidden">
+                <div
+                    className="
+                        relative h-full w-full px-5
+                        pt-14 pb-[calc(var(--nav-bottom-h)+2rem+env(safe-area-inset-bottom))]
+                        sm:px-7 sm:pt-16
+                        lg:px-10 lg:pt-[calc(var(--nav-top-h)+2.5rem)] lg:pb-12
+                    "
                 >
-                    {dict.About.blockLeft}
-                </motion.p>
+                    <div className="pointer-events-none absolute inset-x-0 top-12 lg:top-30 z-20 flex justify-center">
+                        <h2
+                            id={`${id}-title`}
+                            className="text-center text-xl md:2xl lg:text-3xl font-bold uppercase tracking-[0.22em] text-[#B91C1C] "
+                        >
+                            {heading}
+                        </h2>
+                    </div>
+
+                    <AnimatePresence mode="wait">
+                        {sceneIndex === 0 && hasEnteredView ? (
+                            <motion.div
+                                key="about-scene-1"
+                                initial={{ opacity: 0, y: reduce ? 0 : 26 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: reduce ? 0 : -24 }}
+                                transition={{ duration: reduce ? 0.18 : 0.48, delay: reduce ? 0.08 : 0.24, ease: [0.16, 1, 0.3, 1] }}
+                                className={[
+                                    'absolute',
+                                    isMobile
+                                        ? 'inset-x-0 top-46 flex justify-center px-5 sm:top-[14%] sm:px-7'
+                                        : 'right-[max(2.5rem,6vw)] top-54',
+                                ].join(' ')}
+                            >
+                                <div className={sharedTextMaxWidth}>
+                                    <SplitRevealText
+                                        activeKey="about-scene-1-text"
+                                        text={dict.About.intro}
+                                        direction="right"
+                                        align={isMobile ? 'center' : 'right'}
+                                    />
+                                </div>
+                            </motion.div>
+                        ) : null}
+
+                        {sceneIndex === 1 ? (
+                            <motion.div
+                                key="about-scene-2"
+                                initial={{ opacity: 0, y: reduce ? 0 : 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: reduce ? 0 : -24 }}
+                                transition={{ duration: reduce ? 0.18 : 0.48, ease: [0.16, 1, 0.3, 1] }}
+                                className={[
+                                    'absolute',
+                                    isMobile
+                                        ? 'inset-x-0 bottom-46 flex justify-center px-5 sm:bottom-[18%] sm:px-7'
+                                        : 'bottom-12 left-[max(2.5rem,6vw)]',
+                                ].join(' ')}
+                            >
+                                <div className={sharedTextMaxWidth}>
+                                    <SplitRevealText
+                                        activeKey="about-scene-2-text"
+                                        text={dict.About.blockRight}
+                                        direction="right"
+                                        align={isMobile ? 'center' : 'left'}
+                                    />
+                                </div>
+                            </motion.div>
+                        ) : null}
+
+                        {sceneIndex === 2 ? (
+                            <motion.div
+                                key="about-scene-3"
+                                initial={{ opacity: 0, scale: reduce ? 1 : 0.98, y: reduce ? 0 : 18 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: reduce ? 1 : 0.985, y: reduce ? 0 : -18 }}
+                                transition={{ duration: reduce ? 0.18 : 0.48, ease: [0.16, 1, 0.3, 1] }}
+                                className="absolute inset-0 flex items-center justify-center px-5 sm:px-7 lg:px-10"
+                            >
+                                <div className={isMobile ? 'max-w-[18rem] sm:max-w-[22rem]' : 'max-w-[31rem]'}>
+                                    <SplitRevealText
+                                        activeKey="about-scene-3-text"
+                                        text={dict.About.blockLeft}
+                                        direction="left"
+                                        align="center"
+                                    />
+                                </div>
+                            </motion.div>
+                        ) : null}
+                    </AnimatePresence>
+                </div>
             </div>
-        </motion.section>
+        </section>
     );
 }

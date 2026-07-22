@@ -40,8 +40,8 @@
   },
   "About": {
     "title": "Chi sono",
-    "intro": "Ciao, sono Michele. Ho iniziato a programmare all'università e ha cambiato tutto.",
-    "blockRight": "Le prime righe di codice, scritte per gioco, sono diventate una passione. Mi sono immerso nello sviluppo mobile e frontend, scoprendo React, React Native, TypeScript, JavaScript e Flutter.",
+    "intro": "Ciao, sono Michele. Ho iniziato a programmare all'università e non ho piu' smesso.",
+    "blockRight": "Le prime righe di codice, scritte per gli esami, sono diventate una passione. Mi sono immerso nello sviluppo mobile e web lato frontend, andando poi a scoprire le tecnologie piu' all'avanguardia.",
     "blockLeft": "Da autodidatta ho costruito progetti, esplorato il backend con Python e continuo a imparare ogni giorno. Programmo per crescere, risolvere problemi e trasformare idee in realtà."
   },
   "Timeline": {
@@ -307,7 +307,8 @@
           "Django",
           "FastAPI",
           "Vercel",
-          "Render"
+          "Render",
+          "Shopify"
         ],
         "short": "Demo for strtup on team management, coaching and tournaments for e-sports, developed by me with Next.js hosted on vercel frontend and Django with fastAPI for the backend hosted on render",
         "full": "Ho sviluppato questa demo, creandola su misur secondo l'esigenza dell'ideatore, con l'obbiettivo di realizzare una demo di un progetto finale piu' grande e complesso. Mi sono occupato autonommente dell'intero proggetto, design compreso, sviluppo e deploy su Online. L'app permette all'utente di creare un wrap dinamico e animato, poi riproducibile in qualsiasi momento in maniera statica, con le proprie statistiche delle piattaforme Riot e Steam, dopo aver effettuato il login in modo sicuro e con l'autorizzazione dell'utente. ",
@@ -325,10 +326,7 @@
         "kind": "website",
         "stack": [
           "Next.js",
-          "Django",
-          "FastAPI",
-          "Vercel",
-          "Render"
+          "Vercel"
         ],
         "short": "Demo for strtup on team management, coaching and tournaments for e-sports, developed by me with Next.js hosted on vercel frontend and Django with fastAPI for the backend hosted on render",
         "full": "Ho sviluppato questa demo, creandola su misur secondo l'esigenza dell'ideatore, con l'obbiettivo di realizzare una demo di un progetto finale piu' grande e complesso. Mi sono occupato autonommente dell'intero proggetto, design compreso, sviluppo e deploy su Online. L'app permette all'utente di creare un wrap dinamico e animato, poi riproducibile in qualsiasi momento in maniera statica, con le proprie statistiche delle piattaforme Riot e Steam, dopo aver effettuato il login in modo sicuro e con l'autorizzazione dell'utente. ",
@@ -344,7 +342,7 @@
   },
   "Contacts": {
     "title": "Mettiamoci in contatto",
-    "intro": "Sono sempre aperto a nuove opportunità, collaborazioni o anche solo una chiacchierata sulla tecnologia.",
+    "intro": "Sono sempre aperto a nuove opportunità, collaborazioni o anche solo una chiacchierata.",
     "repoHint": "E per vedere i repository dei miei progetti",
     "aria": {
       "mail": "Email",

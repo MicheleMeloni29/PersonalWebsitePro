@@ -78,10 +78,10 @@ export default function Hero({ className, ...sectionProps }: HeroProps) {
             {...sectionProps}
             className={`${baseClasses}${className ? ` ${className}` : ""}`}
         >
-            {/* Two-column layout on desktop, stacked vertically on smaller screens. */}
-            <div className="mx-auto w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-y-8 lg:gap-x-16 lg:items-center">
-                {/* Left side on desktop: the main profile card. */}
-                <div className="flex justify-center lg:justify-start lg:mt-24 sm:mt-4 xl:mt-12">
+            {/* On desktop the hero card sits in the center column so its title stays centered on screen. */}
+            <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-y-8 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-x-10 lg:items-center xl:gap-x-16">
+                {/* Center column on desktop: the main profile card. */}
+                <div className="mt-4 flex justify-center lg:col-start-2 lg:row-start-1 lg:mt-24 xl:mt-12">
                     <div className= "w-full max-w-md sm:max-w-lg lg:max-w-2xl">
                         <ProfileCard
                             name={dict.Hero.profile.name}
@@ -100,8 +100,8 @@ export default function Hero({ className, ...sectionProps }: HeroProps) {
                     </div>
                 </div>
 
-                {/* Right side on desktop: rotating highlights for languages and technologies. */}
-                <div className="mb-10 flex flex-col gap-6 items-center lg:items-start lg:gap-24">
+                {/* Right column on desktop: rotating highlights for languages and technologies. */}
+                <div className="mb-10 flex flex-col items-center gap-6 lg:col-start-3 lg:row-start-1 lg:mb-0 lg:items-start lg:justify-self-end lg:gap-24">
                     <LabeledRotator label={dict.Hero.labels.languages} texts={languages} />
                     <LabeledRotator label={dict.Hero.labels.tech} texts={tech} />
                 </div>

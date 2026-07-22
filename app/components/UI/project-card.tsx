@@ -54,8 +54,8 @@ export default function ProjectCard({
     const primaryLink = getPrimaryLink(project);
     const wrapperClassName =
         layout === 'carousel'
-            ? 'absolute top-1/2 left-1/2 [transform-style:preserve-3d]'
-            : 'relative h-[17.5rem] w-full max-w-[15rem] justify-self-center [transform-style:preserve-3d] sm:h-[18.25rem] sm:max-w-[15.5rem] lg:h-[18.75rem] lg:max-w-[16rem]';
+            ? 'pointer-events-auto absolute top-1/2 left-1/2 [transform-style:preserve-3d]'
+            : 'relative justify-self-center [transform-style:preserve-3d]';
     const wrapperStyle =
         layout === 'carousel'
             ? ({
@@ -63,12 +63,15 @@ export default function ProjectCard({
                 height: 'var(--card-height)',
                 transform: `translate(-50%, -50%) rotateY(${angle ?? 0}deg) translateZ(var(--ring-radius)) scale(var(--card-scale))`,
             } as CSSProperties)
-            : undefined;
+            : ({
+                width: 'calc(var(--card-width) * var(--card-scale) * 1.2)',
+                height: 'calc(var(--card-height) * var(--card-scale) * 1.2)',
+            } as CSSProperties);
 
     return (
         <div className={wrapperClassName} style={wrapperStyle}>
             <div
-                className="relative h-full w-full [transform-style:preserve-3d] transition-transform duration-500 ease-in-out"
+                className="relative h-full w-full cursor-pointer [transform-style:preserve-3d] transition-transform duration-500 ease-in-out"
                 style={{ transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
                 onClick={() => onToggleFlip(index)}
             >

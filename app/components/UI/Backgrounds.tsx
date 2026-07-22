@@ -158,7 +158,7 @@ export function BackgroundVariantB({ scale = 1 }: { scale?: number }) {
 
                     {/* Lighter filter for top-left landscape mode (smaller radius) */}
                     <filter
-                        id="ssoftBlurTRland"
+                        id="softBlurTRland"
                         filterUnits="userSpaceOnUse"
                         x="-4000"
                         y="-4000"

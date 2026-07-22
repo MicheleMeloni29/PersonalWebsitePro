@@ -5,7 +5,7 @@ import { useLanguage } from "./data/LanguageProvider";
 export default function Footer() {
     const { dict } = useLanguage();
     return (
-        <footer className="bg-[#0d0d0d]  h-10 flex items-center justify-center text-red-700 text-xs">
+        <footer className="flex h-10 items-center justify-center text-xs text-red-700">
             {dict.Footer.copyright}
         </footer>
     );
