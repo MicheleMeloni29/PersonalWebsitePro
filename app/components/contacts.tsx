@@ -2,7 +2,7 @@
 'use client';
 
 import { ComponentPropsWithoutRef } from 'react';
-import { FaGithub, FaLinkedin, FaEnvelope, FaInstagram } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaEnvelope, FaInstagram, FaFile } from 'react-icons/fa';
 import { useLanguage } from './data/LanguageProvider';
 
 // Allows the component to behave like a regular section while accepting extra HTML props.
@@ -21,8 +21,8 @@ export default function Contact({ className, id = 'contact', ...sectionProps }: 
             <div className="flex min-h-[calc(100vh-6rem)] flex-col justify-between">
                 <div className="flex flex-1 items-center justify-center">
                     <div className="max-w-2xl text-center transition-all duration-700 ease-in-out">
-                        <h2 className="mb-6 text-3xl font-bold text-red-800 md:text-4xl xl:text-4xl">{t("Contacts", "title")}</h2>
-                        <p className="mb-6 text-lg text-red-400">
+                        <h2 className="mb-6 text-2xl font-bold uppercase text-red-900 md:text-4xl xl:text-4xl">{t("Contacts", "title")}</h2>
+                        <p className="mb-6 text-md text-red-500">
                             {t("Contacts", "intro")}
                         </p>
 
@@ -31,7 +31,7 @@ export default function Contact({ className, id = 'contact', ...sectionProps }: 
                                 href="mailto:melonimichelee29@gmail.com"
                                 rel="noopener noreferrer"
                                 aria-label={t("Contacts", "aria.mail")}
-                                className="transition duration-300 hover:text-red-600"
+                                className="transition duration-300 hover:text-red-700"
                             >
                                 <FaEnvelope />
                             </a>
@@ -40,7 +40,7 @@ export default function Contact({ className, id = 'contact', ...sectionProps }: 
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={t("Contacts", "aria.linkedin")}
-                                className="transition duration-300 hover:text-red-600"
+                                className="transition duration-300 hover:text-red-700"
                             >
                                 <FaLinkedin />
                             </a>
@@ -48,12 +48,26 @@ export default function Contact({ className, id = 'contact', ...sectionProps }: 
                                 href="https://www.instagram.com/michelemelonii/"
                                 target="_blank"
                                 aria-label={t("Contacts", "aria.instagram")}
-                                className="transition duration-300 hover:text-red-600"
+                                className="transition duration-300 hover:text-red-700"
                             >
                                 <FaInstagram />
                             </a>
+                        </div><p className="mb-6 pt-8 text-md text-red-500">
+                            {t("Contacts", "cvCta")}
+                        </p>
+
+                        <div className="mt-8 flex justify-center gap-6 text-4xl">
+                            <a
+                                href="/cv/Michele_Meloni_CV.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={t("Contacts", "aria.cv")}
+                                className="transition duration-300 hover:text-red-700"
+                            >
+                                <FaFile />
+                            </a>
                         </div>
-                        <p className="mb-6 pt-8 text-lg text-red-400">
+                        <p className="mb-6 pt-8 text-md text-red-500">
                             {t("Contacts", "repoHint")}
                         </p>
 
@@ -63,7 +77,7 @@ export default function Contact({ className, id = 'contact', ...sectionProps }: 
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={t("Contacts", "aria.github")}
-                                className="transition duration-300 hover:text-red-600"
+                                className="transition duration-300 hover:text-red-700"
                             >
                                 <FaGithub />
                             </a>

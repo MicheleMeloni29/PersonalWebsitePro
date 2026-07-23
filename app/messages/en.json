@@ -280,14 +280,22 @@
     ]
   },
   "Contacts": {
+    "eyebrow": "Contact / 05",
     "title": "Let's get in touch",
     "intro": "I'm always open to new opportunities, collaborations or just a chat about tech.",
+    "availability": "Available for new projects",
+    "emailCta": "Send an email",
+    "cvCta": "Download CV",
+    "cvHint": "PDF · Resume",
+    "socialTitle": "Find me online",
+    "footerNote": "Built with care",
     "repoHint": "And to see my project repositories",
     "aria": {
       "mail": "Mail",
       "linkedin": "LinkedIn",
       "instagram": "Instagram",
-      "github": "GitHub"
+      "github": "GitHub",
+      "cv": "Download Michele Meloni's CV"
     }
   },
   "Footer": {

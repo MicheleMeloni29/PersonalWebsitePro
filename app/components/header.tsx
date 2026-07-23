@@ -1,131 +1,233 @@
-// This screen components allows the user to navigate through the different sections of the page, and also to switch between languages.
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { useTheme } from "next-themes"; // Keep theme state only if you still want to modulate LiquidChrome colors.
-import { useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import type { IconType } from "react-icons";
 import {
-  FaHome, FaUser, FaClock, FaProjectDiagram, FaEnvelope,
+  FaClock,
+  FaEnvelope,
+  FaHome,
+  FaProjectDiagram,
+  FaUser,
 } from "react-icons/fa";
-import LiquidChrome from "./UI/LiquidChrome";
+
 import { useLanguage } from "./data/LanguageProvider";
+
+type SectionId = "hero" | "about" | "timeline" | "projects" | "contact";
+
+type NavLink = {
+  id: SectionId;
+  label: string;
+  icon: IconType;
+};
 
 export default function Header() {
   const { t, lang, cycleLang } = useLanguage();
+  const navRef = useRef<HTMLElement>(null);
+  const [activeSection, setActiveSection] = useState<SectionId>("hero");
 
-  // Theme information is only used here to adapt the LiquidChrome palette.
-  const { theme, resolvedTheme } = useTheme();
-  const prefersReduced = useReducedMotion();
-  const navRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
-
-  // Waits for client mount before rendering visual effects that depend on browser APIs.
-  useEffect(() => setMounted(true), []);
-
-  // Updates CSS variables with the real header height so the layout can offset top/bottom navigation space.
   useEffect(() => {
     if (!navRef.current) return;
+
     const root = document.documentElement;
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const setVars = () => {
-      const h = navRef.current?.offsetHeight ?? 0;
-      if (mq.matches) {
-        root.style.setProperty("--nav-top-h", `${h}px`);
-        root.style.setProperty("--nav-bottom-h", `0px`);
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+
+    const updateNavigationOffset = () => {
+      const height = navRef.current?.offsetHeight ?? 0;
+
+      if (desktopQuery.matches) {
+        root.style.setProperty("--nav-top-h", `${height}px`);
+        root.style.setProperty("--nav-bottom-h", "0px");
       } else {
-        root.style.setProperty("--nav-bottom-h", `${h}px`);
-        root.style.setProperty("--nav-top-h", `0px`);
+        root.style.setProperty("--nav-bottom-h", `${height}px`);
+        root.style.setProperty("--nav-top-h", "0px");
       }
     };
 
-    // Recomputes the offsets when the nav resizes or when the viewport crosses the desktop breakpoint.
-    const ro = new ResizeObserver(setVars);
-    ro.observe(navRef.current);
-    setVars();
-    mq.addEventListener?.("change", setVars);
-    window.addEventListener("resize", setVars);
+    const resizeObserver = new ResizeObserver(updateNavigationOffset);
+    resizeObserver.observe(navRef.current);
+    updateNavigationOffset();
+    desktopQuery.addEventListener?.("change", updateNavigationOffset);
+    window.addEventListener("resize", updateNavigationOffset);
+
     return () => {
-      ro.disconnect();
-      mq.removeEventListener?.("change", setVars);
-      window.removeEventListener("resize", setVars);
+      resizeObserver.disconnect();
+      desktopQuery.removeEventListener?.("change", updateNavigationOffset);
+      window.removeEventListener("resize", updateNavigationOffset);
     };
   }, []);
 
-  // Navigation labels are translated through the language provider.
-  const links = [
-    { href: "#hero", label: t("Header", "home"), icon: <FaHome /> },
-    { href: "#about", label: t("Header", "about"), icon: <FaUser /> },
-    { href: "#timeline", label: t("Header", "timeline"), icon: <FaClock /> },
-    { href: "#projects", label: t("Header", "projects"), icon: <FaProjectDiagram /> },
-    { href: "#contact", label: t("Header", "contact"), icon: <FaEnvelope /> },
+  useEffect(() => {
+    const sectionIds: SectionId[] = [
+      "hero",
+      "about",
+      "timeline",
+      "projects",
+      "contact",
+    ];
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => Boolean(section));
+    const scrollRoot = document.getElementById("hero")?.closest("main") ?? null;
+
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleSection = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visibleSection) {
+          setActiveSection(visibleSection.target.id as SectionId);
+        }
+      },
+      {
+        root: scrollRoot,
+        rootMargin: "-32% 0px -50% 0px",
+        threshold: [0, 0.15, 0.5],
+      },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  const links: NavLink[] = [
+    { id: "hero", label: t("Header", "home"), icon: FaHome },
+    { id: "about", label: t("Header", "about"), icon: FaUser },
+    { id: "timeline", label: t("Header", "timeline"), icon: FaClock },
+    {
+      id: "projects",
+      label: t("Header", "projects"),
+      icon: FaProjectDiagram,
+    },
+    { id: "contact", label: t("Header", "contact"), icon: FaEnvelope },
   ];
 
-  // LiquidChrome expects normalized RGB values in the 0..1 range.
-  const mode = (resolvedTheme ?? theme) as "light" | "dark" | undefined;
-  const baseColor: [number, number, number] =
-    mode === "dark" ? [0.08, 0.08, 0.12] : [0.88, 0.88, 0.93];
-
-  // Current language shown in compact form inside the language switcher.
-  const flag = lang === "en" ? "EN" : lang === "it" ? "IT" : "ES";
+  const languageCode = lang === "en" ? "EN" : lang === "it" ? "IT" : "ES";
 
   return (
-    // The header stays fixed and moves from bottom on mobile to top on large screens.
-    <header className="fixed left-1/2 -translate-x-1/2 z-50 bottom-2 lg:bottom-auto lg:top-4">
+    <header
+      className="
+        fixed inset-x-0 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50
+        flex justify-center px-3
+        lg:inset-x-auto lg:bottom-auto lg:left-1/2 lg:top-5
+        lg:-translate-x-1/2 lg:px-0
+      "
+    >
       <nav
         ref={navRef}
+        aria-label="Primary navigation"
         className="
-          relative overflow-hidden isolate
-          flex items-center justify-center gap-4 px-6 py-2
-          min-w-[380px] lg:min-w-[700px] w-auto max-w-full whitespace-nowrap
-          rounded-full border-0
-          shadow-[0_4px_6px_rgba(0,0,0,0.4)] backdrop-blur-md
+          relative isolate flex w-full max-w-[430px] items-stretch gap-1
+          overflow-hidden rounded-[1.35rem] border border-white/[0.10]
+          bg-[#08090c]/88 p-1.5
+          shadow-[0_18px_50px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.06)]
+          backdrop-blur-2xl
+          before:pointer-events-none before:absolute before:inset-x-10 before:top-0
+          before:h-px before:bg-gradient-to-r before:from-transparent
+          before:via-red-500/75 before:to-transparent
+          supports-[backdrop-filter]:bg-[#08090c]/72
+          lg:w-auto lg:max-w-none lg:items-center lg:gap-1.5 lg:rounded-2xl lg:p-2
         "
       >
-        {/* Animated background layer, rendered only after mount to avoid hydration mismatches. */}
-        {mounted && (
-          <LiquidChrome
-            baseColor={baseColor}
-            speed={prefersReduced ? 0 : 0.50}
-            amplitude={0}
-            frequencyX={3}
-            frequencyY={3}
-            interactive={false}
-            aria-hidden
-            className="pointer-events-none opacity-90"
-          />
-        )}
+        <div className="grid min-w-0 flex-1 grid-cols-5 gap-0.5 lg:flex lg:items-center lg:gap-1">
+          {links.map(({ id, label, icon: Icon }) => {
+            const isActive = activeSection === id;
 
-        {/* Foreground navigation content sits above the decorative LiquidChrome layer. */}
-        <div className="relative z-10 flex items-center gap-3">
-          {links.map(({ href, label, icon }) => (
-            <a
-              key={href}
-              href={href}
-              className="flex items-center gap-2 px-3 py-1 rounded-md
-                         transition-all duration-300 hover:scale-105
-                         hover:shadow-[0_2px_15px_rgba(255,0,0,0.4)]
-                         text-red-900 dark:text-red-500"
-              aria-label={label}
-            >
-              {/* Each navigation item pairs an icon with a text label that appears on desktop only. */}
-              {React.cloneElement(icon, { className: "text-lg", "aria-hidden": true })}
-              <span className="hidden lg:inline text-sm font-medium">{label}</span>
-            </a>
-          ))}
+            return (
+              <a
+                key={id}
+                href={`#${id}`}
+                aria-label={label}
+                aria-current={isActive ? "location" : undefined}
+                onClick={() => setActiveSection(id)}
+                className={`
+                  group relative flex min-w-0 flex-col items-center justify-center gap-1
+                  rounded-xl px-1 py-2 text-[9px] font-medium tracking-[0.02em]
+                  outline-none transition-[color,background-color,box-shadow,transform]
+                  duration-200 ease-out
+                  focus-visible:bg-white/[0.08] focus-visible:text-white
+                  focus-visible:ring-2 focus-visible:ring-red-500/70
+                  active:scale-[0.96]
+                  lg:flex-none lg:flex-row lg:gap-2 lg:px-3 lg:py-2
+                  lg:text-xs lg:tracking-normal
+                  ${
+                    isActive
+                      ? "bg-white/[0.075] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]"
+                      : "text-white/55 hover:-translate-y-0.5 hover:bg-white/[0.055] hover:text-white lg:hover:translate-y-0"
+                  }
+                `}
+              >
+                <span
+                  className={`
+                    relative grid h-5 w-5 place-items-center transition-colors duration-200
+                    ${
+                      isActive
+                        ? "text-red-500"
+                        : "text-white/45 group-hover:text-red-400"
+                    }
+                  `}
+                >
+                  <span
+                    aria-hidden
+                    className={`
+                      absolute inset-0 rounded-full bg-red-500/30 blur-md
+                      transition-opacity duration-200
+                      ${isActive ? "opacity-60" : "opacity-0 group-hover:opacity-40"}
+                    `}
+                  />
+                  <Icon className="relative h-3.5 w-3.5" aria-hidden />
+                </span>
 
-          {/* Cycles through EN -> IT -> ES and shows the active language in a compact badge. */}
-          <button
-            onClick={cycleLang}
-            aria-label={t("Header", "changeLanguage")}
-            title={t("Header", "changeLanguage")}
-            className="grid place-items-center w-9 h-9 rounded-full
-                      transition-all duration-300 hover:scale-105
-                         hover:shadow-[0_2px_15px_rgba(255,0,0,0.4)]
-                       text-red-500 font-extrabold"
-          >
-            <span aria-hidden>{flag}</span>
-          </button>
+                <span className="max-w-full truncate leading-none">{label}</span>
+
+                <span
+                  aria-hidden
+                  className={`
+                    absolute bottom-0.5 left-1/2 h-0.5 -translate-x-1/2
+                    rounded-full bg-red-500 transition-[width,opacity] duration-200
+                    ${isActive ? "w-4 opacity-100" : "w-0 opacity-0"}
+                  `}
+                />
+              </a>
+            );
+          })}
         </div>
+
+        <span
+          aria-hidden
+          className="my-1 w-px shrink-0 bg-white/[0.10] lg:mx-0.5 lg:h-5 lg:self-auto"
+        />
+
+        <button
+          type="button"
+          onClick={cycleLang}
+          aria-label={t("Header", "changeLanguage")}
+          title={t("Header", "changeLanguage")}
+          className="
+            group relative grid min-h-12 w-11 shrink-0 place-items-center overflow-hidden
+            rounded-xl border border-white/[0.09] bg-white/[0.035]
+            text-[11px] font-bold tracking-[0.12em] text-white/75 outline-none
+            transition-[color,background-color,border-color,box-shadow,transform]
+            duration-200 ease-out
+            hover:-translate-y-0.5 hover:border-red-500/35 hover:bg-red-500/[0.08]
+            hover:text-white hover:shadow-[0_8px_22px_rgba(239,68,68,0.12)]
+            focus-visible:ring-2 focus-visible:ring-red-500/70
+            active:scale-[0.96]
+            lg:min-h-0 lg:h-9 lg:w-12 lg:hover:translate-y-0
+          "
+        >
+          <span
+            aria-hidden
+            className="
+              absolute -right-1 -top-1 h-3 w-3 rounded-full border
+              border-red-400/40 bg-red-500/20 transition-transform duration-200
+              group-hover:scale-[1.6]
+            "
+          />
+          <span aria-live="polite">{languageCode}</span>
+        </button>
       </nav>
     </header>
   );

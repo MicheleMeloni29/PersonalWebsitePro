@@ -286,14 +286,22 @@
                                ]
                  },
     "Contacts":  {
-                     "title":  "PongÃ¡monos en contacto",
-                     "intro":  "Siempre estoy abierto a nuevas oportunidades, colaboraciones o simplemente a charlar sobre tecnologÃ­a.",
+                     "eyebrow":  "Contacto / 05",
+                     "title":  "Pongámonos en contacto",
+                     "intro":  "Siempre estoy abierto a nuevas oportunidades, colaboraciones o simplemente a charlar sobre tecnología.",
+                     "availability":  "Disponible para nuevos proyectos",
+                     "emailCta":  "Enviar un correo",
+                     "cvCta":  "Descargar CV",
+                     "cvHint":  "PDF · Currículum",
+                     "socialTitle":  "Encuéntrame en línea",
+                     "footerNote":  "Creado con cuidado",
                      "repoHint":  "Y para ver los repositorios de mis proyectos",
                      "aria":  {
                                   "mail":  "Correo",
                                   "linkedin":  "LinkedIn",
                                   "instagram":  "Instagram",
-                                  "github":  "GitHub"
+                                  "github":  "GitHub",
+                                  "cv":  "Descargar el currículum de Michele Meloni"
                               }
                  },
     "Footer":  {

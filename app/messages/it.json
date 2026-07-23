@@ -341,14 +341,22 @@
     ]
   },
   "Contacts": {
+    "eyebrow": "Contatti / 05",
     "title": "Mettiamoci in contatto",
     "intro": "Sono sempre aperto a nuove opportunità, collaborazioni o anche solo una chiacchierata.",
+    "availability": "Disponibile per nuovi progetti",
+    "emailCta": "Invia un'email",
+    "cvCta": "Scarica il CV",
+    "cvHint": "PDF · Curriculum",
+    "socialTitle": "Trovami online",
+    "footerNote": "Realizzato con cura",
     "repoHint": "E per vedere i repository dei miei progetti",
     "aria": {
       "mail": "Email",
       "linkedin": "LinkedIn",
       "instagram": "Instagram",
-      "github": "GitHub"
+      "github": "GitHub",
+      "cv": "Scarica il curriculum di Michele Meloni"
     }
   },
   "Footer": {

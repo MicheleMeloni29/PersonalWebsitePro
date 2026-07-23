@@ -119,6 +119,7 @@ export default function Projects({
     );
 
     const anyFlipped = flipped.some(Boolean);
+    const isFinalStage = projectStage === PROJECT_STAGES - 1;
     const stageRotationDuration = reduceMotion
         ? 0
         : [50, 20, 6, 6][projectStage] ?? 50;
@@ -129,16 +130,10 @@ export default function Projects({
         projectStage === PROJECT_STAGES - 1 ||
         isHoverPaused;
     const carouselOpacity = [1, 1, 1, 0][projectStage] ?? 1;
-    const carouselScale = [1, 1.1, 1.2, 0.92][projectStage] ?? 1;
+    const carouselScale = [1, 1.1, 1.2, 1.2][projectStage] ?? 1;
     const carouselTranslateY = [112, 112, 112, 70][projectStage] ?? 112;
-    const gridOpacity = projectStage === PROJECT_STAGES - 1 ? 1 : 0;
-    const gridTranslateY = projectStage === PROJECT_STAGES - 1 ? 0 : 44;
-    const stageLabel = [
-        '01 / Orbit',
-        '02 / Velocity',
-        '03 / Focus',
-        '04 / Explore',
-    ][projectStage] ?? '01 / Orbit';
+    const gridOpacity = isFinalStage ? 1 : 0;
+    const gridTranslateY = isFinalStage ? 0 : 44;
 
     const nextDetailMedia = () => {
         if (!selectedProject) return;
@@ -238,7 +233,7 @@ export default function Projects({
 
                         <div
                             data-projects-grid="true"
-                            className="absolute inset-0 z-10 overflow-y-auto overscroll-contain no-scrollbar pr-1 transition-[opacity,transform] duration-500 ease-out"
+                            className="absolute inset-0 z-10 overflow-y-auto overscroll-contain no-scrollbar pr-1 transition-[opacity,transform] duration-500 ease-out lg:pt-24"
                             style={{
                                 opacity: gridOpacity,
                                 transform: `translateY(${gridTranslateY}px)`,

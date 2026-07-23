@@ -230,6 +230,14 @@ export default function Page() {
       return true;
     };
 
+    const canScrollProjectsGrid = (direction: 1 | -1) =>
+      direction > 0 ? !isProjectsGridScrolledToBottom() : !isProjectsGridScrolledToTop();
+
+    const navigateProjectsGrid = (direction: 1 | -1, delta: number) => {
+      if (!canScrollProjectsGrid(direction)) return false;
+      return scrollProjectsGridBy(delta);
+    };
+
     const getSteppedSceneIndex = (selector: string, totalScenes: number) => {
       const bounds = getSectionBounds(selector);
       if (!bounds) return 0;
@@ -244,6 +252,9 @@ export default function Page() {
       if (!bounds) return false;
       return scroller.scrollTop >= bounds.start && scroller.scrollTop <= bounds.end;
     };
+
+    const isFinalProjectsScene = () =>
+      getSteppedSceneIndex('#projects', PROJECT_SCENES) === PROJECT_SCENES - 1;
 
     const clamp = (value: number): SceneIndex => {
       const totalSections = root.querySelectorAll('[data-index]').length;
@@ -333,17 +344,24 @@ export default function Page() {
       }
 
       if (isProjectsModalTarget(e.target)) return;
+      if (Math.abs(e.deltaY) < 10) return;
+
+      const projectsAreFinal = isWithinRange('#projects') && isFinalProjectsScene();
+      if (projectsAreFinal) {
+        const direction = e.deltaY > 0 ? 1 : -1;
+        e.preventDefault();
+
+        if (navigateProjectsGrid(direction, e.deltaY)) return;
+        if (isProgrammaticScrollRef.current) return;
+        advanceProjects(direction);
+        return;
+      }
+
       if (isProjectsGridTarget(e.target)) {
-        if (Math.abs(e.deltaY) < 10) return;
-
         const movingDown = e.deltaY > 0;
-        const canContinueInsideGrid =
-          (movingDown && !isProjectsGridScrolledToBottom()) ||
-          (!movingDown && !isProjectsGridScrolledToTop());
 
-        if (canContinueInsideGrid) {
+        if (navigateProjectsGrid(movingDown ? 1 : -1, e.deltaY)) {
           e.preventDefault();
-          scrollProjectsGridBy(e.deltaY);
           return;
         }
 
@@ -356,7 +374,6 @@ export default function Page() {
 
         return;
       }
-      if (Math.abs(e.deltaY) < 10) return;
 
       if (isWithinRange('#about')) {
         e.preventDefault();
@@ -414,13 +431,9 @@ export default function Page() {
         if (Math.abs(dy) < 40) return;
 
         const movingDown = dy > 0;
-        const canContinueInsideGrid =
-          (movingDown && !isProjectsGridScrolledToBottom()) ||
-          (!movingDown && !isProjectsGridScrolledToTop());
 
-        if (canContinueInsideGrid) {
+        if (navigateProjectsGrid(movingDown ? 1 : -1, dy)) {
           e.preventDefault();
-          scrollProjectsGridBy(dy);
           touchStartY = e.touches[0]?.clientY ?? touchStartY;
           return;
         }
@@ -437,6 +450,15 @@ export default function Page() {
 
       const dy = touchStartY - (e.touches[0]?.clientY ?? 0);
       if (Math.abs(dy) < 40) return;
+
+      if (isWithinRange('#projects') && isFinalProjectsScene()) {
+        const direction = dy > 0 ? 1 : -1;
+        if (navigateProjectsGrid(direction, dy)) {
+          e.preventDefault();
+          touchStartY = e.touches[0]?.clientY ?? touchStartY;
+          return;
+        }
+      }
 
       if (isWithinRange('#about')) {
         e.preventDefault();
@@ -488,6 +510,11 @@ export default function Page() {
 
       if (isWithinRange('#projects')) {
         e.preventDefault();
+        if (isFinalProjectsScene()) {
+          const projectsGridScroller = getProjectsGridScrollContainer();
+          const gridStep = Math.max(projectsGridScroller?.clientHeight ?? 0, 320) * 0.75;
+          if (navigateProjectsGrid(direction, direction * gridStep)) return;
+        }
         if (isProgrammaticScrollRef.current) return;
         advanceProjects(direction);
         return;
@@ -592,15 +619,7 @@ export default function Page() {
 
         <Projects data-index={3} scrollContainerRef={scrollerRef} />
 
-        <section
-          id="contact"
-          data-index={4}
-          className="flex h-dvh snap-start snap-always items-center justify-center"
-        >
-          <div className="w-full max-w-6xl px-4">
-            <Contacts />
-          </div>
-        </section>
+        <Contacts data-index={4} className="snap-start snap-always" />
 
       </div>
     </main>
